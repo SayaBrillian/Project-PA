@@ -1,81 +1,136 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+  <q-layout>
+    <q-header class="floating-navbar" bordered>
       <q-toolbar>
-        <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
+        <div class="logo">
+          <span class="logo-main">EI GAMING STORE</span>
+        </div>
+        <q-space />
+        <div class="nav-menu">
+          <q-space />
+          <q-btn flat no-caps label="Home" to="/" class="nav-link" active-class="nav-link--active" />
+          <q-btn flat no-caps label="Product" to="/product" class="nav-link" active-class="nav-link--active" />
+          <q-btn flat no-caps label="Help" to="/help" class="nav-link" active-class="nav-link--active" />
+          <q-btn flat no-caps label="About Us" to="/about" class="nav-link" active-class="nav-link--active" />
+          <q-space />
 
-        <q-toolbar-title> Quasar App </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
+          <ProfileMenu />
+        </div>
       </q-toolbar>
     </q-header>
-
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
-      <q-list>
-        <q-item-label header> Essential Links </q-item-label>
-
-        <EssentialLink v-for="link in linksList" :key="link.title" v-bind="link" />
-      </q-list>
-    </q-drawer>
-
-    <q-page-container>
+    <q-page-container class="page-container">
       <router-view />
     </q-page-container>
   </q-layout>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import EssentialLink from 'components/EssentialLink.vue'
-
-const linksList = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev',
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework',
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev',
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev',
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev',
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev',
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev',
-  },
-]
-
-const leftDrawerOpen = ref(false)
-
-function toggleLeftDrawer() {
-  leftDrawerOpen.value = !leftDrawerOpen.value
-}
+import ProfileMenu from 'components/ProfileMenu.vue'
 </script>
+<style lang="scss" scoped>
+.floating-navbar {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: min(1280px, calc(100vw - 32px));
+  z-index: 2000;
+
+  background: linear-gradient(
+    135deg,
+    rgba($dark, 0.92) 0%,
+    rgba($secondary, 0.85) 100%
+  );
+
+  backdrop-filter: blur(18px);
+
+  border: 1px solid rgba($sakura, 0.15);
+  border-radius: 22px;
+
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.3),
+    0 0 24px rgba($sakura, 0.1);
+
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+
+    top: 0;
+    left: 24px;
+    right: 24px;
+
+    height: 1px;
+
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba($sakura, 0.8),
+      transparent
+    );
+  }
+}
+
+.floating-navbar :deep(.q-toolbar) {
+  min-height: 72px;
+  padding: 0 20px;
+}
+
+.page-container {
+  max-width: 1280px;
+  margin: 0 auto;
+
+  padding-top: 110px !important;
+  padding-left: 24px;
+  padding-right: 24px;
+  padding-bottom: 32px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.logo-main {
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1;
+  color: $sakura;
+}
+
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-link {
+  color: rgba(255, 255, 255, 0.8);
+  border-radius: 12px;
+  font-weight: 500;
+
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    transform 0.25s ease;
+
+  &:hover {
+    color: white;
+    background: rgba($sakura, 0.08);
+    transform: translateY(-1px);
+  }
+}
+
+:deep(.nav-link--active) {
+  color: $sakura;
+
+  background: rgba($sakura, 0.14);
+
+  box-shadow:
+    inset 0 0 0 1px rgba($sakura, 0.15),
+    0 4px 12px rgba($sakura, 0.08);
+}
+</style>
