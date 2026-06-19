@@ -5,7 +5,7 @@
     <section class="hero-section">
       <div class="hero-image">
         <!-- Nanti ganti dengan URL CDN -->
-        <img src="https://placehold.co/600x400" alt="Gaming Banner">
+        <img src="src/assets/March7.webp" alt="Gaming Banner">
       </div>
       <div class="hero-content">
         <span class="hero-badge">
@@ -92,7 +92,47 @@
 
     <GameSection title="Latest Update" description="Update dan patch terbaru dari game favoritmu."
       :games="popularGames" />
+
+    <ProductSection title="Produk Terpopuler" description="Produk yang paling banyak dibeli oleh pemain."
+      :products="popularProducts" :filters="['All Time', 'Week', 'Month', 'Day']" />
   </q-page>
+  <TrustStats />
+  <PurchaseFlow />
+  <TestimonialsSection />
+  <FaqSection />
+  <section class="cta-section">
+    <div class="cta-card">
+      <span class="section-badge">
+        Siap Bermain?
+      </span>
+
+      <h2>
+        Top Up Game Favoritmu Sekarang
+      </h2>
+
+      <p>
+        Proses cepat, pembayaran lengkap, dan layanan tersedia 24 jam.
+      </p>
+
+      <div class="cta-actions">
+        <q-btn
+          unelevated
+          no-caps
+          label="Lihat Semua Produk"
+          color="accent"
+          to="/product"
+        />
+
+        <q-btn
+          flat
+          no-caps
+          label="Hubungi Kami"
+          to="/help"
+          class="secondary-btn"
+        />
+      </div>
+    </div>
+  </section>
 </template>
 
 <script setup>
@@ -103,17 +143,43 @@ const popularGames = [
     id: 1,
     name: 'Genshin Impact',
     category: 'Open World',
-    image: 'https://placehold.co/600x340',
+    image: 'src/assets/GenshinImpactIcon.webp',
     isUpdated: true
   },
   {
     id: 2,
     name: 'Honkai Star Rail',
     category: 'RPG',
-    image: 'https://placehold.co/600x340',
+    image: 'src/assets/HonkaiStarRailIcon.webp',
     isUpdated: false
   }
 ]
+
+import ProductSection from 'components/product/ProductSection.vue'
+
+const popularProducts = [
+  {
+    id: 1,
+    game: 'Genshin Impact',
+    name: 'Blessing of the Welkin Moon',
+    price: 79000,
+    image: 'src/assets/Welkin.webp',
+    badge: 'Best Seller'
+  },
+  {
+    id: 2,
+    game: 'Genshin Impact',
+    name: '1680 Genesis Crystals',
+    price: 349000,
+    image: 'src/assets/GenesisCrystal.webp',
+    badge: 'Popular'
+  }
+]
+
+import TrustStats from 'components/trust/TrustStats.vue'
+import PurchaseFlow from 'src/components/home/PurchaseFlow.vue'
+import TestimonialsSection from 'src/components/testimonials/TestimonialsSection.vue'
+import FaqSection from 'src/components/faq/FaqSection.vue'
 </script>
 
 <style lang="scss" scoped>
@@ -122,7 +188,7 @@ const popularGames = [
   flex-direction: column;
   gap: 10px;
 
-  padding: 32px 0 64px;
+  padding: 0px 0 64px;
 }
 
 .hero-section {
@@ -174,11 +240,6 @@ const popularGames = [
 
   object-fit: cover;
 
-  border: 1px solid rgba($sakura, 0.15);
-
-  box-shadow:
-    0 12px 40px rgba(0, 0, 0, 0.3),
-    0 0 24px rgba($sakura, 0.08);
 }
 
 .why-section {
@@ -266,6 +327,64 @@ const popularGames = [
   }
 }
 
+.cta-section {
+  margin: 96px 0;
+}
+
+.cta-card {
+  padding: 56px 32px;
+  text-align: center;
+
+  background: linear-gradient(
+    135deg,
+    rgba($secondary, 0.8),
+    rgba($dark, 0.9)
+  );
+
+  border: 1px solid rgba($sakura, 0.15);
+  border-radius: 32px;
+
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+.section-badge {
+  display: inline-block;
+
+  padding: 6px 14px;
+
+  color: $sakura;
+  background: rgba($sakura, 0.08);
+
+  border: 1px solid rgba($sakura, 0.15);
+  border-radius: 999px;
+}
+
+.cta-card h2 {
+  margin: 20px 0 16px;
+
+  font-size: clamp(2rem, 4vw, 3rem);
+}
+
+.cta-card p {
+  max-width: 560px;
+  margin: 0 auto;
+
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.7;
+}
+
+.cta-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+
+  margin-top: 32px;
+}
+
+.secondary-btn {
+  color: white;
+}
+
 @media (max-width: 600px) {
   .feature-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -273,6 +392,9 @@ const popularGames = [
   }
 
   .hero-actions {
+    flex-direction: column;
+  }
+  .cta-actions {
     flex-direction: column;
   }
 }
