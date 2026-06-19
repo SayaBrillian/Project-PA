@@ -1,5 +1,5 @@
 <template>
-  <q-layout>
+  <q-layout class="app-layout">
     <q-header class="floating-navbar" bordered>
       <q-toolbar>
         <div class="logo">
@@ -27,7 +27,16 @@
 <script setup>
 import ProfileMenu from 'components/ProfileMenu.vue'
 </script>
+
 <style lang="scss" scoped>
+.app-layout {
+  min-height: 100vh;
+
+  background: linear-gradient(180deg,
+      $dark 0%,
+      $secondary 100%);
+}
+
 .floating-navbar {
   position: fixed;
   top: 16px;
@@ -37,11 +46,9 @@ import ProfileMenu from 'components/ProfileMenu.vue'
   width: min(1280px, calc(100vw - 32px));
   z-index: 2000;
 
-  background: linear-gradient(
-    135deg,
-    rgba($dark, 0.92) 0%,
-    rgba($secondary, 0.85) 100%
-  );
+  background: linear-gradient(135deg,
+      rgba($dark, 0.92) 0%,
+      rgba($secondary, 0.85) 100%);
 
   backdrop-filter: blur(18px);
 
@@ -64,12 +71,10 @@ import ProfileMenu from 'components/ProfileMenu.vue'
 
     height: 1px;
 
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba($sakura, 0.8),
-      transparent
-    );
+    background: linear-gradient(90deg,
+        transparent,
+        rgba($sakura, 0.8),
+        transparent);
   }
 }
 
