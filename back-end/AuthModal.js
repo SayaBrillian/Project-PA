@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import express from "express";
 import { db } from "./db.js";
 
@@ -12,6 +13,7 @@ const router = express.Router();
 router.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const result = await db.query(
       `
@@ -23,7 +25,7 @@ router.post("/register", async (req, res) => {
       VALUES ($1, $2, $3)
       RETURNING *
       `,
-      [name, email, password],
+      [name, email, hashedPassword],
     );
 
     res.status(201).json({
@@ -50,15 +52,28 @@ router.post("/login-user", async (req, res) => {
 
     const result = await db.query(
       `
-      SELECT *
-      FROM users
-      WHERE email = $1
-      AND password = $2
-      `,
-      [email, password],
+  SELECT *
+  FROM users
+  WHERE email = $1
+  `,
+      [email],
     );
 
     if (result.rows.length === 0) {
+      return res.status(401).json({
+        success: false,
+        message: "Email atau password salah",
+      });
+    }
+
+    const user = result.rows[0];
+
+    const isMatch = await bcrypt.compare(
+      password,
+      user.password
+    );
+
+    if (!isMatch) {
       return res.status(401).json({
         success: false,
         message: "Email atau password salah",
@@ -89,12 +104,11 @@ router.post("/login-admin", async (req, res) => {
 
     const result = await db.query(
       `
-      SELECT *
-      FROM admins
-      WHERE email = $1
-      AND password = $2
-      `,
-      [email, password],
+  SELECT *
+  FROM admins
+  WHERE email = $1
+  `,
+      [email],
     );
 
     if (result.rows.length === 0) {
@@ -103,6 +117,21 @@ router.post("/login-admin", async (req, res) => {
         message: "Email atau password salah",
       });
     }
+
+    const admin = result.rows[0];
+
+    const isMatch = await bcrypt.compare(
+      password,
+      admin.password
+    );
+
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Email atau password salah",
+      });
+    }
+
 
     res.json({
       success: true,
