@@ -41,7 +41,7 @@
         </q-card-section>
 
         <q-card-actions vertical class="q-pa-md">
-          <q-btn unelevated color="accent" label="Login" class="full-width" />
+          <q-btn unelevated color="accent" label="Login" class="full-width" @click="loginUser" />
           <q-btn flat color="white" label="Kembali" @click="step = 'role'" />
           <div class="auth-switch">
             <span>Belum punya akun?</span>
@@ -62,7 +62,7 @@
         </q-card-section>
 
         <q-card-actions vertical class="q-pa-md">
-          <q-btn unelevated color="accent" label="Login" />
+          <q-btn unelevated color="accent" label="Login" @click="loginAdmin" />
           <q-btn flat color="white" label="Kembali" @click="step = 'role'" />
         </q-card-actions>
       </template>
@@ -80,7 +80,7 @@
         </q-card-section>
 
         <q-card-actions vertical class="q-pa-md">
-          <q-btn unelevated color="accent" label="Daftar" />
+          <q-btn unelevated color="accent" label="Daftar" @click="registerUser" />
           <div class="auth-switch">
             <span>Sudah punya akun?</span>
             <q-btn flat dense no-caps color="accent" label="Masuk" @click="step = 'login-user'" />
@@ -92,6 +92,7 @@
 </template>
 
 <script setup>
+import axios from 'axios'
 import { computed, ref, watch } from 'vue'
 
 const props = defineProps({
@@ -102,7 +103,10 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits([
+  'update:modelValue',
+  'login-success'
+])
 
 const modelValue = computed({
   get: () => props.modelValue,
@@ -136,6 +140,91 @@ const adminPassword = ref('')
 const registerName = ref('')
 const registerEmail = ref('')
 const registerPassword = ref('')
+
+async function registerUser() {
+  try {
+    const response = await axios.post(
+      'http://localhost:3000/api/auth/register',
+      {
+        name: registerName.value,
+        email: registerEmail.value,
+        password: registerPassword.value,
+      }
+    )
+
+    console.log(response.data)
+
+    alert('Registrasi berhasil')
+
+    step.value = 'login-user'
+
+  } catch (error) {
+    console.error(error)
+
+    alert(
+      error.response?.data?.message ||
+      'Registrasi gagal'
+    )
+  }
+}
+
+async function loginUser() {
+  try {
+    const response = await axios.post(
+      'http://localhost:3000/api/auth/login-user',
+      {
+        email: userEmail.value,
+        password: userPassword.value,
+      }
+    )
+
+    localStorage.setItem(
+      'user',
+      JSON.stringify(response.data.user)
+    )
+
+    alert('Login berhasil')
+
+    modelValue.value = false
+
+  } catch (error) {
+    console.error(error)
+
+    alert(
+      error.response?.data?.message ||
+      'Login gagal'
+    )
+  }
+}
+
+async function loginAdmin() {
+  try {
+    const response = await axios.post(
+      'http://localhost:3000/api/auth/login-admin',
+      {
+        email: adminEmail.value,
+        password: adminPassword.value,
+      }
+    )
+
+    localStorage.setItem(
+      'user',
+      JSON.stringify(response.data.admin)
+    )
+
+    alert('Login admin berhasil')
+
+    modelValue.value = false
+
+  } catch (error) {
+    console.error(error)
+
+    alert(
+      error.response?.data?.message ||
+      'Login admin gagal'
+    )
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -175,7 +264,7 @@ const registerPassword = ref('')
 
   text-align: center;
   cursor: pointer;
-display: flex;
+  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;

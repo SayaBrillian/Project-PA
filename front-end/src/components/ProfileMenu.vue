@@ -45,11 +45,11 @@
 
             <div class="q-ml-md">
               <div class="text-weight-medium">
-                Brillian
+                {{ user?.name }}
               </div>
 
               <div class="text-caption text-grey-5">
-                brillian@example.com
+                {{ user?.email }}
               </div>
             </div>
 
@@ -79,7 +79,7 @@
               </q-item-section>
             </q-item>
 
-            <q-item clickable v-close-popup>
+            <q-item clickable v-close-popup @click="logout">
               <q-item-section avatar>
                 <q-icon name="logout" />
               </q-item-section>
@@ -95,20 +95,40 @@
       </q-card>
     </q-menu>
   </div>
-  <AuthModal v-model="showAuth" :initial-step="authStep" />
+  <AuthModal v-model="showAuth" :initial-step="authStep" @login-success="loadUser" />
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import AuthModal from './AuthModal.vue'
 
 const showAuth = ref(false)
 const authStep = ref('role')
 
 const showMenu = ref(false)
-
-// Nanti ganti dengan state dari Pinia atau API
+const user = ref(null)
 const isLoggedIn = ref(false)
+
+function loadUser() {
+  const savedUser = localStorage.getItem('user')
+
+  if (savedUser) {
+    user.value = JSON.parse(savedUser)
+    isLoggedIn.value = true
+  }
+}
+
+onMounted(() => {
+  loadUser()
+})
+
+function logout() {
+  localStorage.removeItem('user')
+
+  user.value = null
+  isLoggedIn.value = false
+}
+// Nanti ganti dengan state dari Pinia atau API
 let timeout
 
 function openMenu() {
