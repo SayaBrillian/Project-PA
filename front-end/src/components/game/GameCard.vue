@@ -85,6 +85,7 @@ defineProps({
 .game-name {
   font-size: 1rem;
   font-weight: 600;
+  color: rgba(255, 255, 255, 0.65);
 }
 
 .game-category {
