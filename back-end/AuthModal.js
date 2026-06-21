@@ -1,3 +1,4 @@
+import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import express from "express";
 import { db } from "./db.js";
@@ -95,11 +96,11 @@ router.post("/login-user", async (req, res) => {
 
     const result = await db.query(
       `
-  SELECT *
-  FROM users
-  WHERE email = $1
-  `,
-      [email],
+      SELECT *
+      FROM users
+      WHERE email = $1
+      `,
+      [email]
     );
 
     if (result.rows.length === 0) {
@@ -115,30 +116,45 @@ router.post("/login-user", async (req, res) => {
       password,
       user.password
     );
+
     if (!isMatch) {
       return res.status(401).json({
         success: false,
         message: "Email atau password salah",
       });
     }
-    // Buat object baru TANPA password
+
     const userData = {
       id: user.id,
       name: user.name,
       email: user.email,
     };
+
+    const token = jwt.sign(
+      {
+        id: user.id,
+        email: user.email,
+        type: "user",
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1d",
+      }
+    );
+
     res.json({
       success: true,
+      token,
       user: userData,
-    })}
-     catch (error) {
-      res.status(500).json({
-        success: false,
-        message: error.message,
-      });
-    }
-  });
+    });
 
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+});
 /*
 |--------------------------------------------------------------------------
 | LOGIN ADMIN
@@ -183,10 +199,24 @@ router.post("/login-admin", async (req, res) => {
       level: admin.level,
     };
 
+    const token = jwt.sign(
+  {
+    id: admin.id,
+    email: admin.email,
+    type: "admin",
+    level: admin.level,
+  },
+  process.env.JWT_SECRET,
+  {
+    expiresIn: "1d",
+  }
+);
+
     res.json({
-      success: true,
-      admin: adminData,
-    });
+  success: true,
+  token,
+  admin: adminData,
+});
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -195,4 +225,34 @@ router.post("/login-admin", async (req, res) => {
   }
 });
 
+router.get("/me", (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader) {
+      return res.status(401).json({
+        success: false,
+        message: "Token tidak ditemukan",
+      });
+    }
+
+    const token = authHeader.split(" ")[1];
+
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET
+    );
+
+    res.json({
+      success: true,
+      user: decoded,
+    });
+
+  } catch (error) {
+    res.status(401).json({
+      success: false,
+      message: "Token tidak valid",
+    });
+  }
+});
 export default router;
