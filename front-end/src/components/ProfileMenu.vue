@@ -95,7 +95,7 @@
       </q-card>
     </q-menu>
   </div>
-  <AuthModal v-model="showAuth" :initial-step="authStep" @login-success="loadAuth" />
+  <AuthModal v-model="showAuth" :initial-step="authStep" @login-success="handleLoginSuccess" />
 </template>
 
 <script setup>
@@ -120,11 +120,9 @@ async function loadAuth() {
       return
     }
 
-    const response = await api.get(
-      '/api/auth/me'
-    )
+    await api.get('/api/auth/me')
 
-    user.value = response.data.user
+    user.value = auth.data
     isLoggedIn.value = true
 
   } catch (error) {
@@ -146,6 +144,10 @@ function logout() {
 
   user.value = null
   isLoggedIn.value = false
+}
+
+function handleLoginSuccess() {
+  loadAuth()
 }
 // Nanti ganti dengan state dari Pinia atau API
 let timeout

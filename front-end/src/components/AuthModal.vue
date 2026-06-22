@@ -156,6 +156,10 @@ async function registerUser() {
 
     alert('Registrasi berhasil')
 
+    registerName.value = ''
+    registerEmail.value = ''
+    registerPassword.value = ''
+
     step.value = 'login-user'
 
   } catch (error) {
@@ -188,7 +192,8 @@ async function loginUser() {
     )
 
     emit('login-success')
-
+    userEmail.value = ''
+    userPassword.value = ''
     modelValue.value = false
 
   } catch (error) {
@@ -204,7 +209,7 @@ async function loginUser() {
 async function loginAdmin() {
   try {
     const response = await api.post(
-      '/api/auth/register',
+      '/api/auth/login-admin',
       {
         email: adminEmail.value,
         password: adminPassword.value,
@@ -221,7 +226,8 @@ async function loginAdmin() {
     )
 
     emit('login-success')
-
+    adminEmail.value = ''
+    adminPassword.value = ''
     modelValue.value = false
 
   } catch (error) {

@@ -14,6 +14,42 @@ const router = express.Router();
 router.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Semua field wajib diisi",
+      });
+    }
+
+    if (!email.includes("@")) {
+      return res.status(400).json({
+        success: false,
+        message: "Format email tidak valid",
+      });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: "Password minimal 6 karakter",
+      });
+    }
+    const existingUser = await db.query(
+      `
+  SELECT id
+  FROM users
+  WHERE email = $1
+  `,
+      [email]
+    );
+
+    if (existingUser.rows.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Email sudah digunakan",
+      });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const result = await db.query(
@@ -29,10 +65,18 @@ router.post("/register", async (req, res) => {
       [name, email, hashedPassword],
     );
 
-    res.status(201).json({
-      success: true,
-      user: result.rows[0],
-    });
+    const user = result.rows[0];
+
+const userData = {
+  id: user.id,
+  name: user.name,
+  email: user.email,
+};
+
+res.status(201).json({
+  success: true,
+  user: userData,
+});
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -52,13 +96,59 @@ router.post(
   verifyToken,
   requireLevel(100),
   async (req, res) => {
-  try {
-   const { name, email, password, level } = req.body;
+    try {
+      const { name, email, password, level } = req.body;
+      if (level < 1 || level > 100) {
+  return res.status(400).json({
+    success: false,
+    message: "Level harus antara 1 sampai 100",
+  });
+}
+      if (!level) {
+  return res.status(400).json({
+    success: false,
+    message: "Level wajib diisi",
+  });
+}
+      if (!name || !email || !password) {
+        return res.status(400).json({
+          success: false,
+          message: "Semua field wajib diisi",
+        });
+      }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+      if (!email.includes("@")) {
+        return res.status(400).json({
+          success: false,
+          message: "Format email tidak valid",
+        });
+      }
 
-    const result = await db.query(
-      `
+      if (password.length < 6) {
+        return res.status(400).json({
+          success: false,
+          message: "Password minimal 6 karakter",
+        });
+      }
+      const existingAdmin = await db.query(
+        `
+  SELECT id
+  FROM admins
+  WHERE email = $1
+  `,
+        [email]
+      );
+
+      if (existingAdmin.rows.length > 0) {
+        return res.status(400).json({
+          success: false,
+          message: "Email admin sudah digunakan",
+        });
+      }
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      const result = await db.query(
+        `
       INSERT INTO admins (
         name,
         email,
@@ -68,25 +158,34 @@ router.post(
       VALUES ($1, $2, $3, $4)
       RETURNING *
       `,
-      [
-  name,
-  email,
-  hashedPassword,
-  level
-]
-    );
+        [
+          name,
+          email,
+          hashedPassword,
+          level
+        ]
+      );
 
-    res.status(201).json({
-      success: true,
-      admin: result.rows[0],
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
+      const admin = result.rows[0];
+
+const adminData = {
+  id: admin.id,
+  name: admin.name,
+  email: admin.email,
+  level: admin.level,
+};
+
+res.status(201).json({
+  success: true,
+  admin: adminData,
 });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  });
 
 /*
 |--------------------------------------------------------------------------
@@ -97,7 +196,12 @@ router.post(
 router.post("/login-user", async (req, res) => {
   try {
     const { email, password } = req.body;
-
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email dan password wajib diisi",
+      });
+    }
     const result = await db.query(
       `
       SELECT *
@@ -168,7 +272,12 @@ router.post("/login-user", async (req, res) => {
 router.post("/login-admin", async (req, res) => {
   try {
     const { email, password } = req.body;
-
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email dan password wajib diisi",
+      });
+    }
     const result = await db.query(
       `
   SELECT *
@@ -204,23 +313,23 @@ router.post("/login-admin", async (req, res) => {
     };
 
     const token = jwt.sign(
-  {
-    id: admin.id,
-    email: admin.email,
-    type: "admin",
-    level: admin.level,
-  },
-  process.env.JWT_SECRET,
-  {
-    expiresIn: "1d",
-  }
-);
+      {
+        id: admin.id,
+        email: admin.email,
+        type: "admin",
+        level: admin.level,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1d",
+      }
+    );
 
     res.json({
-  success: true,
-  token,
-  admin: adminData,
-});
+      success: true,
+      token,
+      admin: adminData,
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
