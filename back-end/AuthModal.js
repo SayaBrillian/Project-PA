@@ -43,11 +43,15 @@ router.post("/register", async (req, res) => {
 
 /*
 |--------------------------------------------------------------------------
-| REGISTER USER
+| REGISTER ADMIN
 |--------------------------------------------------------------------------
 */
 
-router.post("/register-admin", async (req, res) => {
+router.post(
+  "/register-admin",
+  verifyToken,
+  requireLevel(100),
+  async (req, res) => {
   try {
    const { name, email, password, level } = req.body;
 
@@ -225,9 +229,10 @@ router.post("/login-admin", async (req, res) => {
   }
 });
 
-router.get("/me", (req, res) => {
+function verifyToken(req, res, next) {
   try {
-    const authHeader = req.headers.authorization;
+    const authHeader =
+      req.headers.authorization;
 
     if (!authHeader) {
       return res.status(401).json({
@@ -236,23 +241,72 @@ router.get("/me", (req, res) => {
       });
     }
 
-    const token = authHeader.split(" ")[1];
+    const token =
+      authHeader.split(" ")[1];
 
     const decoded = jwt.verify(
       token,
       process.env.JWT_SECRET
     );
 
-    res.json({
-      success: true,
-      user: decoded,
-    });
+    req.user = decoded;
+
+    next();
 
   } catch (error) {
-    res.status(401).json({
+    return res.status(401).json({
       success: false,
       message: "Token tidak valid",
     });
   }
-});
+}
+
+function requireLevel(minLevel) {
+  return (req, res, next) => {
+
+    if (req.user.type !== "admin") {
+      return res.status(403).json({
+        success: false,
+        message: "Hanya admin yang diizinkan",
+      });
+    }
+
+    if (req.user.level < minLevel) {
+      return res.status(403).json({
+        success: false,
+        message: "Level admin tidak mencukupi",
+      });
+    }
+
+    next();
+  };
+}
+
+router.get(
+  "/me",
+  verifyToken,
+  (req, res) => {
+
+    res.json({
+      success: true,
+      user: req.user,
+    });
+
+  }
+);
+
+router.get(
+  "/admin-only",
+  verifyToken,
+  requireLevel(80),
+  (req, res) => {
+
+    res.json({
+      success: true,
+      message: "Selamat datang Admin",
+      admin: req.user,
+    });
+
+  }
+);
 export default router;
