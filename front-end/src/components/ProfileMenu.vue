@@ -95,10 +95,11 @@
       </q-card>
     </q-menu>
   </div>
-  <AuthModal v-model="showAuth" :initial-step="authStep" @login-success="loadUser" />
+  <AuthModal v-model="showAuth" :initial-step="authStep" @login-success="loadAuth" />
 </template>
 
 <script setup>
+import api from 'src/axios'
 import { ref, onMounted } from 'vue'
 import AuthModal from './AuthModal.vue'
 
@@ -109,21 +110,39 @@ const showMenu = ref(false)
 const user = ref(null)
 const isLoggedIn = ref(false)
 
-function loadUser() {
-  const savedUser = localStorage.getItem('user')
+async function loadAuth() {
+  try {
+    const auth = JSON.parse(
+      localStorage.getItem('auth')
+    )
 
-  if (savedUser) {
-    user.value = JSON.parse(savedUser)
+    if (!auth?.token) {
+      return
+    }
+
+    const response = await api.get(
+      '/api/auth/me'
+    )
+
+    user.value = response.data.user
     isLoggedIn.value = true
+
+  } catch (error) {
+    console.error(error)
+
+    localStorage.removeItem('auth')
+
+    user.value = null
+    isLoggedIn.value = false
   }
 }
 
 onMounted(() => {
-  loadUser()
+  loadAuth()
 })
 
 function logout() {
-  localStorage.removeItem('user')
+  localStorage.removeItem('auth')
 
   user.value = null
   isLoggedIn.value = false
@@ -141,6 +160,8 @@ function closeMenu() {
     showMenu.value = false
   }, 150)
 }
+
+
 </script>
 
 <style lang="scss" scoped>

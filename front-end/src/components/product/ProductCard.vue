@@ -1,18 +1,14 @@
 <template>
   <q-card class="product-card" flat clickable>
-
     <div class="product-image-wrapper">
-
-      <img :src="product.image" :alt="product.name" class="product-image">
+      <img :src="product.image" :alt="product.name" class="product-image" />
 
       <div v-if="product.badge" class="product-badge">
         {{ product.badge }}
       </div>
-
     </div>
 
     <q-card-section class="product-content">
-
       <div class="product-game">
         {{ product.game }}
       </div>
@@ -21,12 +17,8 @@
         {{ product.name }}
       </div>
 
-      <div class="product-price">
-        Rp {{ formatPrice(product.price) }}
-      </div>
-
+      <div class="product-price">Rp {{ formatPrice(product.price) }}</div>
     </q-card-section>
-
   </q-card>
 </template>
 
@@ -34,8 +26,8 @@
 defineProps({
   product: {
     type: Object,
-    required: true
-  }
+    required: true,
+  },
 })
 
 const formatPrice = (value) => {

@@ -92,7 +92,7 @@
 </template>
 
 <script setup>
-import axios from 'axios'
+import api from 'src/axios'
 import { computed, ref, watch } from 'vue'
 
 const props = defineProps({
@@ -143,8 +143,8 @@ const registerPassword = ref('')
 
 async function registerUser() {
   try {
-    const response = await axios.post(
-      'http://localhost:3000/api/auth/register',
+    const response = await api.post(
+      '/api/auth/register',
       {
         name: registerName.value,
         email: registerEmail.value,
@@ -170,8 +170,8 @@ async function registerUser() {
 
 async function loginUser() {
   try {
-    const response = await axios.post(
-      'http://localhost:3000/api/auth/login-user',
+    const response = await api.post(
+      '/api/auth/login-user',
       {
         email: userEmail.value,
         password: userPassword.value,
@@ -179,11 +179,15 @@ async function loginUser() {
     )
 
     localStorage.setItem(
-      'user',
-      JSON.stringify(response.data.user)
+      'auth',
+      JSON.stringify({
+        type: 'user',
+        token: response.data.token,
+        data: response.data.user
+      })
     )
 
-    alert('Login berhasil')
+    emit('login-success')
 
     modelValue.value = false
 
@@ -199,8 +203,8 @@ async function loginUser() {
 
 async function loginAdmin() {
   try {
-    const response = await axios.post(
-      'http://localhost:3000/api/auth/login-admin',
+    const response = await api.post(
+      '/api/auth/register',
       {
         email: adminEmail.value,
         password: adminPassword.value,
@@ -208,11 +212,15 @@ async function loginAdmin() {
     )
 
     localStorage.setItem(
-      'user',
-      JSON.stringify(response.data.admin)
+      'auth',
+      JSON.stringify({
+        type: 'admin',
+        token: response.data.token,
+        data: response.data.admin
+      })
     )
 
-    alert('Login admin berhasil')
+    emit('login-success')
 
     modelValue.value = false
 

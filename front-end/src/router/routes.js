@@ -5,21 +5,21 @@ const routes = [
     children: [
       {
         path: '',
-        component: () => import('pages/public/HomePage.vue')
+        component: () => import('pages/public/HomePage.vue'),
       },
       {
         path: 'product',
-        component: () => import('pages/public/ProductPage.vue')
+        component: () => import('pages/public/ProductPage.vue'),
       },
       {
         path: 'help',
-        component: () => import('pages/public/HelpPage.vue')
+        component: () => import('pages/public/HelpPage.vue'),
       },
       {
         path: 'about',
-        component: () => import('pages/public/AboutPage.vue')
-      }
-    ]
+        component: () => import('pages/public/AboutPage.vue'),
+      },
+    ],
   },
 
   {
@@ -28,23 +28,23 @@ const routes = [
     children: [
       {
         path: '',
-        component: () => import('pages/dashboard/DashboardPage.vue')
+        component: () => import('pages/dashboard/DashboardPage.vue'),
       },
       {
         path: 'profile',
-        component: () => import('pages/dashboard/ProfilePage.vue')
+        component: () => import('pages/dashboard/ProfilePage.vue'),
       },
       {
         path: 'settings',
-        component: () => import('pages/dashboard/SettingsPage.vue')
-      }
-    ]
+        component: () => import('pages/dashboard/SettingsPage.vue'),
+      },
+    ],
   },
 
   {
     path: '/:catchAll(.*)*',
-    component: () => import('pages/ErrorNotFound.vue')
-  }
+    component: () => import('pages/ErrorNotFound.vue'),
+  },
 ]
 
 export default routes
