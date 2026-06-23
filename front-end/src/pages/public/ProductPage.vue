@@ -13,63 +13,63 @@
       </p>
     </div>
 
-    <q-input
-      v-model="search"
-      outlined
-      dark
-      rounded
-      clearable
-      placeholder="Cari game..."
-      class="search-bar"
-    >
+    <q-input v-model="search" outlined dark rounded clearable placeholder="Cari game..." class="search-bar">
       <template #prepend>
         <q-icon name="search" />
       </template>
     </q-input>
 
-    <div class="game-grid">
-      <GameCard
-        v-for="game in filteredGames"
-        :key="game.id"
-        :game="game"
-      />
+    <div v-if="filteredGames.length" class="game-grid">
+      <GameCard v-for="game in filteredGames" :key="game.id" :game="game" />
+    </div>
+
+    <div v-else class="empty-state">
+      <q-icon name="search_off" size="64px" />
+
+      <div class="empty-title">
+        Game tidak ditemukan
+      </div>
+
+      <div class="empty-subtitle">
+        Coba gunakan kata kunci lain.
+      </div>
     </div>
 
   </q-page>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { ref, computed } from 'vue'
 import GameCard from 'src/components/game/GameCard.vue'
 
 const search = ref('')
 
-const games = [
+const games = ref([
   {
     id: 1,
     name: 'Genshin Impact',
-    image: 'src/assets/GenshinImpactIcon.webp',
-    available: true
+    slug: 'genshin-impact',
+    is_available: true
   },
   {
     id: 2,
     name: 'Honkai: Star Rail',
-    image: 'src/assets/HonkaiStarRailIcon.webp',
-    available: true
+    slug: 'honkai-star-rail',
+    is_available: true
   },
   {
     id: 3,
     name: 'Zenless Zone Zero',
-    image: 'src/assets/ZenlessZoneZeroIcon.webp',
-    available: false
+    slug: 'zenless-zone-zero',
+    is_available: false
   }
-]
+])
 
 const filteredGames = computed(() => {
-  return games.filter(game =>
-    game.name
-      .toLowerCase()
-      .includes(search.value.toLowerCase())
+  const keyword = search.value.toLowerCase()
+
+  return games.value.filter(game =>
+    game.name.toLowerCase().includes(keyword)
   )
 })
 </script>
@@ -112,10 +112,8 @@ const filteredGames = computed(() => {
 
 .game-grid {
   display: grid;
-  grid-template-columns: repeat(
-    auto-fill,
-    minmax(220px, 1fr)
-  );
+  grid-template-columns: repeat(auto-fill,
+      minmax(220px, 1fr));
 
   gap: 24px;
 }
