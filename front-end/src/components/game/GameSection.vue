@@ -79,6 +79,7 @@ const selectedFilter = ref('All Time')
 
   font-size: clamp(1.75rem, 3vw, 2.25rem);
   font-weight: 700;
+  color: $sakura;
 }
 
 .section-description {

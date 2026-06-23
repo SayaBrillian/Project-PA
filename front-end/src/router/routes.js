@@ -19,6 +19,10 @@ const routes = [
         path: 'about',
         component: () => import('pages/public/AboutPage.vue'),
       },
+      {
+        path: 'products/:slug',
+        component: () => import('pages/public/ProductDetailsPage.vue'),
+      },
     ],
   },
 

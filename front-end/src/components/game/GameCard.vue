@@ -1,26 +1,41 @@
 <template>
-  <q-card class="game-card" flat clickable :to="`/products/${game.slug}`">
+  <router-link
+    :to="`/products/${game.slug}`"
+    class="game-link"
+  >
+    <q-card class="game-card">
 
-    <div class="game-image-wrapper">
+      <div class="game-image-wrapper">
 
-      <img :src="`/games/${game.slug}.webp`" :alt="game.name" class="game-image">
+        <img
+  :src="gameImages[game.slug] || gameImages.placeholder"
+  :alt="game.name"
+  class="game-image"
+/>
 
-      <div v-if="!game.is_available" class="coming-soon">
-        Coming Soon
+        <div
+          v-if="!game.is_available"
+          class="coming-soon"
+        >
+          Coming Soon
+        </div>
+
       </div>
 
-    </div>
+      <q-card-section class="game-content">
 
-    <q-card-section class="game-content">
-      <div class="game-name">
-        {{ game.name }}
-      </div>
-    </q-card-section>
+        <div class="game-name">
+          {{ game.name }}
+        </div>
 
-  </q-card>
+      </q-card-section>
+
+    </q-card>
+  </router-link>
 </template>
 
 <script setup>
+import gameImages from '../../assets/images'
 defineProps({
   game: {
     type: Object,

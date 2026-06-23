@@ -141,16 +141,14 @@ import GameSection from 'components/game/GameSection.vue'
 const popularGames = [
   {
     id: 1,
+    slug: 'genshin-impact',
     name: 'Genshin Impact',
-    category: 'Open World',
-    image: 'src/assets/GenshinImpactIcon.webp',
     isUpdated: true
   },
   {
     id: 2,
+    slug: 'honkai-star-rail',
     name: 'Honkai Star Rail',
-    category: 'RPG',
-    image: 'src/assets/HonkaiStarRailIcon.webp',
     isUpdated: false
   }
 ]
@@ -217,6 +215,7 @@ import FaqSection from 'src/components/faq/FaqSection.vue'
   font-size: clamp(2.5rem, 5vw, 4rem);
   line-height: 1.1;
   font-weight: 800;
+  color: rgba(255, 255, 255, 0.72);
 }
 
 .hero-description {
@@ -255,6 +254,7 @@ import FaqSection from 'src/components/faq/FaqSection.vue'
 .section-header h2 {
   margin-bottom: 12px;
   font-size: 2rem;
+  color: rgba(255, 255, 255, 0.72);
 }
 
 .section-header p {
@@ -302,6 +302,7 @@ import FaqSection from 'src/components/faq/FaqSection.vue'
 
   font-size: 1rem;
   font-weight: 600;
+  color: $sakura;
 }
 
 .feature-card p {
