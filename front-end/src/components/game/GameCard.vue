@@ -1,22 +1,12 @@
 <template>
-  <router-link
-    :to="`/products/${game.slug}`"
-    class="game-link"
-  >
+  <router-link :to="`/products/${game.slug}`" class="game-link">
     <q-card class="game-card">
 
       <div class="game-image-wrapper">
 
-        <img
-  :src="gameImages[game.slug] || gameImages.placeholder"
-  :alt="game.name"
-  class="game-image"
-/>
+        <img :src="gameImages[game.slug] || gameImages.placeholder" :alt="game.name" class="game-image" />
 
-        <div
-          v-if="!game.is_available"
-          class="coming-soon"
-        >
+        <div v-if="!game.is_active" class="coming-soon">
           Coming Soon
         </div>
 
