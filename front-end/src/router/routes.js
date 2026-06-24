@@ -27,27 +27,38 @@ const routes = [
   },
 
   {
-    path: '/dashboard',
-    component: () => import('layouts/DashboardLayout.vue'),
-    meta: {
-      requiresAuth: true,
-    },
-    children: [
-      {
-        path: '',
-        component: () => import('pages/dashboard/DashboardPage.vue'),
-      },
-      {
-        path: 'profile',
-        component: () => import('pages/dashboard/ProfilePage.vue'),
-      },
-      {
-        path: 'settings',
-        component: () => import('pages/dashboard/SettingsPage.vue'),
-      },
-    ],
+  path: '/dashboard',
+  component: () => import('layouts/DashboardLayout.vue'),
+  meta: {
+    requiresAuth: true,
   },
-
+  children: [
+    {
+      path: '',
+      component: () => import('pages/dashboard/DashboardPage.vue'),
+    },
+    {
+      path: 'games',
+      component: () => import('pages/dashboard/GamesPage.vue'),
+    },
+    {
+      path: 'products',
+      component: () => import('pages/dashboard/ProductsPage.vue'),
+    },
+    {
+      path: 'transactions',
+      component: () => import('pages/dashboard/TransactionsPage.vue'),
+    },
+    {
+      path: 'profile',
+      component: () => import('pages/dashboard/ProfilePage.vue'),
+    },
+    {
+      path: 'settings',
+      component: () => import('pages/dashboard/SettingsPage.vue'),
+    },
+  ],
+},
   {
     path: '/:catchAll(.*)*',
     component: () => import('pages/ErrorNotFound.vue'),

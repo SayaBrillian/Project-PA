@@ -1,4 +1,4 @@
-pg_dump -U postgres -d db_game -f "D:\game_store.sql"
+pg_dump -U postgres -d game_store -f "D:\game_store.sql"
 
 createdb -U postgres game game_store
 CREATE DATABASE game_store;

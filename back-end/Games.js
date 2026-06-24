@@ -151,26 +151,41 @@ router.put("/:id", async (req, res) => {
 
         const {
             name,
+            slug,
+            game_key,
+            publisher,
             description,
+            official_url,
+            patchnote_url,
             latest_patch,
             latest_update
         } = req.body;
 
         const result = await db.query(
             `
-      UPDATE games
-      SET
-        name = $1,
-        description = $2,
-        latest_patch = $3,
-        latest_update = $4,
-        updated_at = CURRENT_TIMESTAMP
-      WHERE id = $5
-      RETURNING *
-      `,
+            UPDATE games
+            SET
+                name = $1,
+                slug = $2,
+                game_key = $3,
+                publisher = $4,
+                description = $5,
+                official_url = $6,
+                patchnote_url = $7,
+                latest_patch = $8,
+                latest_update = $9,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = $10
+            RETURNING *
+            `,
             [
                 name,
+                slug,
+                game_key,
+                publisher,
                 description,
+                official_url,
+                patchnote_url,
                 latest_patch,
                 latest_update,
                 id
@@ -183,10 +198,12 @@ router.put("/:id", async (req, res) => {
         });
 
     } catch (error) {
+
         res.status(500).json({
             success: false,
             message: error.message,
         });
+
     }
 });
 

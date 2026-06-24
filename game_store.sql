@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict gjc48gFLp4p6n9RXTB33Qspf0Ht6fHTwe6DiyjT9Dcs7Zd7a0PlV0NdbmqXnd24
+\restrict PiP2BnEe9h2Oi0TIV8wldy77ghfYalSxNvtdPQDmN9ep58MDkGuvU0eg7effCzH
 
 -- Dumped from database version 18.4
 -- Dumped by pg_dump version 18.4
@@ -31,7 +31,8 @@ CREATE TABLE public.admins (
     id integer NOT NULL,
     name character varying(100) NOT NULL,
     email character varying(255) NOT NULL,
-    password character varying(255) NOT NULL,
+    password text NOT NULL,
+    level integer DEFAULT 80,
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -58,6 +59,43 @@ ALTER SEQUENCE public.admins_id_seq OWNER TO postgres;
 --
 
 ALTER SEQUENCE public.admins_id_seq OWNED BY public.admins.id;
+
+
+--
+-- Name: game_servers; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.game_servers (
+    id integer NOT NULL,
+    game_id integer NOT NULL,
+    server_name character varying(100) NOT NULL,
+    display_order integer DEFAULT 0,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.game_servers OWNER TO postgres;
+
+--
+-- Name: game_servers_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.game_servers_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.game_servers_id_seq OWNER TO postgres;
+
+--
+-- Name: game_servers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.game_servers_id_seq OWNED BY public.game_servers.id;
 
 
 --
@@ -281,6 +319,13 @@ ALTER TABLE ONLY public.admins ALTER COLUMN id SET DEFAULT nextval('public.admin
 
 
 --
+-- Name: game_servers id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.game_servers ALTER COLUMN id SET DEFAULT nextval('public.game_servers_id_seq'::regclass);
+
+
+--
 -- Name: games id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -319,7 +364,31 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 -- Data for Name: admins; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.admins (id, name, email, password, created_at) FROM stdin;
+COPY public.admins (id, name, email, password, level, created_at) FROM stdin;
+1	Super Admin	admin@eigaming.com	$2b$10$MU4lnSXF8WRH6yd5ONkhIejh2oOu7WOCYKXHud5JcKZazP6zhVbdi	100	2026-06-24 15:38:40.43135
+\.
+
+
+--
+-- Data for Name: game_servers; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.game_servers (id, game_id, server_name, display_order, created_at) FROM stdin;
+1	1	Asia	1	2026-06-24 11:13:59.79124
+2	1	America	2	2026-06-24 11:13:59.79124
+3	1	Europe	3	2026-06-24 11:13:59.79124
+4	1	TW, HK, MO	4	2026-06-24 11:13:59.79124
+5	2	Asia	1	2026-06-24 11:14:05.79907
+6	2	America	2	2026-06-24 11:14:05.79907
+7	2	Europe	3	2026-06-24 11:14:05.79907
+8	2	TW, HK, MO	4	2026-06-24 11:14:05.79907
+9	3	Asia	1	2026-06-24 11:14:10.471047
+10	3	America	2	2026-06-24 11:14:10.471047
+11	3	Europe	3	2026-06-24 11:14:10.471047
+12	3	TW, HK, MO	4	2026-06-24 11:14:10.471047
+13	4	SEA	1	2026-06-24 11:14:16.838979
+14	4	America	2	2026-06-24 11:14:16.838979
+15	4	Europe	3	2026-06-24 11:14:16.838979
 \.
 
 
@@ -331,6 +400,7 @@ COPY public.games (id, name, slug, game_key, description, official_url, patchnot
 1	Genshin Impact	genshin-impact	GI	Top up Genesis Crystal dan layanan Genshin Impact.	https://genshin.hoyoverse.com/en/	https://game8.co/games/Genshin-Impact/archives/594202	6.6	2026-05-20	HoYoverse	t	2026-06-23 20:47:38.279666	2026-06-23 20:47:38.279666
 2	Honkai: Star Rail	honkai-star-rail	HSR	Top up Oneiric Shard dan layanan Honkai: Star Rail.	https://hsr.hoyoverse.com/en-us/	https://game8.co/games/Honkai-Star-Rail/archives/404257	3.4	2026-05-31	HoYoverse	t	2026-06-23 20:47:38.279666	2026-06-23 20:47:38.279666
 3	Zenless Zone Zero	zenless-zone-zero	ZZZ	Top up Monochrome dan layanan Zenless Zone Zero.	https://zenless.hoyoverse.com/en-us/	https://game8.co/games/Zenless-Zone-Zero/archives/595942	3.0	2026-06-17	HoYoverse	t	2026-06-23 20:47:38.279666	2026-06-23 20:47:38.279666
+4	Honkai Impact 3rd	honkai-impact-3	HI3	Top up Crystal dan layanan Honkai Impact 3rd.	https://honkaiimpact3.hoyoverse.com/global/en-us/home	https://honkaiimpact3.hoyoverse.com/global/en-us/news	8.3	2026-06-24	HoYoverse	t	2026-06-24 10:55:59.272167	2026-06-24 10:55:59.272167
 \.
 
 
@@ -377,6 +447,13 @@ COPY public.transaction_details (id, transaction_id, game_uid, game_server, crea
 10	6	100333333	Asia	2026-06-23 22:58:09.525839
 11	6	100444444	Asia	2026-06-23 22:58:09.525839
 12	6	100555555	Asia	2026-06-23 22:58:09.525839
+13	7	800111111	Asia	2026-06-24 10:36:37.524634
+14	8	1800080555	Asia	2026-06-24 14:28:30.886608
+15	8	862595069	Asia	2026-06-24 14:28:30.887523
+16	9	1800080555	Asia	2026-06-24 14:35:28.301011
+17	9	862595069	Asia	2026-06-24 14:35:28.301483
+18	10	1800080555	Asia	2026-06-24 14:38:03.877192
+19	11	1800080555	Asia	2026-06-24 14:45:18.220131
 \.
 
 
@@ -391,6 +468,11 @@ COPY public.transactions (id, order_id, user_id, product_id, quantity, total_pri
 5	TRX-HSR-20260623-0005	\N	12	1	1599000	trailblazer@example.com	085555555555	bank_transfer	SNAP_TOKEN_005	MIDTRANS_TX_005	cancel	\N	2026-06-23 17:56:03.628905	\N	2026-06-23 18:11:03.628905	\N	Dibatalkan user	2026-06-23 22:56:03.628905	2026-06-23 22:56:03.628905
 6	TRX-ZZZ-20260623-0006	\N	13	5	80000	event@example.com	086666666666	qris	SNAP_TOKEN_006	MIDTRANS_TX_006	settlement	accept	2026-06-23 16:56:03.628905	2026-06-23 17:56:03.628905	2026-06-23 17:11:03.628905	2026-06-23 17:56:03.628905	Event komunitas	2026-06-23 22:56:03.628905	2026-06-23 22:56:03.628905
 1	TRX-GI-20260623-0001	\N	1	1	15000	genshin1@example.com	081111111111	qris	4a211abc-ad18-48e2-8cbb-c35e9fca0fa3	MIDTEST123	settlement	accept	2026-06-21 22:56:03.628905	2026-06-24 10:00:00	2026-06-21 23:11:03.628905	2026-06-21 22:56:03.628905	Topup pribadi	2026-06-23 22:56:03.628905	2026-06-24 02:53:48.547549
+7	TRX-1782272197498	\N	1	1	15000	test@gmail.com	08123456789	qris	6166bdaf-31de-405f-9789-0ee1df141eed	e6ebb3f9-2d52-4fa4-9800-5f9e48402fbd	settlement	accept	\N	2026-06-24 10:40:33	\N	\N	Webhook Test	2026-06-24 10:36:37.522274	2026-06-24 10:40:27.959948
+8	TRX-1782286110869	\N	6	2	3198000	testcheckout@test.com	088800009999	\N	\N	\N	pending	\N	\N	\N	\N	\N	\N	2026-06-24 14:28:30.884592	2026-06-24 14:28:30.884592
+9	TRX-1782286528283	\N	6	2	3198000	testcheckout@test.com	088800009999	\N	\N	\N	pending	\N	\N	\N	\N	\N	\N	2026-06-24 14:35:28.299329	2026-06-24 14:35:28.299329
+10	TRX-1782286683756	\N	6	1	1599000	testcheckout@test.com	088800009999	\N	a3ecc7e4-d6d6-4f06-8ff8-167dff8caaa5	\N	pending	\N	\N	\N	\N	\N	\N	2026-06-24 14:38:03.875641	2026-06-24 14:38:03.875641
+11	TRX-1782287118101	\N	5	1	799000	testcheckout@test.com	088800009999	qris	96612cd8-1f34-4970-829e-f4cbcd1ba964	742d6b8d-cceb-4946-8618-b0e2818fe694	settlement	accept	\N	2026-06-24 14:46:11	\N	\N	\N	2026-06-24 14:45:18.218561	2026-06-24 14:46:05.455881
 \.
 
 
@@ -407,14 +489,21 @@ COPY public.users (id, name, email, password, created_at) FROM stdin;
 -- Name: admins_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.admins_id_seq', 1, false);
+SELECT pg_catalog.setval('public.admins_id_seq', 1, true);
+
+
+--
+-- Name: game_servers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.game_servers_id_seq', 15, true);
 
 
 --
 -- Name: games_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.games_id_seq', 3, true);
+SELECT pg_catalog.setval('public.games_id_seq', 4, true);
 
 
 --
@@ -428,14 +517,14 @@ SELECT pg_catalog.setval('public.products_id_seq', 18, true);
 -- Name: transaction_details_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.transaction_details_id_seq', 12, true);
+SELECT pg_catalog.setval('public.transaction_details_id_seq', 19, true);
 
 
 --
 -- Name: transactions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.transactions_id_seq', 6, true);
+SELECT pg_catalog.setval('public.transactions_id_seq', 11, true);
 
 
 --
@@ -459,6 +548,14 @@ ALTER TABLE ONLY public.admins
 
 ALTER TABLE ONLY public.admins
     ADD CONSTRAINT admins_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: game_servers game_servers_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.game_servers
+    ADD CONSTRAINT game_servers_pkey PRIMARY KEY (id);
 
 
 --
@@ -534,6 +631,14 @@ ALTER TABLE ONLY public.users
 
 
 --
+-- Name: game_servers game_servers_game_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.game_servers
+    ADD CONSTRAINT game_servers_game_id_fkey FOREIGN KEY (game_id) REFERENCES public.games(id) ON DELETE CASCADE;
+
+
+--
 -- Name: products products_game_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -569,5 +674,5 @@ ALTER TABLE ONLY public.transactions
 -- PostgreSQL database dump complete
 --
 
-\unrestrict gjc48gFLp4p6n9RXTB33Qspf0Ht6fHTwe6DiyjT9Dcs7Zd7a0PlV0NdbmqXnd24
+\unrestrict PiP2BnEe9h2Oi0TIV8wldy77ghfYalSxNvtdPQDmN9ep58MDkGuvU0eg7effCzH
 
