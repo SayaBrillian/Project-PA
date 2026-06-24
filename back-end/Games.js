@@ -223,4 +223,33 @@ router.delete("/:id", async (req, res) => {
     }
 });
 
+router.get("/:id/servers", async (req, res) => {
+  try {
+
+    const { id } = req.params;
+
+    const result = await db.query(
+      `
+      SELECT *
+      FROM game_servers
+      WHERE game_id = $1
+      ORDER BY display_order
+      `,
+      [id]
+    );
+
+    res.json({
+      success: true,
+      servers: result.rows,
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+
+  }
+});
 export default router;

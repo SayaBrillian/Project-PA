@@ -28,20 +28,49 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import api from 'src/axios'
 import GameCard from 'src/components/game/GameCard.vue'
 
 const search = ref('')
 
-const games = ref([
-  { id: 1, name: 'Genshin Impact', slug: 'genshin-impact', is_available: true },
-  { id: 2, name: 'Honkai: Star Rail', slug: 'honkai-star-rail', is_available: true },
-  { id: 3, name: 'Zenless Zone Zero', slug: 'zenless-zone-zero', is_available: false },
-])
+const games = ref([])
+
+const loadGames = async () => {
+  try {
+
+    const response =
+      await api.get('/api/games')
+
+    games.value =
+      response.data.games
+
+  } catch (error) {
+
+    console.error(
+      'Load games error:',
+      error
+    )
+
+  }
+}
+
+onMounted(() => {
+  loadGames()
+})
 
 const filteredGames = computed(() => {
-  const keyword = search.value.toLowerCase()
-  return games.value.filter((game) => game.name.toLowerCase().includes(keyword))
+
+  const keyword =
+    search.value.toLowerCase()
+
+  return games.value.filter(
+    game =>
+      game.name
+        .toLowerCase()
+        .includes(keyword)
+  )
+
 })
 </script>
 
