@@ -91,7 +91,25 @@
             {{ item.label }}
           </q-item-section>
         </q-item>
+<q-item
+  clickable
+  to="/"
+  class="sidebar-item home-item"
+>
 
+  <q-item-section avatar>
+
+    <q-icon
+      name="arrow_back"
+    />
+
+  </q-item-section>
+
+  <q-item-section>
+    EI Gaming Store
+  </q-item-section>
+
+</q-item>
         <q-item
           clickable
           class="sidebar-item logout-item"
@@ -269,7 +287,18 @@ const accountItems = [
 
   font-weight: 600;
 }
+.home-item {
+  color: $accent;
+}
 
+.home-item:hover {
+  background: rgba(
+    $sakura,
+    .08
+  );
+
+  color: $accent;
+}
 .logout-item {
   color: #ff6b81;
 }
