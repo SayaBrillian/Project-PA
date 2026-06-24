@@ -190,35 +190,23 @@
       <!-- RIGHT -->
       <div class="checkout-right">
         <div class="checkout-card">
-
-  <div class="section-title">
-    Informasi Kontak
-  </div>
+          <div class="section-title">Informasi Kontak</div>
 
           <div class="section-subtitle">Digunakan untuk konfirmasi dan status pesanan.</div>
 
           <div class="account-form">
+            <q-input
+              v-model="customerEmail"
+              outlined
+              dark
+              type="email"
+              label="Email"
+              class="form-field"
+            />
 
-    <q-input
-      v-model="customerEmail"
-      outlined
-      dark
-      type="email"
-      label="Email"
-      class="form-field"
-    />
-
-    <q-input
-      v-model="customerWhatsapp"
-      outlined
-      dark
-      label="WhatsApp"
-      class="form-field"
-    />
-
-  </div>
-
-</div>
+            <q-input v-model="customerWhatsapp" outlined dark label="WhatsApp" class="form-field" />
+          </div>
+        </div>
 
         <div class="checkout-card">
           <div class="section-title">Ringkasan Pesanan</div>
@@ -228,30 +216,25 @@
               <span class="summary-label"> Produk </span>
 
               <span class="summary-value">
-  {{ selectedProduct?.name || 'Belum dipilih' }}
-</span>
+                {{ selectedProduct?.name || 'Belum dipilih' }}
+              </span>
             </div>
 
             <div class="summary-item">
               <span class="summary-label"> Total Akun </span>
 
               <span class="summary-value">
-  {{ targets.length }}
-</span>
+                {{ targets.length }}
+              </span>
             </div>
 
             <div class="summary-item">
               <span class="summary-label"> Harga Satuan </span>
 
               <span class="summary-value">
-  Rp
-  {{
-    selectedProduct
-      ? Number(selectedProduct.price)
-          .toLocaleString('id-ID')
-      : 0
-  }}
-</span>
+                Rp
+                {{ selectedProduct ? Number(selectedProduct.price).toLocaleString('id-ID') : 0 }}
+              </span>
             </div>
           </div>
 
@@ -259,21 +242,19 @@
             <div class="summary-total-label">Total Pembayaran</div>
 
             <div class="summary-total-price">
-  Rp
-  {{
-    totalPrice.toLocaleString('id-ID')
-  }}
-</div>
+              Rp
+              {{ totalPrice.toLocaleString('id-ID') }}
+            </div>
           </div>
 
           <q-btn
-            unelevated
-            color="accent"
-            size="lg"
-            class="checkout-btn"
-            label="Bayar Sekarang"
-            disable
-          />
+  unelevated
+  color="accent"
+  size="lg"
+  class="checkout-btn"
+  label="Bayar Sekarang"
+  @click="checkout"
+/>
         </div>
       </div>
     </section>
@@ -282,8 +263,12 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import api from 'src/axios'
 import gameImages from 'src/assets/images'
+
+const route = useRoute()
+const router = useRouter()
 
 const games = ref([])
 const selectedGame = ref(null)
@@ -302,7 +287,13 @@ const loadGames = async () => {
 
     games.value = response.data.games
 
-    if (games.value.length > 0) {
+    const gameFromUrl = games.value.find(
+      (game) => game.slug === route.params.slug
+    )
+
+    if (gameFromUrl) {
+      selectedGame.value = gameFromUrl.id
+    } else if (games.value.length > 0) {
       selectedGame.value = games.value[0].id
     }
   } catch (error) {
@@ -362,19 +353,113 @@ const removeTarget = (index) => {
 }
 
 const totalPrice = computed(() => {
+  if (!selectedProduct.value) return 0
 
-  if (!selectedProduct.value)
-    return 0
+  return Number(selectedProduct.value.price) * targets.value.length
+})
 
-  return (
-    Number(selectedProduct.value.price) *
-    targets.value.length
+const checkout = async () => {
+  try {
+
+    const response =
+      await api.post(
+        '/api/transactions',
+        {
+          user_id: null,
+
+          product_id:
+            selectedProduct.value.id,
+
+          quantity:
+            targets.value.length,
+
+          total_price:
+            totalPrice.value,
+
+          customer_email:
+            customerEmail.value,
+
+          customer_whatsapp:
+            customerWhatsapp.value,
+
+          notes: null,
+
+          targets:
+            targets.value,
+        }
+      )
+const orderId =
+  response.data.transaction.order_id
+
+const paymentResponse =
+  await api.post(
+    '/api/payments/create',
+    {
+      order_id: orderId
+    }
   )
 
-})
+window.snap.pay(
+  paymentResponse.data.token,
+  {
+    onSuccess(result) {
+      console.log(
+        'SUCCESS',
+        result
+      )
+    },
+
+    onPending(result) {
+      console.log(
+        'PENDING',
+        result
+      )
+    },
+
+    onError(result) {
+      console.log(
+        'ERROR',
+        result
+      )
+    },
+
+    onClose() {
+      console.log(
+        'User closed popup'
+      )
+    }
+  }
+)
+    console.log(
+      'Transaction Created:',
+      response.data
+    )
+
+  } catch (error) {
+
+    console.error(
+      'Checkout Error:',
+      error
+    )
+
+  }
+}
 
 watch(selectedGame, (gameId) => {
   if (!gameId) return
+
+  const selectedGameData =
+    games.value.find(
+      (game) => game.id === gameId
+    )
+
+  if (selectedGameData) {
+
+    router.replace(
+      `/products/${selectedGameData.slug}`
+    )
+
+  }
 
   loadProducts(gameId)
 
