@@ -1,117 +1,330 @@
 <template>
-  <div class="profile-wrapper">
-    <q-btn round flat icon="account_circle" class="profile-btn" @mouseenter="openMenu" />
 
-    <q-menu v-model="showMenu" anchor="bottom right" self="top right" :offset="[0, 12]" no-focus no-refocus
-      transition-show="jump-down" transition-hide="jump-up" persistent @mouseenter="openMenu" @mouseleave="closeMenu">
+  <div class="profile-wrapper">
+
+    <q-btn
+      round
+      flat
+      class="profile-btn"
+      @mouseenter="openMenu"
+    >
+
+      <q-avatar
+        size="38px"
+        color="accent"
+        text-color="white"
+      >
+
+        <template v-if="isLoggedIn">
+
+          {{
+            user?.name?.charAt(0)
+          }}
+
+        </template>
+
+        <template v-else>
+
+          <q-icon
+            name="person"
+          />
+
+        </template>
+
+      </q-avatar>
+
+    </q-btn>
+
+    <q-menu
+      v-model="showMenu"
+      anchor="bottom right"
+      self="top right"
+      :offset="[0,12]"
+      no-focus
+      no-refocus
+      persistent
+      transition-show="jump-down"
+      transition-hide="jump-up"
+      @mouseenter="openMenu"
+      @mouseleave="closeMenu"
+    >
+
       <q-card class="profile-card">
 
-        <!-- Kondisi belum login -->
-        <template v-if="!isLoggedIn">
-          <q-card-section class="text-center">
+        <!-- GUEST -->
 
-            <q-avatar size="64px" color="primary" text-color="white">
+        <template v-if="!isLoggedIn">
+
+          <q-card-section
+            class="guest-section"
+          >
+
+            <q-avatar
+              size="72px"
+              color="accent"
+              text-color="white"
+            >
               ?
             </q-avatar>
 
-            <div class="text-h6 q-mt-md">
-              Selamat Datang
+            <div class="guest-title">
+              Welcome
             </div>
 
-            <div class="text-caption text-grey-5">
-              Masuk untuk melanjutkan
+            <div class="guest-subtitle">
+              Login untuk melanjutkan
             </div>
 
           </q-card-section>
 
-          <q-card-actions vertical class="q-pa-md">
+          <q-card-actions
+            vertical
+            class="q-pa-md"
+          >
 
-            <q-btn unelevated color="accent" label="Masuk" class="full-width"
-              @click="authStep = 'role'; showAuth = true" />
+            <q-btn
+              unelevated
+              color="accent"
+              label="Masuk"
+              class="full-width"
+              @click="
+                authStep = 'role';
+                showAuth = true
+              "
+            />
 
-            <q-btn flat color="white" label="Daftar" class="full-width q-mt-sm"
-              @click="authStep = 'register'; showAuth = true" />
+            <q-btn
+              flat
+              color="white"
+              label="Daftar"
+              class="full-width q-mt-sm"
+              @click="
+                authStep = 'register';
+                showAuth = true
+              "
+            />
 
           </q-card-actions>
+
         </template>
 
-        <!-- Kondisi sudah login -->
-        <template v-else>
-          <q-card-section class="row items-center no-wrap">
+        <!-- USER / ADMIN -->
 
-            <q-avatar size="48px">
-              <img src="https://i.pravatar.cc/150?img=12">
+        <template v-else>
+
+          <q-card-section
+            class="profile-header"
+          >
+
+            <q-avatar
+              size="64px"
+              color="accent"
+              text-color="white"
+            >
+              {{
+                user?.name?.charAt(0)
+              }}
             </q-avatar>
 
-            <div class="q-ml-md">
-              <div class="text-weight-medium">
+            <div class="profile-info">
+
+              <div class="profile-name">
                 {{ user?.name }}
               </div>
 
-              <div class="text-caption text-grey-5">
+              <div class="profile-email">
                 {{ user?.email }}
               </div>
+
+              <q-badge
+                class="role-badge"
+                color="primary"
+              >
+                {{ roleLabel }}
+              </q-badge>
+
             </div>
 
           </q-card-section>
 
           <q-separator dark />
 
-          <q-list padding>
+          <q-list class="menu-list">
 
-            <q-item clickable v-close-popup to="/dashboard">
+            <q-item
+              clickable
+              v-close-popup
+              :to="dashboardRoute"
+            >
+
               <q-item-section avatar>
-                <q-icon name="dashboard" />
+                <q-icon
+                  name="dashboard"
+                />
               </q-item-section>
 
               <q-item-section>
-                Dashboard
+                {{ dashboardLabel }}
               </q-item-section>
+
             </q-item>
 
-            <q-item clickable v-close-popup>
+            <q-item
+              clickable
+              v-close-popup
+            >
+
               <q-item-section avatar>
-                <q-icon name="person" />
+                <q-icon
+                  name="person"
+                />
               </q-item-section>
 
               <q-item-section>
-                Profil
+                Profile
               </q-item-section>
+
             </q-item>
 
-            <q-item clickable v-close-popup @click="logout">
+            <q-separator
+              dark
+              inset
+            />
+
+            <q-item
+              clickable
+              v-close-popup
+              class="logout-item"
+              @click="logout"
+            >
+
               <q-item-section avatar>
-                <q-icon name="logout" />
+
+                <q-icon
+                  name="logout"
+                />
+
               </q-item-section>
 
               <q-item-section>
+
                 Logout
+
               </q-item-section>
+
             </q-item>
 
           </q-list>
+
         </template>
 
       </q-card>
+
     </q-menu>
+
   </div>
-  <AuthModal v-model="showAuth" :initial-step="authStep" @login-success="handleLoginSuccess" />
+
+  <AuthModal
+    v-model="showAuth"
+    :initial-step="authStep"
+    @login-success="handleLoginSuccess"
+  />
+
 </template>
 
 <script setup>
+import {
+  ref,
+  computed,
+  onMounted,
+} from 'vue'
+
+import {
+  useRouter,
+} from 'vue-router'
+
 import api from 'src/axios'
-import { ref, onMounted } from 'vue'
+
 import AuthModal from './AuthModal.vue'
 
-const showAuth = ref(false)
-const authStep = ref('role')
+const router =
+  useRouter()
 
-const showMenu = ref(false)
-const user = ref(null)
-const isLoggedIn = ref(false)
+const showAuth =
+  ref(false)
+
+const authStep =
+  ref('role')
+
+const showMenu =
+  ref(false)
+
+const user =
+  ref(null)
+
+const isLoggedIn =
+  ref(false)
+
+/*
+|--------------------------------------------------------------------------
+| ROLE
+|--------------------------------------------------------------------------
+*/
+
+const roleLabel =
+  computed(() => {
+
+    if (
+      user.value?.type === 'admin'
+    ) {
+
+      return 'ADMIN'
+
+    }
+
+    return 'USER'
+
+  })
+
+const dashboardLabel =
+  computed(() => {
+
+    if (
+      user.value?.type === 'admin'
+    ) {
+
+      return 'Admin Dashboard'
+
+    }
+
+    return 'Dashboard'
+
+  })
+
+const dashboardRoute =
+  computed(() => {
+
+    if (
+      user.value?.type === 'admin'
+    ) {
+
+      return '/dashboard'
+
+    }
+
+    return '/user'
+
+  })
+
+/*
+|--------------------------------------------------------------------------
+| AUTH
+|--------------------------------------------------------------------------
+*/
 
 async function loadAuth() {
   try {
+
     const auth = JSON.parse(
       localStorage.getItem('auth')
     )
@@ -122,91 +335,310 @@ async function loadAuth() {
 
     await api.get('/api/auth/me')
 
-    user.value = auth.data
+    user.value = {
+      ...auth.data,
+      type: auth.type,
+    }
+
     isLoggedIn.value = true
 
   } catch (error) {
+
     console.error(error)
 
     localStorage.removeItem('auth')
 
     user.value = null
+
     isLoggedIn.value = false
+
   }
 }
 
-onMounted(() => {
-  loadAuth()
-})
+const logout =
+  () => {
 
-function logout() {
-  localStorage.removeItem('auth')
+    localStorage.removeItem(
+      'auth'
+    )
 
-  user.value = null
-  isLoggedIn.value = false
-}
+    user.value =
+      null
 
-function handleLoginSuccess() {
-  loadAuth()
-}
-// Nanti ganti dengan state dari Pinia atau API
+    isLoggedIn.value =
+      false
+
+    router.push('/')
+
+  }
+
+const handleLoginSuccess =
+  () => {
+
+    loadAuth()
+
+  }
+
+/*
+|--------------------------------------------------------------------------
+| MENU
+|--------------------------------------------------------------------------
+*/
+
 let timeout
 
-function openMenu() {
-  clearTimeout(timeout)
-  showMenu.value = true
-}
+const openMenu =
+  () => {
 
-function closeMenu() {
-  timeout = setTimeout(() => {
-    showMenu.value = false
-  }, 150)
-}
+    clearTimeout(
+      timeout
+    )
 
+    showMenu.value =
+      true
+
+  }
+
+const closeMenu =
+  () => {
+
+    timeout =
+      setTimeout(
+        () => {
+
+          showMenu.value =
+            false
+
+        },
+        150
+      )
+
+  }
+
+onMounted(() => {
+
+  loadAuth()
+
+})
 
 </script>
 
 <style lang="scss" scoped>
+
 .profile-wrapper {
   display: flex;
   align-items: center;
 }
 
-.profile-btn {
-  color: rgba(255, 255, 255, 0.85);
-  transition: all 0.25s ease;
+/*
+|--------------------------------------------------------------------------
+| PROFILE BUTTON
+|--------------------------------------------------------------------------
+*/
 
-  &:hover {
-    color: $sakura;
-    background: rgba($sakura, 0.08);
-  }
+.profile-btn {
+  padding: 0;
+
+  transition:
+    transform .25s ease;
 }
 
+.profile-btn:hover {
+  transform: scale(1.05);
+}
+
+/*
+|--------------------------------------------------------------------------
+| CARD
+|--------------------------------------------------------------------------
+*/
+
 .profile-card {
-  width: 280px;
+  width: 340px;
 
-  background: linear-gradient(135deg,
-      rgba($dark, 0.95),
-      rgba($secondary, 0.92));
+  overflow: hidden;
 
-  backdrop-filter: blur(18px);
+  background:
+    linear-gradient(
+      135deg,
+      rgba($dark,.97),
+      rgba($secondary,.92)
+    );
 
-  color: white;
+  backdrop-filter: blur(20px);
 
-  border: 1px solid rgba($sakura, 0.15);
-  border-radius: 20px;
+  border-radius: 24px;
+
+  border: 1px solid rgba(
+    $sakura,
+    .15
+  );
 
   box-shadow:
-    0 12px 40px rgba(0, 0, 0, 0.35),
-    0 0 24px rgba($sakura, 0.1);
+    0 20px 50px rgba(
+      0,
+      0,
+      0,
+      .35
+    );
+}
+
+/*
+|--------------------------------------------------------------------------
+| GUEST
+|--------------------------------------------------------------------------
+*/
+
+.guest-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 32px 24px;
+
+  text-align: center;
+}
+
+.guest-title {
+  margin-top: 16px;
+
+  font-size: 1.25rem;
+  font-weight: 700;
+
+  color: white;
+}
+
+.guest-subtitle {
+  margin-top: 8px;
+
+  color: rgba(
+    255,
+    255,
+    255,
+    .65
+  );
+
+  font-size: .9rem;
+}
+
+/*
+|--------------------------------------------------------------------------
+| PROFILE HEADER
+|--------------------------------------------------------------------------
+*/
+
+.profile-header {
+  display: flex;
+  align-items: center;
+
+  gap: 16px;
+
+  padding: 24px;
+}
+
+.profile-info {
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.profile-name {
+  font-size: 1rem;
+  font-weight: 700;
+
+  color: white;
+}
+
+.profile-email {
+  font-size: .85rem;
+
+  color: rgba(
+    255,
+    255,
+    255,
+    .65
+  );
+
+  word-break: break-all;
+}
+
+.role-badge {
+  width: fit-content;
+
+  margin-top: 6px;
+
+  font-weight: 700;
+
+  letter-spacing: .5px;
+}
+
+/*
+|--------------------------------------------------------------------------
+| MENU
+|--------------------------------------------------------------------------
+*/
+
+.menu-list {
+  padding: 8px;
 }
 
 :deep(.q-item) {
-  border-radius: 12px;
-  transition: background-color 0.2s ease;
+  min-height: 52px;
+
+  border-radius: 14px;
+
+  transition:
+    background .2s ease,
+    transform .2s ease;
 }
 
 :deep(.q-item:hover) {
-  background: rgba($sakura, 0.08);
+  background: rgba(
+    $sakura,
+    .08
+  );
+
+  transform: translateX(4px);
 }
+
+:deep(.q-item__label) {
+  color: white;
+}
+
+:deep(.q-item .q-icon) {
+  color: rgba(
+    255,
+    255,
+    255,
+    .8
+  );
+}
+
+/*
+|--------------------------------------------------------------------------
+| LOGOUT
+|--------------------------------------------------------------------------
+*/
+
+.logout-item {
+  margin-top: 4px;
+}
+
+.logout-item :deep(.q-icon) {
+  color: #ef4444;
+}
+
+/*
+|--------------------------------------------------------------------------
+| SCROLL FIX
+|--------------------------------------------------------------------------
+*/
+
+:deep(.q-menu) {
+  overflow: visible;
+}
+
 </style>

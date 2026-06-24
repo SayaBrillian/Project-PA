@@ -10,6 +10,7 @@
           <q-space />
           <q-btn flat no-caps label="Home" to="/" class="nav-link" active-class="nav-link--active" />
           <q-btn flat no-caps label="Product" to="/product" class="nav-link" active-class="nav-link--active" />
+          <q-btn flat no-caps label="Check" to="/check-transaction" class="nav-link" active-class="nav-link--active" />
           <q-btn flat no-caps label="Help" to="/help" class="nav-link" active-class="nav-link--active" />
           <q-btn flat no-caps label="About Us" to="/about" class="nav-link" active-class="nav-link--active" />
           <q-space />
