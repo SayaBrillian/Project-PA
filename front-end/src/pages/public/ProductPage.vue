@@ -80,11 +80,6 @@ const filteredGames = computed(() => {
   margin: 0 auto;
 }
 
-.page-header {
-  margin-bottom: 32px;
-  text-align: center;
-}
-
 .section-badge {
   display: inline-block;
   padding: 6px 14px;
@@ -94,13 +89,25 @@ const filteredGames = computed(() => {
   border-radius: 999px;
 }
 
+.page-header {
+  text-align: center;
+}
+
 .page-header h1 {
-  margin: 16px 0 12px;
+  margin: 0;
+
+  font-size: 2.25rem;
+  font-weight: 700;
+
   color: rgba(255, 255, 255, 0.65);
 }
 
 .page-header p {
+  margin-top: 12px;
+
   color: rgba(255, 255, 255, 0.65);
+
+  line-height: 1.6;
 }
 
 .search-bar {

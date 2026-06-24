@@ -80,6 +80,46 @@ router.get("/order/:orderId", async (req, res) => {
     }
 });
 
+router.get("/customer/:keyword", async (req, res) => {
+    try {
+
+        const { keyword } = req.params;
+
+        const result = await db.query(
+            `
+            SELECT
+                t.*,
+                p.name AS product_name,
+                p.game_id,
+                g.name AS game_name
+            FROM transactions t
+            JOIN products p
+                ON p.id = t.product_id
+            JOIN games g
+                ON g.id = p.game_id
+            WHERE
+                t.customer_email = $1
+                OR t.customer_whatsapp = $1
+            ORDER BY t.created_at DESC
+            `,
+            [keyword]
+        );
+
+        res.json({
+            success: true,
+            transactions: result.rows,
+        });
+
+    } catch (error) {
+
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+
+    }
+});
+
 router.get("/:id", async (req, res) => {
     try {
 

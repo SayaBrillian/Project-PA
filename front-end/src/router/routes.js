@@ -12,6 +12,13 @@ const routes = [
         component: () => import('pages/public/ProductPage.vue'),
       },
       {
+  path: '/check-transaction',
+  component: () =>
+    import(
+      'pages/public/CheckTransactionPage.vue'
+    ),
+},
+      {
         path: 'help',
         component: () => import('pages/public/HelpPage.vue'),
       },
