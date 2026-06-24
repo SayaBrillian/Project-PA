@@ -7,18 +7,22 @@ router.get("/", async (req, res) => {
     try {
 
         const result = await db.query(`
-      SELECT
-        t.*,
-        p.name AS product_name
-      FROM transactions t
-      JOIN products p
-        ON p.id = t.product_id
-      ORDER BY t.id DESC
-    `);
+  SELECT
+    t.*,
+    p.name AS product_name,
+    p.game_id,
+    g.name AS game_name
+  FROM transactions t
+  JOIN products p
+    ON p.id = t.product_id
+  JOIN games g
+    ON g.id = p.game_id
+  ORDER BY t.id DESC
+`);
 
         res.json({
             success: true,
-            transactions: result.rows,
+            transactions: result.rows,  
         });
 
     } catch (error) {
@@ -73,6 +77,68 @@ router.get("/order/:orderId", async (req, res) => {
             success: false,
             message: error.message,
         });
+    }
+});
+
+router.get("/:id", async (req, res) => {
+    try {
+
+        const { id } = req.params;
+
+        const transactionResult =
+            await db.query(
+                `
+                SELECT
+    t.*,
+    p.name AS product_name,
+    p.game_id,
+    g.name AS game_name
+FROM transactions t
+JOIN products p
+    ON p.id = t.product_id
+JOIN games g
+    ON g.id = p.game_id
+WHERE t.id = $1
+                `,
+                [id]
+            );
+
+        if (
+            transactionResult.rows.length === 0
+        ) {
+
+            return res.status(404).json({
+                success: false,
+                message: "Transaksi tidak ditemukan",
+            });
+
+        }
+
+        const detailsResult =
+            await db.query(
+                `
+                SELECT *
+                FROM transaction_details
+                WHERE transaction_id = $1
+                `,
+                [id]
+            );
+
+        res.json({
+            success: true,
+            transaction:
+                transactionResult.rows[0],
+            details:
+                detailsResult.rows,
+        });
+
+    } catch (error) {
+
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+
     }
 });
 

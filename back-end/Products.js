@@ -155,34 +155,58 @@ router.post("/", async (req, res) => {
 
 router.put("/:id", async (req, res) => {
     try {
+
         const { id } = req.params;
 
-        const { name, price, currency_amount, is_active } = req.body;
+        const {
+            game_id,
+            name,
+            slug,
+            currency_amount,
+            price,
+            display_order,
+            is_active
+        } = req.body;
 
         const result = await db.query(
             `
-      UPDATE products
-      SET
-        name = $1,
-        price = $2,
-        currency_amount = $3,
-        is_active = $4,
-        updated_at = CURRENT_TIMESTAMP
-      WHERE id = $5
-      RETURNING *
-      `,
-            [name, price, currency_amount, is_active, id],
+            UPDATE products
+            SET
+                game_id = $1,
+                name = $2,
+                slug = $3,
+                currency_amount = $4,
+                price = $5,
+                display_order = $6,
+                is_active = $7,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = $8
+            RETURNING *
+            `,
+            [
+                game_id,
+                name,
+                slug,
+                currency_amount,
+                price,
+                display_order,
+                is_active,
+                id
+            ]
         );
 
         res.json({
             success: true,
             product: result.rows[0],
         });
+
     } catch (error) {
+
         res.status(500).json({
             success: false,
             message: error.message,
         });
+
     }
 });
 
