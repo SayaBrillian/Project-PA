@@ -2,7 +2,7 @@
   <q-dialog :model-value="modelValue" @update:model-value="emit('update:modelValue', $event)">
     <q-card class="dialog-card">
       <q-card-section>
-        <div class="dialog-title">Add Game</div>
+        <div class="dialog-title">Update Game</div>
       </q-card-section>
 
       <q-card-section class="form-section">

@@ -467,8 +467,6 @@ onMounted(() => {
 
   backdrop-filter: blur(20px);
 
-  border-radius: 24px;
-
   border: 1px solid rgba(
     $sakura,
     .15
@@ -583,6 +581,7 @@ onMounted(() => {
 
 .menu-list {
   padding: 8px;
+  color: white;
 }
 
 :deep(.q-item) {

@@ -108,28 +108,21 @@ const openDetails =
 
 .page-header {
   text-align: center;
-
-  margin-bottom: 40px;
 }
 
 .page-header h1 {
   margin: 0;
 
-  font-size: 2.5rem;
+  font-size: 2.25rem;
   font-weight: 700;
 
-  color: white;
+  color: rgba(255, 255, 255, 0.65);
 }
 
 .page-header p {
   margin-top: 12px;
 
-  color: rgba(255,
-      255,
-      255,
-      .7);
-
-  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.65);
 
   line-height: 1.6;
 }
@@ -149,7 +142,7 @@ const openDetails =
 
   gap: 16px;
 
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 
   padding: 20px;
 
@@ -163,7 +156,7 @@ const openDetails =
   border: 1px solid rgba($sakura,
       .15);
 
-  border-radius: 20px;
+  border-radius: 10px;
 }
 
 .search-input {
@@ -192,7 +185,12 @@ const openDetails =
 | Transaction Table
 |--------------------------------------------------------------------------
 */
+.debug-result{
+text-align: center;
+ color: rgba(255, 255, 255, 0.65);
 
+  line-height: 1.6;
+}
 .transaction-table {
   margin-top: 24px;
 

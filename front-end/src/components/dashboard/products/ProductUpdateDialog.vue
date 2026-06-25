@@ -16,11 +16,11 @@
       <q-card-section>
 
         <div class="dialog-title">
-          Add Product
+          Update Product
         </div>
 
         <div class="dialog-subtitle">
-          Tambahkan produk baru ke dalam game.
+          Update produk baru ke dalam game.
         </div>
 
       </q-card-section>
