@@ -176,13 +176,80 @@
     :loading="paymentLoading"
     @click="payNow"
   />
-
+<q-btn
+  v-if="transaction.transaction_status === 'pending'"
+  flat
+  color="negative"
+  icon="cancel"
+  label="Batalkan Pesanan"
+  class="full-width q-mt-sm"
+  :loading="cancelLoading"
+  @click="showCancelDialog = true"
+/>
 </q-card-section> 
       <q-card-actions align="right">
         <q-btn flat label="Close" v-close-popup />
       </q-card-actions>
     </q-card>
   </q-dialog>
+  <q-dialog
+  v-model="showCancelDialog"
+  persistent
+>
+
+  <q-card class="cancel-dialog">
+
+    <q-card-section class="cancel-header">
+
+      <q-icon
+        name="warning"
+        size="56px"
+        class="cancel-icon"
+      />
+
+      <div class="cancel-title">
+
+        Batalkan Pesanan
+
+      </div>
+
+    </q-card-section>
+
+    <q-card-section class="cancel-message">
+
+      Apakah Anda yakin ingin membatalkan pesanan ini?
+
+      <br><br>
+
+      Pesanan yang sudah dibatalkan tidak dapat dipulihkan.
+
+    </q-card-section>
+
+    <q-card-actions
+      align="right"
+      class="cancel-actions"
+    >
+
+      <q-btn
+        flat
+        color="grey"
+        label="Tidak"
+        v-close-popup
+      />
+
+      <q-btn
+        unelevated
+        color="negative"
+        label="Ya, Batalkan"
+        :loading="cancelLoading"
+        @click="cancelOrder"
+      />
+
+    </q-card-actions>
+
+  </q-card>
+
+</q-dialog>
 </template>
 
 <script setup>
@@ -190,54 +257,8 @@ import { ref, watch } from 'vue'
 import api from 'src/axios'
 
 const paymentLoading = ref(false)
-
-const payNow = async () => {
-
-  try {
-
-    paymentLoading.value = true
-
-    const response =
-      await api.get(
-        `/api/payments/snap/${transaction.value.order_id}`
-      )
-
-    window.snap.pay(
-      response.data.token,
-      {
-
-        onSuccess() {
-
-          loadTransaction()
-
-        },
-
-        onPending() {
-
-          loadTransaction()
-
-        },
-
-        onClose() {
-
-          paymentLoading.value = false
-
-        }
-
-      }
-    )
-
-  } catch (error) {
-
-    console.error(error)
-
-  } finally {
-
-    paymentLoading.value = false
-
-  }
-
-}
+const cancelLoading = ref(false)
+const showCancelDialog = ref(false) 
 
 const props = defineProps({
   modelValue: Boolean,
@@ -255,6 +276,7 @@ const loading = ref(false)
 const transaction = ref({})
 
 const details = ref([])
+
 
 /*
 |--------------------------------------------------------------------------
@@ -350,6 +372,84 @@ const getOrderStatusColor = (status) => {
   }
 
 }
+
+const cancelOrder = async () => {
+
+  try {
+
+    cancelLoading.value = true
+
+    await api.put(
+      `/api/transactions/order/${transaction.value.order_id}`,
+      {
+        transaction_status: 'cancel',
+        order_status: 'cancel',
+      }
+    )
+
+    showCancelDialog.value = false
+
+    await loadTransaction()
+
+  } catch (error) {
+
+    console.error(error)
+
+  } finally {
+
+    cancelLoading.value = false
+
+  }
+
+}
+const payNow = async () => {
+
+  try {
+
+    paymentLoading.value = true
+
+    const response =
+      await api.get(
+        `/api/payments/snap/${transaction.value.order_id}`
+      )
+
+    window.snap.pay(
+      response.data.token,
+      {
+
+        onSuccess() {
+
+          loadTransaction()
+
+        },
+
+        onPending() {
+
+          loadTransaction()
+
+        },
+
+        onClose() {
+
+          paymentLoading.value = false
+
+        }
+
+      }
+    )
+
+  } catch (error) {
+
+    console.error(error)
+
+  } finally {
+
+    paymentLoading.value = false
+
+  }
+
+}
+
 watch(
   () => props.modelValue,
   (value) => {
@@ -470,6 +570,73 @@ watch(
   width: fit-content;
 }
 
+/*
+|--------------------------------------------------------------------------
+| CANCEL DIALOG
+|--------------------------------------------------------------------------
+*/
+
+.cancel-dialog {
+
+  width: 420px;
+
+  max-width: 90vw;
+
+  border-radius: 24px;
+
+  overflow: hidden;
+
+}
+
+.cancel-header {
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  text-align: center;
+
+  gap: 12px;
+
+  padding: 28px 24px 12px;
+
+}
+
+.cancel-title {
+
+  color: $dark;
+
+  font-size: 1.25rem;
+
+  font-weight: 700;
+
+}
+
+.cancel-message {
+
+  padding: 0 24px 24px;
+
+  color: rgba(0, 0, 0, .65);
+
+  text-align: center;
+
+  line-height: 1.6;
+
+}
+
+.cancel-icon {
+
+  color: #ff6b81;
+
+}
+
+.cancel-actions {
+
+  padding: 16px 24px 24px;
+
+}
 /*
 |--------------------------------------------------------------------------
 | RESPONSIVE
