@@ -6,3 +6,12 @@ CREATE DATABASE game_store;
 psql -U postgres -d game_store -f "C:\Users\RED-22\Desktop\Project-PA\game_store.sql"
 
 37BwvsubmHx40TVpER70nVVHVPh_2PWu2XSs53Xgb9xSYMPpG
+
+user test
+janedoe@test.id
+janedoe1
+
+
+admin test
+admin@eigaming.com
+123456

@@ -1,65 +1,40 @@
 import transporter from "./transporter.js";
 import transactionTemplate from "./templates.js";
 
-const sendTransactionEmail = async ({
-    to,
-    customerName,
-    orderId,
-    gameName,
-    productName,
-    quantity,
-    totalPrice,
-    status,
-}) => {
+const sendTransactionEmail = async ({ to, customerName, orderId, gameName, productName, quantity, totalPrice, status, }) => {
+  try {
+    const info = await transporter.sendMail({
+      from: `"EI Gaming Store" <${process.env.EMAIL_USER}>`,
 
-    try {
+      to,
 
-        const info =
-            await transporter.sendMail({
+      subject: `Pembayaran ${status} • ${orderId}`,
 
-                from: `"EI Gaming Store" <${process.env.EMAIL_USER}>`,
+      html: transactionTemplate({
+        customerName,
 
-                to,
+        orderId,
 
-                subject: `Pembayaran ${status} • ${orderId}`,
+        gameName,
 
-                html: transactionTemplate({
+        productName,
 
-                    customerName,
+        quantity,
 
-                    orderId,
+        totalPrice,
 
-                    gameName,
+        status,
+      }),
+    });
 
-                    productName,
+    console.log(`Email transaksi berhasil dikirim ke ${to}`);
 
-                    quantity,
+    return info;
+  } catch (error) {
+    console.error("Send Transaction Email Error:", error);
 
-                    totalPrice,
-
-                    status,
-
-                }),
-
-            });
-
-        console.log(
-            `Email transaksi berhasil dikirim ke ${to}`
-        );
-
-        return info;
-
-    } catch (error) {
-
-        console.error(
-            "Send Transaction Email Error:",
-            error
-        );
-
-        throw error;
-
-    }
-
+    throw error;
+  }
 };
 
 export default sendTransactionEmail;

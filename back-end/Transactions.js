@@ -6,9 +6,8 @@ import sendTransactionEmail from "./email/sendTransactionEmail.js";
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-    try {
-
-        const result = await db.query(`
+  try {
+    const result = await db.query(`
   SELECT
     t.*,
     p.name AS product_name,
@@ -22,73 +21,68 @@ router.get("/", async (req, res) => {
   ORDER BY t.id DESC
 `);
 
-        res.json({
-            success: true,
-            transactions: result.rows,
-        });
-
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message,
-        });
-    }
+    res.json({
+      success: true,
+      transactions: result.rows,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 });
 
 router.get("/order/:orderId", async (req, res) => {
-    try {
+  try {
+    const { orderId } = req.params;
 
-        const { orderId } = req.params;
-
-        const transactionResult = await db.query(
-            `
+    const transactionResult = await db.query(
+      `
       SELECT *
       FROM transactions
       WHERE order_id = $1
       `,
-            [orderId]
-        );
+      [orderId],
+    );
 
-        if (transactionResult.rows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: "Transaksi tidak ditemukan",
-            });
-        }
+    if (transactionResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Transaksi tidak ditemukan",
+      });
+    }
 
-        const transaction =
-            transactionResult.rows[0];
+    const transaction = transactionResult.rows[0];
 
-        const detailsResult = await db.query(
-            `
+    const detailsResult = await db.query(
+      `
       SELECT *
       FROM transaction_details
       WHERE transaction_id = $1
       `,
-            [transaction.id]
-        );
+      [transaction.id],
+    );
 
-        res.json({
-            success: true,
-            transaction,
-            details: detailsResult.rows,
-        });
-
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message,
-        });
-    }
+    res.json({
+      success: true,
+      transaction,
+      details: detailsResult.rows,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 });
 
 router.get("/customer/:keyword", async (req, res) => {
-    try {
+  try {
+    const { keyword } = req.params;
 
-        const { keyword } = req.params;
-
-        const result = await db.query(
-            `
+    const result = await db.query(
+      `
             SELECT
                 t.*,
                 p.name AS product_name,
@@ -104,32 +98,27 @@ router.get("/customer/:keyword", async (req, res) => {
                 OR t.customer_whatsapp = $1
             ORDER BY t.created_at DESC
             `,
-            [keyword]
-        );
+      [keyword],
+    );
 
-        res.json({
-            success: true,
-            transactions: result.rows,
-        });
-
-    } catch (error) {
-
-        res.status(500).json({
-            success: false,
-            message: error.message,
-        });
-
-    }
+    res.json({
+      success: true,
+      transactions: result.rows,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 });
 
 router.get("/:id", async (req, res) => {
-    try {
+  try {
+    const { id } = req.params;
 
-        const { id } = req.params;
-
-        const transactionResult =
-            await db.query(
-                `
+    const transactionResult = await db.query(
+      `
                 SELECT
     t.*,
     p.name AS product_name,
@@ -142,68 +131,55 @@ JOIN games g
     ON g.id = p.game_id
 WHERE t.id = $1
                 `,
-                [id]
-            );
+      [id],
+    );
 
-        if (
-            transactionResult.rows.length === 0
-        ) {
+    if (transactionResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Transaksi tidak ditemukan",
+      });
+    }
 
-            return res.status(404).json({
-                success: false,
-                message: "Transaksi tidak ditemukan",
-            });
-
-        }
-
-        const detailsResult =
-            await db.query(
-                `
+    const detailsResult = await db.query(
+      `
                 SELECT *
                 FROM transaction_details
                 WHERE transaction_id = $1
                 `,
-                [id]
-            );
+      [id],
+    );
 
-        res.json({
-            success: true,
-            transaction:
-                transactionResult.rows[0],
-            details:
-                detailsResult.rows,
-        });
-
-    } catch (error) {
-
-        res.status(500).json({
-            success: false,
-            message: error.message,
-        });
-
-    }
+    res.json({
+      success: true,
+      transaction: transactionResult.rows[0],
+      details: detailsResult.rows,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 });
 
 router.post("/", async (req, res) => {
-    try {
+  try {
+    const {
+      user_id,
+      product_id,
+      quantity,
+      total_price,
+      customer_email,
+      customer_whatsapp,
+      notes,
+      targets,
+    } = req.body;
 
-        const {
-            user_id,
-            product_id,
-            quantity,
-            total_price,
-            customer_email,
-            customer_whatsapp,
-            notes,
-            targets
-        } = req.body;
+    const orderId = `TRX-${Date.now()}`;
 
-        const orderId =
-            `TRX-${Date.now()}`;
-
-        const transactionResult =
-            await db.query(
-                `
+    const transactionResult = await db.query(
+      `
         INSERT INTO transactions (
           order_id,
           user_id,
@@ -219,29 +195,24 @@ router.post("/", async (req, res) => {
         )
         RETURNING *
         `,
-                [
-                    orderId,
-                    user_id,
-                    product_id,
-                    quantity,
-                    total_price,
-                    customer_email,
-                    customer_whatsapp,
-                    notes
-                ]
-            );
+      [
+        orderId,
+        user_id,
+        product_id,
+        quantity,
+        total_price,
+        customer_email,
+        customer_whatsapp,
+        notes,
+      ],
+    );
 
-        const transaction =
-            transactionResult.rows[0];
+    const transaction = transactionResult.rows[0];
 
-        if (
-            Array.isArray(targets)
-        ) {
-
-            for (const target of targets) {
-
-                await db.query(
-                    `
+    if (Array.isArray(targets)) {
+      for (const target of targets) {
+        await db.query(
+          `
           INSERT INTO transaction_details (
             transaction_id,
             game_uid,
@@ -249,47 +220,35 @@ router.post("/", async (req, res) => {
           )
           VALUES ($1,$2,$3)
           `,
-                    [
-                        transaction.id,
-                        target.game_uid,
-                        target.game_server
-                    ]
-                );
-
-            }
-
-        }
-
-        res.status(201).json({
-            success: true,
-            transaction,
-        });
-
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message,
-        });
+          [transaction.id, target.game_uid, target.game_server],
+        );
+      }
     }
+    res.status(201).json({
+      success: true,
+      transaction,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 });
-
 router.put("/order/:orderId", async (req, res) => {
-    try {
+  try {
+    const { orderId } = req.params;
 
-        const { orderId } =
-            req.params;
+    const {
+      transaction_status,
+      payment_type,
+      transaction_id_midtrans,
+      fraud_status,
+      settlement_time,
+    } = req.body;
 
-        const {
-            transaction_status,
-            payment_type,
-            transaction_id_midtrans,
-            fraud_status,
-            settlement_time
-        } = req.body;
-
-        const result =
-            await db.query(
-                `
+    const result = await db.query(
+      `
           UPDATE transactions
           SET
             transaction_status = $1,
@@ -301,70 +260,24 @@ router.put("/order/:orderId", async (req, res) => {
           WHERE order_id = $6
           RETURNING *
           `,
-                [
-                    transaction_status,
-                    payment_type,
-                    transaction_id_midtrans,
-                    fraud_status,
-                    settlement_time,
-                    orderId
-                ]
-            );
-        const transactionResult =
-            await db.query(
-                `
-        SELECT
-            t.*,
-            p.name AS product_name,
-            g.name AS game_name
-        FROM transactions t
-        JOIN products p
-            ON p.id = t.product_id
-        JOIN games g
-            ON g.id = p.game_id
-        WHERE t.order_id = $1
-        `,
-                [orderId]
-            );
-
-        const transaction =
-            transactionResult.rows[0];
-
-        if (transaction.transaction_status === "settlement") {
-
-            await sendTransactionEmail({
-
-                to: transaction.customer_email,
-
-                customerName: "Customer",
-
-                orderId: transaction.order_id,
-
-                gameName: transaction.game_name,
-
-                productName: transaction.product_name,
-
-                quantity: transaction.quantity,
-
-                totalPrice: transaction.total_price,
-
-                status: transaction.transaction_status,
-
-            });
-
-        }
-        res.json({
-            success: true,
-            transaction:
-                result.rows[0],
-        });
-
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message,
-        });
-    }
-}
-);
+      [
+        transaction_status,
+        payment_type,
+        transaction_id_midtrans,
+        fraud_status,
+        settlement_time,
+        orderId,
+      ],
+    );
+    res.json({
+      success: true,
+      transaction: result.rows[0],
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+});
 export default router;
