@@ -1,15 +1,7 @@
 <template>
 
-  <q-table
-    flat
-    bordered
-    hide-pagination
-    :rows-per-page-options="[0]"
-    :rows="transactions"
-    :columns="columns"
-    row-key="id"
-    class="transaction-table"
-  >
+  <q-table flat bordered hide-pagination :rows-per-page-options="[0]" :rows="transactions" :columns="columns"
+    row-key="id" class="transaction-table">
 
     <template #body-cell-total_price="props">
 
@@ -32,13 +24,10 @@
 
       <q-td :props="props">
 
-        <q-badge
-          :color="
-            getStatusColor(
-              props.row.transaction_status
-            )
-          "
-        >
+        <q-badge :color="getStatusColor(
+          props.row.transaction_status
+        )
+          ">
           {{
             props.row.transaction_status
           }}
@@ -66,19 +55,12 @@
 
       <q-td :props="props">
 
-        <q-btn
-          flat
-          round
-          dense
-          icon="visibility"
-          color="info"
-          @click="
-            emit(
-              'details',
-              props.row
-            )
-          "
-        />
+        <q-btn flat round dense icon="visibility" color="info" @click="
+          emit(
+            'details',
+            props.row
+          )
+          " />
 
       </q-td>
 
@@ -86,14 +68,12 @@
 
     <template #no-data>
 
-      <div
-        class="
+      <div class="
           full-width
           row
           flex-center
           q-pa-lg
-        "
-      >
+        ">
         Tidak ada transaksi.
       </div>
 
@@ -169,7 +149,7 @@ const getStatusColor =
   (status) => {
 
     switch (
-      status?.toLowerCase()
+    status?.toLowerCase()
     ) {
 
       case 'settlement':
@@ -205,7 +185,6 @@ const formatDate =
 </script>
 
 <style lang="scss" scoped>
-
 .transaction-table {
   background: white;
 
@@ -215,10 +194,8 @@ const formatDate =
 }
 
 :deep(.q-table thead tr) {
-  background: rgba(
-    $sakura,
-    .08
-  );
+  background: rgba($sakura,
+      .08);
 }
 
 :deep(.q-table th) {
@@ -228,10 +205,7 @@ const formatDate =
 }
 
 :deep(.q-table tbody tr:hover) {
-  background: rgba(
-    $sakura,
-    .04
-  );
+  background: rgba($sakura,
+      .04);
 }
-
 </style>

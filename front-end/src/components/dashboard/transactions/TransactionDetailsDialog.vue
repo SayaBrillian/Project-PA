@@ -130,28 +130,20 @@
         <q-card-section>
           <div class="section-title">Game Targets</div>
 
-          <q-table
-  flat
-  bordered
-  hide-pagination
-  :rows-per-page-options="[0]"
-  :rows="details"
-  :columns="targetColumns"
-  row-key="game_uid"
-  class="targets-table"
->
+          <q-table flat bordered hide-pagination :rows-per-page-options="[0]" :rows="details" :columns="targetColumns"
+            row-key="game_uid" class="targets-table">
 
-  <template #body-cell-index="props">
+            <template #body-cell-index="props">
 
-    <q-td :props="props">
+              <q-td :props="props">
 
-      {{ props.pageIndex + 1 }}
+                {{ props.pageIndex + 1 }}
 
-    </q-td>
+              </q-td>
 
-  </template>
+            </template>
 
-</q-table>
+          </q-table>
         </q-card-section>
       </template>
 
@@ -250,7 +242,7 @@ watch(
 
   border-radius: 24px;
 
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 .dialog-title {
@@ -333,10 +325,8 @@ watch(
 }
 
 :deep(.targets-table thead tr) {
-  background: rgba(
-    $sakura,
-    .08
-  );
+  background: rgba($sakura,
+      .08);
 }
 
 :deep(.targets-table th) {

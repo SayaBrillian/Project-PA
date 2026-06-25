@@ -1,6 +1,8 @@
 import express from "express";
 import { db } from "./db.js";
 
+import sendTransactionEmail from "./email/sendTransactionEmail.js";
+
 const router = express.Router();
 
 router.get("/", async (req, res) => {
@@ -22,7 +24,7 @@ router.get("/", async (req, res) => {
 
         res.json({
             success: true,
-            transactions: result.rows,  
+            transactions: result.rows,
         });
 
     } catch (error) {
@@ -271,25 +273,23 @@ router.post("/", async (req, res) => {
     }
 });
 
-router.put(
-    "/order/:orderId",
-    async (req, res) => {
-        try {
+router.put("/order/:orderId", async (req, res) => {
+    try {
 
-            const { orderId } =
-                req.params;
+        const { orderId } =
+            req.params;
 
-            const {
-                transaction_status,
-                payment_type,
-                transaction_id_midtrans,
-                fraud_status,
-                settlement_time
-            } = req.body;
+        const {
+            transaction_status,
+            payment_type,
+            transaction_id_midtrans,
+            fraud_status,
+            settlement_time
+        } = req.body;
 
-            const result =
-                await db.query(
-                    `
+        const result =
+            await db.query(
+                `
           UPDATE transactions
           SET
             transaction_status = $1,
@@ -301,28 +301,70 @@ router.put(
           WHERE order_id = $6
           RETURNING *
           `,
-                    [
-                        transaction_status,
-                        payment_type,
-                        transaction_id_midtrans,
-                        fraud_status,
-                        settlement_time,
-                        orderId
-                    ]
-                );
+                [
+                    transaction_status,
+                    payment_type,
+                    transaction_id_midtrans,
+                    fraud_status,
+                    settlement_time,
+                    orderId
+                ]
+            );
+        const transactionResult =
+            await db.query(
+                `
+        SELECT
+            t.*,
+            p.name AS product_name,
+            g.name AS game_name
+        FROM transactions t
+        JOIN products p
+            ON p.id = t.product_id
+        JOIN games g
+            ON g.id = p.game_id
+        WHERE t.order_id = $1
+        `,
+                [orderId]
+            );
 
-            res.json({
-                success: true,
-                transaction:
-                    result.rows[0],
+        const transaction =
+            transactionResult.rows[0];
+
+        if (transaction.transaction_status === "settlement") {
+
+            await sendTransactionEmail({
+
+                to: transaction.customer_email,
+
+                customerName: "Customer",
+
+                orderId: transaction.order_id,
+
+                gameName: transaction.game_name,
+
+                productName: transaction.product_name,
+
+                quantity: transaction.quantity,
+
+                totalPrice: transaction.total_price,
+
+                status: transaction.transaction_status,
+
             });
 
-        } catch (error) {
-            res.status(500).json({
-                success: false,
-                message: error.message,
-            });
         }
+        res.json({
+            success: true,
+            transaction:
+                result.rows[0],
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
     }
+}
 );
 export default router;
