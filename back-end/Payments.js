@@ -171,9 +171,9 @@ router.post("/webhook", async (req, res) => {
       } catch (error) {
         console.error("WhatsApp Error:", error.response?.data || error.message);
       }
-startDummyDelivery(
-    transaction.id
-);
+console.log("Start Dummy Delivery:", transaction.id);
+
+startDummyDelivery(transaction.id);
 }
     res.status(200).json({
       success: true,

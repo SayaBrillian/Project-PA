@@ -94,6 +94,9 @@
 <script setup>
 import api from 'src/axios'
 import { computed, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const props = defineProps({
   modelValue: Boolean,
@@ -196,6 +199,8 @@ async function loginUser() {
     userPassword.value = ''
     modelValue.value = false
 
+router.push('/user')
+
   } catch (error) {
     console.error(error)
 
@@ -229,6 +234,8 @@ async function loginAdmin() {
     adminEmail.value = ''
     adminPassword.value = ''
     modelValue.value = false
+
+router.push('/dashboard')
 
   } catch (error) {
     console.error(error)

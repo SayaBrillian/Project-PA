@@ -233,10 +233,11 @@ router.post("/login-user", async (req, res) => {
     }
 
     const userData = {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-    };
+  id: user.id,
+  name: user.name,
+  email: user.email,
+  type: "user",
+};
 
     const token = jwt.sign(
       {
@@ -306,11 +307,12 @@ router.post("/login-admin", async (req, res) => {
     }
 
     const adminData = {
-      id: admin.id,
-      name: admin.name,
-      email: admin.email,
-      level: admin.level,
-    };
+  id: admin.id,
+  name: admin.name,
+  email: admin.email,
+  level: admin.level,
+  type: "admin",
+};
 
     const token = jwt.sign(
       {

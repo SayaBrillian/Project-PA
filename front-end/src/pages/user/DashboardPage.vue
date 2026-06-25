@@ -1,31 +1,15 @@
 <template>
   <q-page class="dashboard-page">
     <div class="page-header">
-      <h1>Overview</h1>
+      <h1>Welcome Back</h1>
 
-      <p>Ringkasan aktivitas EI Gaming Store.</p>
+<p>Ringkasan aktivitas akun Anda.</p>
     </div>
 
     <!-- STATS -->
     <div class="stats-grid">
       <div class="stats-card">
-        <div class="stats-label">Total Games</div>
-
-        <div class="stats-value">
-          {{ totalGames }}
-        </div>
-      </div>
-
-      <div class="stats-card">
-        <div class="stats-label">Total Products</div>
-
-        <div class="stats-value">
-          {{ totalProducts }}
-        </div>
-      </div>
-
-      <div class="stats-card">
-        <div class="stats-label">Total Transactions</div>
+        <div class="stats-label">My Transactions</div>
 
         <div class="stats-value">
           {{ totalTransactions }}
@@ -33,11 +17,26 @@
       </div>
 
       <div class="stats-card">
-        <div class="stats-label">Total Revenue</div>
+        <div class="stats-label">Completed Orders</div>
 
         <div class="stats-value">
-          Rp
-          {{ totalRevenue.toLocaleString('id-ID') }}
+          {{ completedOrders }}
+        </div>
+      </div>
+
+      <div class="stats-card">
+        <div class="stats-label">Processing Orders</div>
+
+        <div class="stats-value">
+          {{ processingOrders }}
+        </div>
+      </div>
+
+      <div class="stats-card">
+        <div class="stats-label">Total Spending</div>
+
+        <div class="stats-value">
+          Rp {{ totalSpending.toLocaleString('id-ID') }}
         </div>
       </div>
     </div>
@@ -77,38 +76,68 @@ import { ref, onMounted } from 'vue'
 
 import api from 'src/axios'
 
-const totalGames = ref(0)
-const totalProducts = ref(0)
 const totalTransactions = ref(0)
-const totalRevenue = ref(0)
+
+const completedOrders = ref(0)
+
+const processingOrders = ref(0)
+
+const totalSpending = ref(0)
 
 const recentTransactions = ref([])
 
 const loadDashboard = async () => {
   try {
-    const gamesResponse = await api.get('/api/games')
 
-    totalGames.value = gamesResponse.data.games.length
-
-    const productsResponse = await api.get('/api/products')
-
-    totalProducts.value = productsResponse.data.products.length
-
-    const transactionsResponse = await api.get('/api/transactions')
-
-    const transactions = transactionsResponse.data.transactions
-
-    totalTransactions.value = transactions.length
-
-    totalRevenue.value = transactions.reduce(
-      (total, transaction) => total + Number(transaction.total_price || 0),
-      0,
+    const auth = JSON.parse(
+      localStorage.getItem('auth')
     )
 
-    recentTransactions.value = transactions.slice(0, 5)
+    const email = auth.data.email
+
+const response = await api.get(
+  `/api/transactions/customer/${email}`
+)
+
+console.log(response.data)
+
+const transactions = response.data.transactions
+
+totalTransactions.value =
+  transactions.length
+
+completedOrders.value =
+  transactions.filter(
+    transaction =>
+      transaction.order_status === 'done'
+  ).length
+
+processingOrders.value =
+  transactions.filter(
+    transaction =>
+      [
+        'waiting',
+        'processing',
+        'delivering'
+      ].includes(
+        transaction.order_status
+      )
+  ).length
+
+totalSpending.value =
+  transactions.reduce(
+    (total, transaction) =>
+      total +
+      Number(transaction.total_price || 0),
+    0
+  )
+
+recentTransactions.value =
+  transactions.slice(0, 5)
   } catch (error) {
     console.error('Dashboard Error:', error)
   }
+
 }
 
 onMounted(() => {

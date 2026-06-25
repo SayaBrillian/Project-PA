@@ -4,13 +4,11 @@
 
     <div class="page-header">
 
-      <h1>
-        Transactions
-      </h1>
+      <h1>My Transactions</h1>
 
-      <p>
-        Kelola dan pantau seluruh transaksi.
-      </p>
+<p>
+Lihat riwayat pembelian dan status pesanan Anda.
+</p>
 
     </div>
 
@@ -125,20 +123,20 @@ const statusOptions = [
     value: null,
   },
   {
-    label: 'Settlement',
-    value: 'settlement',
+    label: 'Waiting',
+    value: 'waiting',
   },
   {
-    label: 'Pending',
-    value: 'pending',
+    label: 'Processing',
+    value: 'processing',
   },
   {
-    label: 'Failed',
-    value: 'failed',
+    label: 'Delivering',
+    value: 'delivering',
   },
   {
-    label: 'Cancel',
-    value: 'cancel',
+    label: 'Done',
+    value: 'done',
   },
 ]
 
@@ -147,10 +145,14 @@ const loadTransactions =
 
     try {
 
-      const response =
-        await api.get(
-          '/api/transactions'
-        )
+      const auth = JSON.parse(
+  localStorage.getItem('auth')
+)
+
+const response =
+  await api.get(
+    `/api/transactions/customer/${auth.data.email}`
+  )
 
       transactions.value =
         response.data.transactions
@@ -215,8 +217,8 @@ const filteredTransactions =
 
       data = data.filter(
         (transaction) =>
-          transaction.transaction_status ===
-          selectedStatus.value
+          transaction.order_status ===
+selectedStatus.value
       )
 
     }
@@ -238,9 +240,9 @@ const filteredTransactions =
             ?.toLowerCase()
             .includes(keyword)
           ||
-          transaction.customer_email
-            ?.toLowerCase()
-            .includes(keyword)
+          transaction.game_name
+      ?.toLowerCase()
+      .includes(keyword)
       )
 
     }
