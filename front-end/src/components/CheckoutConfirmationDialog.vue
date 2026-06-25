@@ -278,17 +278,14 @@ const continuePayment =
 .dialog-card {
 
   width: 760px;
+
   max-width: 95vw;
 
   height: 80vh;
-  max-height: 80vh;
 
   display: flex;
+
   flex-direction: column;
-
-  border-radius: 24px;
-
-  overflow: hidden;
 
 }
 

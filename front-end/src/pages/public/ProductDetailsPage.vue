@@ -196,15 +196,33 @@
 
           <div class="account-form">
             <q-input
-              v-model="customerEmail"
-              outlined
-              dark
-              type="email"
-              label="Email"
-              class="form-field"
-            />
+  v-model="customerEmail"
+  outlined
+  dark
+  type="email"
+  label="Email"
 
-            <q-input v-model="customerWhatsapp" outlined dark label="WhatsApp" class="form-field" />
+  :error="
+    customerEmail !== '' &&
+    !isEmailValid
+  "
+
+  error-message="Format email tidak valid"
+/>
+
+            <q-input
+  v-model="customerWhatsapp"
+  outlined
+  dark
+  label="WhatsApp"
+
+  :error="
+    customerWhatsapp !== '' &&
+    !isWhatsappValid
+  "
+
+  error-message="Nomor WhatsApp minimal 10 digit"
+/>
           </div>
         </div>
 
@@ -253,11 +271,25 @@
   size="lg"
   class="checkout-btn"
   label="Bayar Sekarang"
-  @click="checkout"
+
+  :disable="!canCheckout"
+
+  @click="
+    showConfirmation = true
+  "
 />
         </div>
       </div>
     </section>
+    <CheckoutConfirmationDialog
+
+  v-model="showConfirmation"
+
+  :order="confirmationOrder"
+
+  @confirm="processCheckout"
+
+/>
   </q-page>
 </template>
 
@@ -266,10 +298,12 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import api from 'src/axios'
 import gameImages from 'src/assets/images'
+import CheckoutConfirmationDialog from 'src/components/CheckoutConfirmationDialog.vue'
 
 const route = useRoute()
 const router = useRouter()
 
+const showConfirmation = ref(false)
 const games = ref([])
 const selectedGame = ref(null)
 const products = ref([])
@@ -280,6 +314,39 @@ const servers = ref([])
 const targets = ref([])
 const customerEmail = ref('')
 const customerWhatsapp = ref('')
+
+const isEmailValid = computed(() => {
+
+  if (!customerEmail.value.trim())
+    return true
+
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    .test(customerEmail.value.trim())
+
+})
+
+const isWhatsappValid = computed(() => {
+
+  if (!customerWhatsapp.value.trim())
+    return true
+
+  return customerWhatsapp.value
+    .trim()
+    .length >= 10
+
+})
+
+const hasContact = computed(() => {
+
+  return (
+
+    customerEmail.value.trim() ||
+
+    customerWhatsapp.value.trim()
+
+  )
+
+})
 
 const loadGames = async () => {
   try {
@@ -358,7 +425,50 @@ const totalPrice = computed(() => {
   return Number(selectedProduct.value.price) * targets.value.length
 })
 
-const checkout = async () => {
+const confirmationOrder = computed(() => ({
+
+  gameName:
+    currentGame.value?.name || '',
+
+  productName:
+    selectedProduct.value?.name || '',
+
+  quantity:
+    targets.value.length,
+
+  totalPrice:
+    totalPrice.value,
+
+  customerEmail:
+    customerEmail.value,
+
+  customerWhatsapp:
+    customerWhatsapp.value,
+
+  targets:
+    targets.value,
+
+}))
+
+const canCheckout = computed(() => {
+
+  return (
+
+    selectedProduct.value &&
+
+    targets.value.length > 0 &&
+
+    hasContact.value &&
+
+    isEmailValid.value &&
+
+    isWhatsappValid.value
+
+  )
+
+})
+
+const processCheckout = async () => {
   try {
 
     const response =
@@ -467,7 +577,20 @@ watch(selectedGame, (gameId) => {
 })
 
 onMounted(() => {
+
   loadGames()
+
+  const auth = JSON.parse(
+    localStorage.getItem('auth')
+  )
+
+  if (auth?.type === 'user') {
+
+    customerEmail.value =
+      auth.data.email || ''
+
+  }
+
 })
 </script>
 
