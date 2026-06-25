@@ -187,4 +187,53 @@ startDummyDelivery(transaction.id);
     });
   }
 });
+
+router.get(
+  "/snap/:orderId",
+  async (req, res) => {
+
+    try {
+
+      const { orderId } = req.params
+
+      const result = await db.query(
+        `
+        SELECT snap_token
+        FROM transactions
+        WHERE order_id = $1
+        `,
+        [orderId]
+      )
+
+      if (result.rows.length === 0) {
+
+        return res.status(404).json({
+          success: false,
+          message: "Transaksi tidak ditemukan"
+        })
+
+      }
+
+      res.json({
+
+        success: true,
+
+        token: result.rows[0].snap_token
+
+      })
+
+    } catch (error) {
+
+      res.status(500).json({
+
+        success: false,
+
+        message: error.message
+
+      })
+
+    }
+
+  }
+)
 export default router;
