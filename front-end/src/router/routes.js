@@ -66,6 +66,31 @@ const routes = [
     },
   ],
 },
+{
+  path: '/user',
+  component: () => import('layouts/UserLayout.vue'),
+  meta: {
+    requiresAuth: true,
+  },
+  children: [
+    {
+      path: '',
+      component: () => import('pages/user/DashboardPage.vue'),
+    },
+    {
+      path: 'transactions',
+      component: () => import('pages/user/TransactionsPage.vue'),
+    },
+    {
+      path: 'profile',
+      component: () => import('pages/user/ProfilePage.vue'),
+    },
+    {
+      path: 'settings',
+      component: () => import('pages/user/SettingsPage.vue'),
+    },
+  ],
+},
   {
     path: '/:catchAll(.*)*',
     component: () => import('pages/ErrorNotFound.vue'),

@@ -179,33 +179,35 @@ router.post("/", async (req, res) => {
     const orderId = `TRX-${Date.now()}`;
 
     const transactionResult = await db.query(
-      `
-        INSERT INTO transactions (
-          order_id,
-          user_id,
-          product_id,
-          quantity,
-          total_price,
-          customer_email,
-          customer_whatsapp,
-          notes
-        )
-        VALUES (
-          $1,$2,$3,$4,$5,$6,$7,$8
-        )
-        RETURNING *
-        `,
-      [
-        orderId,
-        user_id,
-        product_id,
-        quantity,
-        total_price,
-        customer_email,
-        customer_whatsapp,
-        notes,
-      ],
-    );
+  `
+    INSERT INTO transactions (
+      order_id,
+      user_id,
+      product_id,
+      quantity,
+      total_price,
+      customer_email,
+      customer_whatsapp,
+      notes,
+      order_status
+    )
+    VALUES (
+      $1,$2,$3,$4,$5,$6,$7,$8,$9
+    )
+    RETURNING *
+    `,
+  [
+    orderId,
+    user_id,
+    product_id,
+    quantity,
+    total_price,
+    customer_email,
+    customer_whatsapp,
+    notes,
+    "waiting",
+  ],
+);
 
     const transaction = transactionResult.rows[0];
 
@@ -235,6 +237,7 @@ router.post("/", async (req, res) => {
     });
   }
 });
+
 router.put("/order/:orderId", async (req, res) => {
   try {
     const { orderId } = req.params;

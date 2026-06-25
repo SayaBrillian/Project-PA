@@ -36,7 +36,21 @@
       </q-td>
 
     </template>
+<template #body-cell-order_status="props">
 
+  <q-td :props="props">
+
+    <q-badge
+      :color="getOrderStatusColor(props.row.order_status)"
+    >
+
+      {{ props.row.order_status }}
+
+    </q-badge>
+
+  </q-td>
+
+</template>
     <template #body-cell-created_at="props">
 
       <q-td :props="props">
@@ -126,11 +140,17 @@ const columns = [
     sortable: true,
   },
   {
-    name: 'transaction_status',
-    label: 'Status',
-    field: 'transaction_status',
-    align: 'center',
-  },
+  name: 'transaction_status',
+  label: 'Payment',
+  field: 'transaction_status',
+  align: 'center',
+},
+  {
+  name: 'order_status',
+  label: 'Order',
+  field: 'order_status',
+  align: 'center',
+},
   {
     name: 'created_at',
     label: 'Created',
@@ -170,7 +190,28 @@ const getStatusColor =
     }
 
   }
+const getOrderStatusColor = (status) => {
 
+  switch (status?.toLowerCase()) {
+
+    case 'waiting':
+      return 'warning'
+
+    case 'processing':
+      return 'info'
+
+    case 'sending':
+      return 'primary'
+
+    case 'done':
+      return 'positive'
+
+    default:
+      return 'grey'
+
+  }
+
+}
 const formatDate =
   (date) => {
 

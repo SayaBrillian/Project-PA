@@ -2,6 +2,8 @@ import express from "express";
 import { db } from "./db.js";
 import snap from "./midtrans.js";
 import sendTransactionEmail from "./email/sendTransactionEmail.js";
+import startDummyDelivery from "./delivery/dummyDelivery.js";
+import axios from 'axios';
 
 const router = express.Router();
 
@@ -132,6 +134,46 @@ router.post("/webhook", async (req, res) => {
 
     console.log("Email berhasil dikirim.");
 
+      try {
+        const response = await axios.post(
+          "https://api.fonnte.com/send",
+
+          {
+            target: transaction.customer_whatsapp,
+
+            message: `🎮 EI Gaming Store
+            Pembayaran Anda berhasil.
+            ━━━━━━━━━━━━━━━
+            Order ID
+            ${transaction.order_id}
+            Game
+            ${transaction.game_name}
+            Produk
+            ${transaction.product_name}
+            Jumlah
+            ${transaction.quantity}
+            Total
+            Rp ${Number(transaction.total_price).toLocaleString("id-ID")}
+            Status
+            ${transaction.transaction_status}
+            ━━━━━━━━━━━━━━━
+            Terima kasih telah berbelanja di
+            EI Gaming Store ❤️`,
+          },
+          {
+            headers: {
+              Authorization: process.env.FONNTE_TOKEN,
+            },
+          },
+        );
+        console.log("WhatsApp berhasil dikirim.");
+        console.log(response.data);
+      } catch (error) {
+        console.error("WhatsApp Error:", error.response?.data || error.message);
+      }
+startDummyDelivery(
+    transaction.id
+);
 }
     res.status(200).json({
       success: true,

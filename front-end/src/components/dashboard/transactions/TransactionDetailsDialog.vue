@@ -29,12 +29,27 @@
             </div>
 
             <div class="detail-item">
-              <span> Status </span>
 
-              <q-badge color="positive">
-                {{ transaction.transaction_status || '-' }}
-              </q-badge>
-            </div>
+  <span> Payment Status </span>
+
+  <q-badge
+    :color="getPaymentStatusColor(transaction.transaction_status)"
+  >
+    {{ transaction.transaction_status || '-' }}
+  </q-badge>
+
+</div>
+<div class="detail-item">
+
+  <span> Order Status </span>
+
+  <q-badge
+    :color="getOrderStatusColor(transaction.order_status)"
+  >
+    {{ transaction.order_status || '-' }}
+  </q-badge>
+
+</div>
 
             <div class="detail-item">
               <span> Payment Type </span>
@@ -225,6 +240,51 @@ const targetColumns = [
     align: 'left',
   },
 ]
+
+const getPaymentStatusColor = (status) => {
+
+  switch (status?.toLowerCase()) {
+
+    case 'settlement':
+      return 'positive'
+
+    case 'pending':
+      return 'warning'
+
+    case 'expire':
+    case 'cancel':
+    case 'failed':
+      return 'negative'
+
+    default:
+      return 'grey'
+
+  }
+
+}
+
+const getOrderStatusColor = (status) => {
+
+  switch (status?.toLowerCase()) {
+
+    case 'waiting':
+      return 'warning'
+
+    case 'processing':
+      return 'info'
+
+    case 'sending':
+      return 'primary'
+
+    case 'done':
+      return 'positive'
+
+    default:
+      return 'grey'
+
+  }
+
+}
 watch(
   () => props.modelValue,
   (value) => {
