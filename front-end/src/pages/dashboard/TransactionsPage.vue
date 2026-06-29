@@ -18,42 +18,17 @@
 
     <div class="toolbar-row">
 
-      <q-select
-        v-model="selectedGame"
-        :options="gameOptions"
-        label="Game"
-        outlined
-        dense
-        emit-value
-        map-options
-        class="game-filter"
-      />
+      <q-select v-model="selectedGame" :options="gameOptions" label="Game" outlined dense emit-value map-options
+        class="game-filter" />
 
-      <q-select
-        v-model="selectedStatus"
-        :options="statusOptions"
-        label="Status"
-        outlined
-        dense
-        emit-value
-        map-options
-        class="status-filter"
-      />
+      <q-select v-model="selectedStatus" :options="statusOptions" label="Status" outlined dense emit-value map-options
+        class="status-filter" />
 
-      <q-input
-        v-model="search"
-        outlined
-        dense
-        clearable
-        placeholder="Cari transaksi..."
-        class="search-input"
-      >
+      <q-input v-model="search" outlined dense clearable placeholder="Cari transaksi..." class="search-input">
 
         <template #prepend>
 
-          <q-icon
-            name="search"
-          />
+          <q-icon name="search" />
 
         </template>
 
@@ -63,23 +38,15 @@
 
     <!-- TABLE -->
 
-    <TransactionTable
-      :transactions="
-        filteredTransactions
-      "
-      @details="
+    <TransactionTable :transactions="filteredTransactions
+      " @details="
         openDetails
-      "
-    />
+      " />
 
     <!-- DETAILS -->
 
-    <TransactionDetailsDialog
-      v-model="showDetails"
-      :transaction-id="
-        selectedTransaction?.id
-      "
-    />
+    <TransactionDetailsDialog v-model="showDetails" :transaction-id="selectedTransaction?.id
+      " />
 
   </q-page>
 
@@ -95,10 +62,10 @@ import {
 import api from 'src/axios'
 
 import TransactionTable from
-'src/components/dashboard/transactions/TransactionTable.vue'
+  'src/components/dashboard/transactions/TransactionTable.vue'
 
 import TransactionDetailsDialog from
-'src/components/dashboard/transactions/TransactionDetailsDialog.vue'
+  'src/components/dashboard/transactions/TransactionDetailsDialog.vue'
 
 const transactions = ref([])
 
@@ -269,7 +236,6 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-
 .transactions-page {
   display: flex;
   flex-direction: column;
@@ -289,12 +255,10 @@ onMounted(() => {
 .page-header p {
   margin-top: 8px;
 
-  color: rgba(
-    0,
-    0,
-    0,
-    .55
-  );
+  color: rgba(0,
+      0,
+      0,
+      .55);
 }
 
 .toolbar-row {
@@ -330,5 +294,4 @@ onMounted(() => {
   }
 
 }
-
 </style>

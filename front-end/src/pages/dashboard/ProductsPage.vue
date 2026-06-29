@@ -20,110 +20,62 @@
 
     <div class="toolbar-row">
 
-      <q-select
-        v-model="selectedGame"
-        :options="games"
-        label="Game"
-        outlined
-        dense
-        emit-value
-        map-options
-        class="game-filter"
-      />
+      <q-select v-model="selectedGame" :options="games" label="Game" outlined dense emit-value map-options
+        class="game-filter" />
 
-      <q-input
-        v-model="search"
-        outlined
-        dense
-        clearable
-        placeholder="Cari produk..."
-        class="search-input"
-      >
+      <q-input v-model="search" outlined dense clearable placeholder="Cari produk..." class="search-input">
         <template #prepend>
 
-          <q-icon
-            name="search"
-          />
+          <q-icon name="search" />
 
         </template>
       </q-input>
 
-      <q-btn
-        unelevated
-        color="accent"
-        icon="add"
-        label="Add Product"
-        @click="
-          showCreate = true
-        "
-      />
+      <q-btn unelevated color="accent" icon="add" label="Add Product" @click="
+        showCreate = true
+        " />
 
     </div>
 
     <!-- TABLE -->
 
-    <ProductTable
-      :products="
-        filteredProducts
-      "
-      @details="
+    <ProductTable :products="filteredProducts
+      " @details="
         openDetails
-      "
-      @update="
+      " @update="
         openUpdate
-      "
-      @delete="
+      " @delete="
         openDelete
-      "
-    />
+      " />
 
     <!-- DETAILS -->
 
-    <ProductDetailsDialog
-      v-model="showDetails"
-      :product="
-        selectedProduct
-      "
-      @update="
+    <ProductDetailsDialog v-model="showDetails" :product="selectedProduct
+      " @update="
         openUpdate
-      "
-      @delete="
+      " @delete="
         openDelete
-      "
-    />
+      " />
 
     <!-- CREATE -->
 
-    <ProductCreateDialog
-      v-model="showCreate"
-      @created="
-        refreshProducts
-      "
-    />
+    <ProductCreateDialog v-model="showCreate" @created="
+      refreshProducts
+    " />
 
     <!-- UPDATE -->
 
-    <ProductUpdateDialog
-      v-model="showUpdate"
-      :product="
-        selectedProduct
-      "
-      @updated="
+    <ProductUpdateDialog v-model="showUpdate" :product="selectedProduct
+      " @updated="
         refreshProducts
-      "
-    />
+      " />
 
     <!-- DELETE -->
 
-    <ProductDeleteDialog
-      v-model="showDelete"
-      :product="
-        selectedProduct
-      "
-      @deleted="
+    <ProductDeleteDialog v-model="showDelete" :product="selectedProduct
+      " @deleted="
         refreshProducts
-      "
-    />
+      " />
 
   </q-page>
 
@@ -388,12 +340,10 @@ onMounted(() => {
 .page-header p {
   margin-top: 8px;
 
-  color: rgba(
-    0,
-    0,
-    0,
-    .55
-  );
+  color: rgba(0,
+      0,
+      0,
+      .55);
 }
 
 /*
@@ -454,4 +404,5 @@ onMounted(() => {
     width: 100%;
   }
 
-}</style>
+}
+</style>

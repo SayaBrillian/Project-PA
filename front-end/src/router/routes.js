@@ -12,12 +12,9 @@ const routes = [
         component: () => import('pages/public/ProductPage.vue'),
       },
       {
-  path: '/check-transaction',
-  component: () =>
-    import(
-      'pages/public/CheckTransactionPage.vue'
-    ),
-},
+        path: '/check-transaction',
+        component: () => import('pages/public/CheckTransactionPage.vue'),
+      },
       {
         path: 'help',
         component: () => import('pages/public/HelpPage.vue'),
@@ -34,63 +31,71 @@ const routes = [
   },
 
   {
-  path: '/dashboard',
-  component: () => import('layouts/DashboardLayout.vue'),
-  meta: {
-    requiresAuth: true,
+    path: '/dashboard',
+    component: () => import('layouts/DashboardLayout.vue'),
+    meta: {
+      requiresAuth: true,
+    },
+    children: [
+      {
+        path: '',
+        component: () => import('pages/dashboard/DashboardPage.vue'),
+      },
+      {
+        path: 'games',
+        component: () => import('pages/dashboard/GamesPage.vue'),
+      },
+      {
+        path: 'products',
+        component: () => import('pages/dashboard/ProductsPage.vue'),
+      },
+      {
+        path: 'transactions',
+        component: () => import('pages/dashboard/TransactionsPage.vue'),
+      },
+      {
+        path: 'profile',
+        component: () => import('pages/dashboard/ProfilePage.vue'),
+      },
+      {
+        path: 'settings',
+        component: () => import('pages/dashboard/SettingsPage.vue'),
+      },
+      {
+        path: 'users',
+        component: () => import('pages/dashboard/UsersPage.vue'),
+      },
+      {
+        path: 'admins',
+        component: () => import('pages/dashboard/AdminsPage.vue'),
+      },
+    ],
   },
-  children: [
-    {
-      path: '',
-      component: () => import('pages/dashboard/DashboardPage.vue'),
+  {
+    path: '/user',
+    component: () => import('layouts/UserLayout.vue'),
+    meta: {
+      requiresAuth: true,
     },
-    {
-      path: 'games',
-      component: () => import('pages/dashboard/GamesPage.vue'),
-    },
-    {
-      path: 'products',
-      component: () => import('pages/dashboard/ProductsPage.vue'),
-    },
-    {
-      path: 'transactions',
-      component: () => import('pages/dashboard/TransactionsPage.vue'),
-    },
-    {
-      path: 'profile',
-      component: () => import('pages/dashboard/ProfilePage.vue'),
-    },
-    {
-      path: 'settings',
-      component: () => import('pages/dashboard/SettingsPage.vue'),
-    },
-  ],
-},
-{
-  path: '/user',
-  component: () => import('layouts/UserLayout.vue'),
-  meta: {
-    requiresAuth: true,
+    children: [
+      {
+        path: '',
+        component: () => import('pages/user/DashboardPage.vue'),
+      },
+      {
+        path: 'transactions',
+        component: () => import('pages/user/TransactionsPage.vue'),
+      },
+      {
+        path: 'profile',
+        component: () => import('pages/user/ProfilePage.vue'),
+      },
+      {
+        path: 'settings',
+        component: () => import('pages/user/SettingsPage.vue'),
+      },
+    ],
   },
-  children: [
-    {
-      path: '',
-      component: () => import('pages/user/DashboardPage.vue'),
-    },
-    {
-      path: 'transactions',
-      component: () => import('pages/user/TransactionsPage.vue'),
-    },
-    {
-      path: 'profile',
-      component: () => import('pages/user/ProfilePage.vue'),
-    },
-    {
-      path: 'settings',
-      component: () => import('pages/user/SettingsPage.vue'),
-    },
-  ],
-},
   {
     path: '/:catchAll(.*)*',
     component: () => import('pages/ErrorNotFound.vue'),

@@ -7,6 +7,9 @@ import authRoutes from "./AuthModal.js";
 import productsRoutes from "./Products.js";
 import transactionsRoutes from "./Transactions.js";
 import paymentsRoutes from "./Payments.js";
+import usersRoutes from './users.js'
+import adminsRoutes from './admins.js'
+
 
 dotenv.config();
 
@@ -20,6 +23,8 @@ app.use("/api/games", gamesRoutes);
 app.use("/api/products", productsRoutes);
 app.use("/api/transactions", transactionsRoutes);
 app.use("/api/payments", paymentsRoutes);
+app.use('/api/users', usersRoutes)
+app.use('/api/admins', adminsRoutes)
 
 const PORT = process.env.PORT || 3000;
 
