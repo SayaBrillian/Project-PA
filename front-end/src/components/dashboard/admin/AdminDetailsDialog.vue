@@ -7,7 +7,7 @@
     )
     ">
 
-    <q-card v-if="user" class="dialog-card">
+    <q-card v-if="admin" class="dialog-card">
 
       <q-card-section>
 
@@ -111,7 +111,7 @@ const emit = defineEmits([
 </script>
 
 <style lang="scss" scoped>
-.admin-card {
+.dialog-card {
   width: 700px;
   max-width: 95vw;
 
