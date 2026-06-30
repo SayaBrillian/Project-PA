@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict PiP2BnEe9h2Oi0TIV8wldy77ghfYalSxNvtdPQDmN9ep58MDkGuvU0eg7effCzH
+\restrict hIAWxlaflpWMzWlTeZltxRoumIbdj0tjlwVdXv6GDEQPPXqTdZCggzjUBv3K5lI
 
 -- Dumped from database version 18.4
 -- Dumped by pg_dump version 18.4
@@ -246,7 +246,8 @@ CREATE TABLE public.transactions (
     paid_at timestamp without time zone,
     notes text,
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    order_status character varying(30) DEFAULT 'waiting'::character varying
 );
 
 
@@ -366,6 +367,7 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 
 COPY public.admins (id, name, email, password, level, created_at) FROM stdin;
 1	Super Admin	admin@eigaming.com	$2b$10$MU4lnSXF8WRH6yd5ONkhIejh2oOu7WOCYKXHud5JcKZazP6zhVbdi	100	2026-06-24 15:38:40.43135
+2	Ei Makoto	eimakoto@admin.com	$2b$10$pBCB.9oE75fKMNTQr6bciuv2iiAQRAl/yjbyFU5AZdOmNk8qpv4fW	80	2026-06-29 22:04:11.579594
 \.
 
 
@@ -454,6 +456,10 @@ COPY public.transaction_details (id, transaction_id, game_uid, game_server, crea
 17	9	862595069	Asia	2026-06-24 14:35:28.301483
 18	10	1800080555	Asia	2026-06-24 14:38:03.877192
 19	11	1800080555	Asia	2026-06-24 14:45:18.220131
+20	12	1800080555	Asia	2026-06-29 14:47:59.297184
+21	13	862595069	Asia	2026-06-29 15:07:15.766541
+22	14	1800080555	Asia	2026-06-29 22:56:24.492802
+23	14	86295069	Asia	2026-06-29 22:56:24.504412
 \.
 
 
@@ -461,18 +467,21 @@ COPY public.transaction_details (id, transaction_id, game_uid, game_server, crea
 -- Data for Name: transactions; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.transactions (id, order_id, user_id, product_id, quantity, total_price, customer_email, customer_whatsapp, payment_type, snap_token, transaction_id_midtrans, transaction_status, fraud_status, transaction_time, settlement_time, expiry_time, paid_at, notes, created_at, updated_at) FROM stdin;
-2	TRX-GI-20260623-0002	\N	6	3	4797000	giveaway@example.com	082222222222	qris	SNAP_TOKEN_002	MIDTRANS_TX_002	settlement	accept	2026-06-22 22:56:03.628905	2026-06-22 22:56:03.628905	2026-06-22 23:11:03.628905	2026-06-22 22:56:03.628905	Giveaway komunitas	2026-06-23 22:56:03.628905	2026-06-23 22:56:03.628905
-3	TRX-HSR-20260623-0003	\N	9	1	249000	hsr@example.com	083333333333	gopay	SNAP_TOKEN_003	MIDTRANS_TX_003	pending	\N	2026-06-23 22:56:03.628905	\N	2026-06-23 23:11:03.628905	\N	Menunggu pembayaran	2026-06-23 22:56:03.628905	2026-06-23 22:56:03.628905
-4	TRX-ZZZ-20260623-0004	\N	15	1	249000	zzz@example.com	084444444444	shopeepay	SNAP_TOKEN_004	MIDTRANS_TX_004	expire	\N	2026-06-23 19:56:03.628905	\N	2026-06-23 20:11:03.628905	\N	Pembayaran expired	2026-06-23 22:56:03.628905	2026-06-23 22:56:03.628905
-5	TRX-HSR-20260623-0005	\N	12	1	1599000	trailblazer@example.com	085555555555	bank_transfer	SNAP_TOKEN_005	MIDTRANS_TX_005	cancel	\N	2026-06-23 17:56:03.628905	\N	2026-06-23 18:11:03.628905	\N	Dibatalkan user	2026-06-23 22:56:03.628905	2026-06-23 22:56:03.628905
-6	TRX-ZZZ-20260623-0006	\N	13	5	80000	event@example.com	086666666666	qris	SNAP_TOKEN_006	MIDTRANS_TX_006	settlement	accept	2026-06-23 16:56:03.628905	2026-06-23 17:56:03.628905	2026-06-23 17:11:03.628905	2026-06-23 17:56:03.628905	Event komunitas	2026-06-23 22:56:03.628905	2026-06-23 22:56:03.628905
-1	TRX-GI-20260623-0001	\N	1	1	15000	genshin1@example.com	081111111111	qris	4a211abc-ad18-48e2-8cbb-c35e9fca0fa3	MIDTEST123	settlement	accept	2026-06-21 22:56:03.628905	2026-06-24 10:00:00	2026-06-21 23:11:03.628905	2026-06-21 22:56:03.628905	Topup pribadi	2026-06-23 22:56:03.628905	2026-06-24 02:53:48.547549
-7	TRX-1782272197498	\N	1	1	15000	test@gmail.com	08123456789	qris	6166bdaf-31de-405f-9789-0ee1df141eed	e6ebb3f9-2d52-4fa4-9800-5f9e48402fbd	settlement	accept	\N	2026-06-24 10:40:33	\N	\N	Webhook Test	2026-06-24 10:36:37.522274	2026-06-24 10:40:27.959948
-8	TRX-1782286110869	\N	6	2	3198000	testcheckout@test.com	088800009999	\N	\N	\N	pending	\N	\N	\N	\N	\N	\N	2026-06-24 14:28:30.884592	2026-06-24 14:28:30.884592
-9	TRX-1782286528283	\N	6	2	3198000	testcheckout@test.com	088800009999	\N	\N	\N	pending	\N	\N	\N	\N	\N	\N	2026-06-24 14:35:28.299329	2026-06-24 14:35:28.299329
-10	TRX-1782286683756	\N	6	1	1599000	testcheckout@test.com	088800009999	\N	a3ecc7e4-d6d6-4f06-8ff8-167dff8caaa5	\N	pending	\N	\N	\N	\N	\N	\N	2026-06-24 14:38:03.875641	2026-06-24 14:38:03.875641
-11	TRX-1782287118101	\N	5	1	799000	testcheckout@test.com	088800009999	qris	96612cd8-1f34-4970-829e-f4cbcd1ba964	742d6b8d-cceb-4946-8618-b0e2818fe694	settlement	accept	\N	2026-06-24 14:46:11	\N	\N	\N	2026-06-24 14:45:18.218561	2026-06-24 14:46:05.455881
+COPY public.transactions (id, order_id, user_id, product_id, quantity, total_price, customer_email, customer_whatsapp, payment_type, snap_token, transaction_id_midtrans, transaction_status, fraud_status, transaction_time, settlement_time, expiry_time, paid_at, notes, created_at, updated_at, order_status) FROM stdin;
+2	TRX-GI-20260623-0002	\N	6	3	4797000	giveaway@example.com	082222222222	qris	SNAP_TOKEN_002	MIDTRANS_TX_002	settlement	accept	2026-06-22 22:56:03.628905	2026-06-22 22:56:03.628905	2026-06-22 23:11:03.628905	2026-06-22 22:56:03.628905	Giveaway komunitas	2026-06-23 22:56:03.628905	2026-06-23 22:56:03.628905	waiting
+3	TRX-HSR-20260623-0003	\N	9	1	249000	hsr@example.com	083333333333	gopay	SNAP_TOKEN_003	MIDTRANS_TX_003	pending	\N	2026-06-23 22:56:03.628905	\N	2026-06-23 23:11:03.628905	\N	Menunggu pembayaran	2026-06-23 22:56:03.628905	2026-06-23 22:56:03.628905	waiting
+4	TRX-ZZZ-20260623-0004	\N	15	1	249000	zzz@example.com	084444444444	shopeepay	SNAP_TOKEN_004	MIDTRANS_TX_004	expire	\N	2026-06-23 19:56:03.628905	\N	2026-06-23 20:11:03.628905	\N	Pembayaran expired	2026-06-23 22:56:03.628905	2026-06-23 22:56:03.628905	waiting
+5	TRX-HSR-20260623-0005	\N	12	1	1599000	trailblazer@example.com	085555555555	bank_transfer	SNAP_TOKEN_005	MIDTRANS_TX_005	cancel	\N	2026-06-23 17:56:03.628905	\N	2026-06-23 18:11:03.628905	\N	Dibatalkan user	2026-06-23 22:56:03.628905	2026-06-23 22:56:03.628905	waiting
+6	TRX-ZZZ-20260623-0006	\N	13	5	80000	event@example.com	086666666666	qris	SNAP_TOKEN_006	MIDTRANS_TX_006	settlement	accept	2026-06-23 16:56:03.628905	2026-06-23 17:56:03.628905	2026-06-23 17:11:03.628905	2026-06-23 17:56:03.628905	Event komunitas	2026-06-23 22:56:03.628905	2026-06-23 22:56:03.628905	waiting
+1	TRX-GI-20260623-0001	\N	1	1	15000	genshin1@example.com	081111111111	qris	4a211abc-ad18-48e2-8cbb-c35e9fca0fa3	MIDTEST123	settlement	accept	2026-06-21 22:56:03.628905	2026-06-24 10:00:00	2026-06-21 23:11:03.628905	2026-06-21 22:56:03.628905	Topup pribadi	2026-06-23 22:56:03.628905	2026-06-24 02:53:48.547549	waiting
+7	TRX-1782272197498	\N	1	1	15000	test@gmail.com	08123456789	qris	6166bdaf-31de-405f-9789-0ee1df141eed	e6ebb3f9-2d52-4fa4-9800-5f9e48402fbd	settlement	accept	\N	2026-06-24 10:40:33	\N	\N	Webhook Test	2026-06-24 10:36:37.522274	2026-06-24 10:40:27.959948	waiting
+8	TRX-1782286110869	\N	6	2	3198000	testcheckout@test.com	088800009999	\N	\N	\N	pending	\N	\N	\N	\N	\N	\N	2026-06-24 14:28:30.884592	2026-06-24 14:28:30.884592	waiting
+9	TRX-1782286528283	\N	6	2	3198000	testcheckout@test.com	088800009999	\N	\N	\N	pending	\N	\N	\N	\N	\N	\N	2026-06-24 14:35:28.299329	2026-06-24 14:35:28.299329	waiting
+10	TRX-1782286683756	\N	6	1	1599000	testcheckout@test.com	088800009999	\N	a3ecc7e4-d6d6-4f06-8ff8-167dff8caaa5	\N	pending	\N	\N	\N	\N	\N	\N	2026-06-24 14:38:03.875641	2026-06-24 14:38:03.875641	waiting
+11	TRX-1782287118101	\N	5	1	799000	testcheckout@test.com	088800009999	qris	96612cd8-1f34-4970-829e-f4cbcd1ba964	742d6b8d-cceb-4946-8618-b0e2818fe694	settlement	accept	\N	2026-06-24 14:46:11	\N	\N	\N	2026-06-24 14:45:18.218561	2026-06-24 14:46:05.455881	waiting
+12	TRX-1782719279110	\N	2	1	79000	brillianbagusajisasongko@gmail.com	085162566346	qris	f32340b0-a2ff-447a-b7e6-f27124ca29ff	9f9c8aa2-f84e-4553-a46a-d33e17f0a34e	settlement	accept	\N	2026-06-29 14:48:59	\N	\N	\N	2026-06-29 14:47:59.279411	2026-06-29 14:52:06.091016	done
+13	TRX-1782720435533	\N	3	1	249000	brillianbagusajisasongko@gmail.com	085162566346	qris	c59b08cd-1e7d-4431-bd87-6c8b74f8a025	115e95e3-86b5-4e51-b7be-c44bdda15d13	settlement	accept	\N	2026-06-29 15:07:50	\N	\N	\N	2026-06-29 15:07:15.749006	2026-06-29 15:10:57.92164	done
+14	TRX-1782748584195	\N	6	2	3198000	brillianbagusajisasongko@gmail.com	085162566346	qris	a2e06575-2b15-46aa-a8cb-4bf8378c4a39	c54f20da-23b3-4b9a-96a9-2e9af776cb9a	settlement	accept	\N	2026-06-29 22:58:05	\N	\N	\N	2026-06-29 22:56:24.467863	2026-06-29 23:01:10.474149	done
 \.
 
 
@@ -482,6 +491,7 @@ COPY public.transactions (id, order_id, user_id, product_id, quantity, total_pri
 
 COPY public.users (id, name, email, password, created_at) FROM stdin;
 1	Jane Doe	janedoe@test.id	janedoe1	2026-06-20 15:30:18.056393
+2	Brillian Bagus Aji Sasongko	brillianbagusajisasongko@gmail.com	$2b$10$qRmbLZpBKEGRbuj10Ya38.DALXV/IVcu5I2G2vodT.HMDFJZg6qRu	2026-06-29 15:04:35.661679
 \.
 
 
@@ -489,7 +499,7 @@ COPY public.users (id, name, email, password, created_at) FROM stdin;
 -- Name: admins_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.admins_id_seq', 1, true);
+SELECT pg_catalog.setval('public.admins_id_seq', 2, true);
 
 
 --
@@ -517,21 +527,21 @@ SELECT pg_catalog.setval('public.products_id_seq', 18, true);
 -- Name: transaction_details_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.transaction_details_id_seq', 19, true);
+SELECT pg_catalog.setval('public.transaction_details_id_seq', 23, true);
 
 
 --
 -- Name: transactions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.transactions_id_seq', 11, true);
+SELECT pg_catalog.setval('public.transactions_id_seq', 14, true);
 
 
 --
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.users_id_seq', 1, true);
+SELECT pg_catalog.setval('public.users_id_seq', 2, true);
 
 
 --
@@ -674,5 +684,5 @@ ALTER TABLE ONLY public.transactions
 -- PostgreSQL database dump complete
 --
 
-\unrestrict PiP2BnEe9h2Oi0TIV8wldy77ghfYalSxNvtdPQDmN9ep58MDkGuvU0eg7effCzH
+\unrestrict hIAWxlaflpWMzWlTeZltxRoumIbdj0tjlwVdXv6GDEQPPXqTdZCggzjUBv3K5lI
 
