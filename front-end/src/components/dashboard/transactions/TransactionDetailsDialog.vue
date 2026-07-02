@@ -30,26 +30,22 @@
 
             <div class="detail-item">
 
-  <span> Payment Status </span>
+              <span> Payment Status </span>
 
-  <q-badge
-    :color="getPaymentStatusColor(transaction.transaction_status)"
-  >
-    {{ transaction.transaction_status || '-' }}
-  </q-badge>
+              <q-badge :color="getPaymentStatusColor(transaction.transaction_status)">
+                {{ transaction.transaction_status || '-' }}
+              </q-badge>
 
-</div>
-<div class="detail-item">
+            </div>
+            <div class="detail-item">
 
-  <span> Order Status </span>
+              <span> Order Status </span>
 
-  <q-badge
-    :color="getOrderStatusColor(transaction.order_status)"
-  >
-    {{ transaction.order_status || '-' }}
-  </q-badge>
+              <q-badge :color="getOrderStatusColor(transaction.order_status)">
+                {{ transaction.order_status || '-' }}
+              </q-badge>
 
-</div>
+            </div>
 
             <div class="detail-item">
               <span> Payment Type </span>
@@ -161,7 +157,14 @@
           </q-table>
         </q-card-section>
       </template>
+      <q-separator />
 
+      <q-card-section v-if="transaction.transaction_status === 'pending'">
+
+        <q-btn unelevated color="accent" icon="payments" label="Bayar Sekarang" class="full-width"
+          :loading="paymentLoading" @click="payNow" />
+
+      </q-card-section>
       <q-card-actions align="right">
         <q-btn flat label="Close" v-close-popup />
       </q-card-actions>
@@ -173,6 +176,56 @@
 import { ref, watch } from 'vue'
 
 import api from 'src/axios'
+
+const paymentLoading = ref(false)
+
+const payNow = async () => {
+
+  try {
+
+    paymentLoading.value = true
+
+    const response =
+      await api.get(
+        `/api/payments/snap/${transaction.value.order_id}`
+      )
+
+    window.snap.pay(
+      response.data.token,
+      {
+
+        onSuccess() {
+
+          loadTransaction()
+
+        },
+
+        onPending() {
+
+          loadTransaction()
+
+        },
+
+        onClose() {
+
+          paymentLoading.value = false
+
+        }
+
+      }
+    )
+
+  } catch (error) {
+
+    console.error(error)
+
+  } finally {
+
+    paymentLoading.value = false
+
+  }
+
+}
 
 const props = defineProps({
   modelValue: Boolean,

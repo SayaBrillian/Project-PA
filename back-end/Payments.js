@@ -110,9 +110,9 @@ router.post("/webhook", async (req, res) => {
     const transaction = transactionResult.rows[0];
     if (transaction.transaction_status === "settlement") {
 
-    console.log("Settlement terdeteksi, mengirim email...");
+      console.log("Settlement terdeteksi, mengirim email...");
 
-    await sendTransactionEmail({
+      await sendTransactionEmail({
 
         to: transaction.customer_email,
 
@@ -130,9 +130,9 @@ router.post("/webhook", async (req, res) => {
 
         status: transaction.transaction_status,
 
-    });
+      });
 
-    console.log("Email berhasil dikirim.");
+      console.log("Email berhasil dikirim.");
 
       try {
         const response = await axios.post(
@@ -171,10 +171,10 @@ router.post("/webhook", async (req, res) => {
       } catch (error) {
         console.error("WhatsApp Error:", error.response?.data || error.message);
       }
-console.log("Start Dummy Delivery:", transaction.id);
+      console.log("Start Dummy Delivery:", transaction.id);
 
-startDummyDelivery(transaction.id);
-}
+      startDummyDelivery(transaction.id);
+    }
     res.status(200).json({
       success: true,
       transaction: result.rows[0],
@@ -187,4 +187,53 @@ startDummyDelivery(transaction.id);
     });
   }
 });
+
+router.get(
+  "/snap/:orderId",
+  async (req, res) => {
+
+    try {
+
+      const { orderId } = req.params
+
+      const result = await db.query(
+        `
+        SELECT snap_token
+        FROM transactions
+        WHERE order_id = $1
+        `,
+        [orderId]
+      )
+
+      if (result.rows.length === 0) {
+
+        return res.status(404).json({
+          success: false,
+          message: "Transaksi tidak ditemukan"
+        })
+
+      }
+
+      res.json({
+
+        success: true,
+
+        token: result.rows[0].snap_token
+
+      })
+
+    } catch (error) {
+
+      res.status(500).json({
+
+        success: false,
+
+        message: error.message
+
+      })
+
+    }
+
+  }
+)
 export default router;
