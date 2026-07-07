@@ -110,70 +110,12 @@ router.post("/webhook", async (req, res) => {
     const transaction = transactionResult.rows[0];
     if (transaction.transaction_status === "settlement") {
 
-      console.log("Settlement terdeteksi, mengirim email...");
+      console.log("Settlement diterima");
 
-      await sendTransactionEmail({
-
-        to: transaction.customer_email,
-
-        customerName: "Customer",
-
-        orderId: transaction.order_id,
-
-        gameName: transaction.game_name,
-
-        productName: transaction.product_name,
-
-        quantity: transaction.quantity,
-
-        totalPrice: transaction.total_price,
-
-        status: transaction.transaction_status,
-
-      });
-
-      console.log("Email berhasil dikirim.");
-
-      try {
-        const response = await axios.post(
-          "https://api.fonnte.com/send",
-
-          {
-            target: transaction.customer_whatsapp,
-
-            message: `🎮 EI Gaming Store
-            Pembayaran Anda berhasil.
-            ━━━━━━━━━━━━━━━
-            Order ID
-            ${transaction.order_id}
-            Game
-            ${transaction.game_name}
-            Produk
-            ${transaction.product_name}
-            Jumlah
-            ${transaction.quantity}
-            Total
-            Rp ${Number(transaction.total_price).toLocaleString("id-ID")}
-            Status
-            ${transaction.transaction_status}
-            ━━━━━━━━━━━━━━━
-            Terima kasih telah berbelanja di
-            EI Gaming Store ❤️`,
-          },
-          {
-            headers: {
-              Authorization: process.env.FONNTE_TOKEN,
-            },
-          },
-        );
-        console.log("WhatsApp berhasil dikirim.");
-        console.log(response.data);
-      } catch (error) {
-        console.error("WhatsApp Error:", error.response?.data || error.message);
-      }
       console.log("Start Dummy Delivery:", transaction.id);
 
       startDummyDelivery(transaction.id);
+
     }
     res.status(200).json({
       success: true,
