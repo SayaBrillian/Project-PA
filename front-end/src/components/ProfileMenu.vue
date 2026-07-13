@@ -2,18 +2,9 @@
 
   <div class="profile-wrapper">
 
-    <q-btn
-      round
-      flat
-      class="profile-btn"
-      @mouseenter="openMenu"
-    >
+    <q-btn round flat class="profile-btn" @mouseenter="openMenu">
 
-      <q-avatar
-        size="38px"
-        color="accent"
-        text-color="white"
-      >
+      <q-avatar size="38px" color="accent" text-color="white">
 
         <template v-if="isLoggedIn">
 
@@ -25,9 +16,7 @@
 
         <template v-else>
 
-          <q-icon
-            name="person"
-          />
+          <q-icon name="person" />
 
         </template>
 
@@ -35,19 +24,8 @@
 
     </q-btn>
 
-    <q-menu
-      v-model="showMenu"
-      anchor="bottom right"
-      self="top right"
-      :offset="[0,12]"
-      no-focus
-      no-refocus
-      persistent
-      transition-show="jump-down"
-      transition-hide="jump-up"
-      @mouseenter="openMenu"
-      @mouseleave="closeMenu"
-    >
+    <q-menu v-model="showMenu" anchor="bottom right" self="top right" :offset="[0, 12]" no-focus no-refocus persistent
+      transition-show="jump-down" transition-hide="jump-up" @mouseenter="openMenu" @mouseleave="closeMenu">
 
       <q-card class="profile-card">
 
@@ -55,15 +33,9 @@
 
         <template v-if="!isLoggedIn">
 
-          <q-card-section
-            class="guest-section"
-          >
+          <q-card-section class="guest-section">
 
-            <q-avatar
-              size="72px"
-              color="accent"
-              text-color="white"
-            >
+            <q-avatar size="72px" color="accent" text-color="white">
               ?
             </q-avatar>
 
@@ -77,32 +49,17 @@
 
           </q-card-section>
 
-          <q-card-actions
-            vertical
-            class="q-pa-md"
-          >
+          <q-card-actions vertical class="q-pa-md">
 
-            <q-btn
-              unelevated
-              color="accent"
-              label="Masuk"
-              class="full-width"
-              @click="
-                authStep = 'role';
-                showAuth = true
-              "
-            />
+            <q-btn unelevated color="accent" label="Masuk" class="full-width" @click="
+              authStep = 'role';
+            showAuth = true
+              " />
 
-            <q-btn
-              flat
-              color="white"
-              label="Daftar"
-              class="full-width q-mt-sm"
-              @click="
-                authStep = 'register';
-                showAuth = true
-              "
-            />
+            <q-btn flat color="white" label="Daftar" class="full-width q-mt-sm" @click="
+              authStep = 'register';
+            showAuth = true
+              " />
 
           </q-card-actions>
 
@@ -112,15 +69,9 @@
 
         <template v-else>
 
-          <q-card-section
-            class="profile-header"
-          >
+          <q-card-section class="profile-header">
 
-            <q-avatar
-              size="64px"
-              color="accent"
-              text-color="white"
-            >
+            <q-avatar size="64px" color="accent" text-color="white">
               {{
                 user?.name?.charAt(0)
               }}
@@ -136,10 +87,7 @@
                 {{ user?.email }}
               </div>
 
-              <q-badge
-                class="role-badge"
-                color="primary"
-              >
+              <q-badge class="role-badge" color="primary">
                 {{ roleLabel }}
               </q-badge>
 
@@ -151,16 +99,10 @@
 
           <q-list class="menu-list">
 
-            <q-item
-              clickable
-              v-close-popup
-              :to="dashboardRoute"
-            >
+            <q-item clickable v-close-popup :to="dashboardRoute">
 
               <q-item-section avatar>
-                <q-icon
-                  name="dashboard"
-                />
+                <q-icon name="dashboard" />
               </q-item-section>
 
               <q-item-section>
@@ -169,15 +111,10 @@
 
             </q-item>
 
-            <q-item
-              clickable
-              v-close-popup
-            >
+            <q-item clickable v-close-popup>
 
               <q-item-section avatar>
-                <q-icon
-                  name="person"
-                />
+                <q-icon name="person" />
               </q-item-section>
 
               <q-item-section>
@@ -186,23 +123,13 @@
 
             </q-item>
 
-            <q-separator
-              dark
-              inset
-            />
+            <q-separator dark inset />
 
-            <q-item
-              clickable
-              v-close-popup
-              class="logout-item"
-              @click="logout"
-            >
+            <q-item clickable v-close-popup class="logout-item" @click="logout">
 
               <q-item-section avatar>
 
-                <q-icon
-                  name="logout"
-                />
+                <q-icon name="logout" />
 
               </q-item-section>
 
@@ -224,11 +151,7 @@
 
   </div>
 
-  <AuthModal
-    v-model="showAuth"
-    :initial-step="authStep"
-    @login-success="handleLoginSuccess"
-  />
+  <AuthModal v-model="showAuth" :initial-step="authStep" @login-success="handleLoginSuccess" />
 
 </template>
 
@@ -424,7 +347,6 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-
 .profile-wrapper {
   display: flex;
   align-items: center;
@@ -459,26 +381,20 @@ onMounted(() => {
   overflow: hidden;
 
   background:
-    linear-gradient(
-      135deg,
-      rgba($dark,.97),
-      rgba($secondary,.92)
-    );
+    linear-gradient(135deg,
+      rgba($dark, .97),
+      rgba($secondary, .92));
 
   backdrop-filter: blur(20px);
 
-  border: 1px solid rgba(
-    $sakura,
-    .15
-  );
+  border: 1px solid rgba($sakura,
+      .15);
 
   box-shadow:
-    0 20px 50px rgba(
+    0 20px 50px rgba(0,
       0,
       0,
-      0,
-      .35
-    );
+      .35);
 }
 
 /*
@@ -509,12 +425,10 @@ onMounted(() => {
 .guest-subtitle {
   margin-top: 8px;
 
-  color: rgba(
-    255,
-    255,
-    255,
-    .65
-  );
+  color: rgba(255,
+      255,
+      255,
+      .65);
 
   font-size: .9rem;
 }
@@ -553,12 +467,10 @@ onMounted(() => {
 .profile-email {
   font-size: .85rem;
 
-  color: rgba(
-    255,
-    255,
-    255,
-    .65
-  );
+  color: rgba(255,
+      255,
+      255,
+      .65);
 
   word-break: break-all;
 }
@@ -595,10 +507,8 @@ onMounted(() => {
 }
 
 :deep(.q-item:hover) {
-  background: rgba(
-    $sakura,
-    .08
-  );
+  background: rgba($sakura,
+      .08);
 
   transform: translateX(4px);
 }
@@ -608,12 +518,10 @@ onMounted(() => {
 }
 
 :deep(.q-item .q-icon) {
-  color: rgba(
-    255,
-    255,
-    255,
-    .8
-  );
+  color: rgba(255,
+      255,
+      255,
+      .8);
 }
 
 /*
@@ -639,5 +547,4 @@ onMounted(() => {
 :deep(.q-menu) {
   overflow: visible;
 }
-
 </style>

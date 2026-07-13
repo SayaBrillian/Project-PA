@@ -8,7 +8,7 @@ const sendTransactionEmail = async ({ to, customerName, orderId, gameName, produ
 
       to,
 
-      subject: `Pembayaran ${status} • ${orderId}`,
+      subject: `Pengiriman Top Up  ${status} • ${orderId}`,
 
       html: transactionTemplate({
         customerName,

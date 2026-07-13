@@ -1,1 +1,69 @@
-// app global css
+@use 'quasar.variables' as *;
+
+// ======================================================
+// EI Gaming Store Theme Variables
+// ======================================================
+
+body.body--dark {
+  // Background
+  --app-bg: #{$dark-bg};
+  --app-surface: #{$dark-surface};
+  --app-surface-2: #{$dark-surface-2};
+
+  // Text
+  --app-text: #{$dark-text};
+  --app-text-secondary: #{$dark-text-secondary};
+
+  // Brand
+  --app-primary: #{$primary};
+  --app-secondary: #{$secondary};
+  --app-accent: #{$accent};
+  --app-sakura: #{$sakura};
+
+  // Utility
+  --app-border: #{$dark-border};
+  --app-shadow: #{$dark-shadow};
+}
+
+body.body--light {
+  // Background
+  --app-bg: #{$light-bg};
+  --app-surface: #{$light-surface};
+  --app-surface-2: #{$light-surface-2};
+
+  // Text
+  --app-text: #{$light-text};
+  --app-text-secondary: #{$light-text-secondary};
+
+  // Brand
+  --app-primary: #{$primary};
+  --app-secondary: #{$secondary};
+  --app-accent: #{$accent};
+  --app-sakura: #{$sakura};
+
+  // Utility
+  --app-border: #{$light-border};
+  --app-shadow: #{$light-shadow};
+}
+
+// ======================================================
+// Global
+// ======================================================
+
+html,
+body,
+#q-app {
+  background: var(--app-bg);
+  color: var(--app-text);
+
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+
+* {
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease;
+}

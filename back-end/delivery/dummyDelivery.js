@@ -5,15 +5,15 @@ import axios from "axios";
 const deliverySteps = [
   {
     status: "processing",
-    delay: 10 * 1000,
+    delay: 15 * 1000,
   },
   {
     status: "sending",
-    delay: 20 * 1000,
+    delay: 30 * 1000,
   },
   {
     status: "done",
-    delay: 30 * 1000,
+    delay: 45 * 1000,
   },
 ];
 

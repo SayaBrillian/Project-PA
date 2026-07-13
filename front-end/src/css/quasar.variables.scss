@@ -1,16 +1,52 @@
-// quasar.variables.sass — Tema Inazuma
-// Dibuat dengan pemilih warna Inazuma
+// ==========================================
+// EI Gaming Store Theme
+// Inazuma Inspired
+// ==========================================
 
+// ---------- Brand Color ----------
 $primary: #7b4fa6;
 $secondary: #4a2d7a;
 $accent: #e8b84b;
 
+$sakura: #f4c2d7;
+
+// ---------- Semantic ----------
 $positive: #4caf82;
 $negative: #c94040;
 $info: #4a7fa5;
 $warning: #f0a830;
 
-$dark: #1a1228;
-$dark-page: #100c1a;
+// ==========================================
+// Dark Theme Palette
+// ==========================================
 
-$sakura: #f4c2d7;
+$dark-bg: #100c1a;
+$dark-surface: #1a1228;
+$dark-surface-2: #231738;
+
+$dark-text: #ffffff;
+$dark-text-secondary: #d5cfdf;
+
+$dark-border: rgba(255, 255, 255, 0.08);
+$dark-shadow: rgba(0, 0, 0, 0.35);
+
+// ==========================================
+// Light Theme Palette
+// ==========================================
+
+$light-bg: #f6f5fb;
+$light-surface: #ffffff;
+$light-surface-2: #f0edf7;
+
+$light-text: #2f2438;
+$light-text-secondary: #6c6277;
+
+$light-border: rgba(0, 0, 0, 0.08);
+$light-shadow: rgba(0, 0, 0, 0.12);
+
+// ==========================================
+// Quasar Compatibility
+// ==========================================
+
+$dark: $dark-surface;
+$dark-page: $dark-bg;
