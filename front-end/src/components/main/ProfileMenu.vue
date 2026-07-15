@@ -6,9 +6,9 @@
     <div class="profile-wrapper">
 
       <q-btn round flat class="profile-btn">
-        <q-avatar size="38px" color="accent" class="profile-avatar">
+        <q-avatar size="38px" color="primary" text-color="white" class="profile-avatar">
           <template v-if="isLoggedIn">
-            {{ user?.name?.charAt(0) }}
+            {{ avatarLetter }}
           </template>
 
           <template v-else>
@@ -21,7 +21,6 @@
 
           <q-card class="profile-card">
 
-            <!-- Theme -->
             <!-- Theme -->
             <q-item class="theme-item">
 
@@ -93,8 +92,8 @@
               <!-- User Information -->
               <q-card-section class="profile-header">
 
-                <q-avatar size="64px" color="accent" text-color="white">
-                  {{ user?.name?.charAt(0) }}
+                <q-avatar size="64px" color="primary" text-color="white" class="profile-avatar profile-avatar-lg">
+                  {{ avatarLetter }}
                 </q-avatar>
 
                 <div class="profile-info">
@@ -181,7 +180,7 @@
       <q-btn flat stack no-caps icon="account_circle" label="Profile" class="mobile-nav-link"
         @click="showDialog = true" />
 
-      <!-- Drawer -->
+      <!-- Dialog -->
       <q-dialog v-model="showDialog" position="bottom">
 
         <q-card class="mobile-profile-card">
@@ -206,7 +205,6 @@
 
           <q-separator />
 
-          <!-- Guest -->
           <!-- GUEST -->
           <template v-if="!isLoggedIn">
 
@@ -230,13 +228,13 @@
             <q-card-actions vertical class="guest-actions">
 
               <q-btn unelevated color="accent" label="Masuk" class="full-width" @click="
-                showDrawer = false;
+                showDialog = false;
               authStep = 'role';
               showAuth = true;
               " />
 
               <q-btn flat label="Daftar" class="full-width q-mt-sm" @click="
-                showDrawer = false;
+                showDialog = false;
               authStep = 'register';
               showAuth = true;
               " />
@@ -249,7 +247,7 @@
 
             <q-list class="menu-list">
 
-              <q-item clickable :to="'/help'" @click="showDrawer = false">
+              <q-item clickable :to="'/help'" @click="showDialog = false">
 
                 <q-item-section avatar>
                   <q-icon name="help" />
@@ -261,7 +259,7 @@
 
               </q-item>
 
-              <q-item clickable :to="'/about'" @click="showDrawer = false">
+              <q-item clickable :to="'/about'" @click="showDialog = false">
 
                 <q-item-section avatar>
                   <q-icon name="info" />
@@ -284,8 +282,8 @@
             <!-- User Information -->
             <q-card-section class="profile-header">
 
-              <q-avatar size="64px" color="accent" text-color="white">
-                {{ user?.name?.charAt(0) }}
+              <q-avatar size="64px" color="primary" text-color="white" class="profile-avatar profile-avatar-lg">
+                {{ avatarLetter }}
               </q-avatar>
 
               <div class="profile-info">
@@ -312,7 +310,7 @@
 
               <!-- Dashboard -->
 
-              <q-item clickable :to="dashboardRoute" @click="showDrawer = false">
+              <q-item clickable :to="dashboardRoute" @click="showDialog = false">
 
                 <q-item-section avatar>
                   <q-icon name="dashboard" />
@@ -326,7 +324,7 @@
 
               <!-- Profile -->
 
-              <q-item clickable @click="showDrawer = false">
+              <q-item clickable @click="showDialog = false">
 
                 <q-item-section avatar>
                   <q-icon name="person" />
@@ -342,7 +340,7 @@
 
               <!-- Help -->
 
-              <q-item clickable to="/help" @click="showDrawer = false">
+              <q-item clickable to="/help" @click="showDialog = false">
 
                 <q-item-section avatar>
                   <q-icon name="help" />
@@ -356,7 +354,7 @@
 
               <!-- About -->
 
-              <q-item clickable to="/about" @click="showDrawer = false">
+              <q-item clickable to="/about" @click="showDialog = false">
 
                 <q-item-section avatar>
                   <q-icon name="info" />
@@ -373,7 +371,7 @@
               <!-- Logout -->
 
               <q-item clickable class="logout-item" @click="
-                showDrawer = false;
+                showDialog = false;
               logout();
               ">
 
@@ -399,8 +397,7 @@
 
   </template>
 
-  <AuthModal v-model="showAuth" :initial-step="authStep" @login-success="handleLoginSuccess" />
-
+  <component :is="AuthModal" v-model="showAuth" :initial-step="authStep" @login-success="handleLoginSuccess" />
 
 </template>
 
@@ -421,7 +418,17 @@ import {
 
 import api from 'src/axios'
 
-import AuthModal from './AuthModalDesktop.vue'
+import AuthModalDesktop from './AuthModalDesktop.vue'
+import AuthModalMobile from './AuthModalMobile.vue'
+
+const AuthModal =
+  computed(() =>
+
+    $q.screen.gt.sm
+      ? AuthModalDesktop
+      : AuthModalMobile
+
+  )
 
 const router =
   useRouter()
@@ -544,6 +551,25 @@ const toggleTheme =
 
   }
 
+const avatarLetter =
+  computed(() => {
+
+    const text =
+
+      user.value?.name ||
+
+      user.value?.username ||
+
+      user.value?.email ||
+
+      ''
+
+    return text
+      ? text.charAt(0).toUpperCase()
+      : 'P'
+
+  })
+
 /*
 |--------------------------------------------------------------------------
 | AUTH
@@ -556,73 +582,82 @@ async function loadAuth() {
 
     const auth =
       JSON.parse(
-        localStorage.getItem(
-          'auth'
-        )
+        localStorage.getItem('auth')
       )
 
-    if (
-      !auth?.token
-    ) {
+    if (!auth?.token) {
+
+      user.value = null
+
+      isLoggedIn.value = false
 
       return
 
     }
 
-    await api.get(
-      '/api/auth/me'
-    )
+    let response
 
-    user.value = {
-      ...auth.data,
-      type: auth.type,
+    if (auth.type === 'user') {
+
+      response =
+        await api.get('/api/user/me')
+
+      user.value = response.data.user
+
+    } else if (auth.type === 'admin') {
+
+      response =
+        await api.get('/api/admin/me')
+
+      user.value = response.data.admin
+
+    } else {
+
+      throw new Error('Tipe akun tidak valid')
+
     }
 
-    isLoggedIn.value =
-      true
+    isLoggedIn.value = true
 
   } catch (error) {
 
-    console.error(
-      error
-    )
+    console.error(error)
 
-    localStorage.removeItem(
-      'auth'
-    )
+    localStorage.removeItem('auth')
 
-    user.value =
-      null
+    user.value = null
 
-    isLoggedIn.value =
-      false
+    isLoggedIn.value = false
 
   }
 
 }
 
-const logout =
-  () => {
+/*
+|--------------------------------------------------------------------------
+| LOGOUT
+|--------------------------------------------------------------------------
+*/
 
-    localStorage.removeItem(
-      'auth'
-    )
+function logout() {
 
-    user.value =
-      null
+  localStorage.removeItem('auth')
 
-    isLoggedIn.value =
-      false
+  user.value = null
 
-    showMenu.value =
-      false
+  isLoggedIn.value = false
 
-    showDialog.value =
-      false
+  showMenu.value = false
 
-    router.push('/')
+  showDialog.value = false
 
-  }
+  authStep.value = 'role'
+
+  showAuth.value = false
+
+  router.replace('/')
+
+}
 
 const handleLoginSuccess =
   () => {
@@ -682,8 +717,20 @@ onMounted(() => {
   color: var(--app-text-secondary);
 }
 
-.mobile-nav-link--active {
-  color: var(--app-primary);
+/*
+|--------------------------------------------------------------------------
+| PROFILE AVATAR
+|--------------------------------------------------------------------------
+*/
+
+.profile-avatar {
+  font-weight: 700;
+
+  user-select: none;
+}
+
+.profile-avatar-lg {
+  font-size: 1.5rem;
 }
 
 /*
@@ -738,23 +785,6 @@ onMounted(() => {
 
 :deep(.q-dialog__inner--bottom) {
   padding: 0;
-}
-
-/*
-|--------------------------------------------------------------------------
-| SHEET HANDLE
-|--------------------------------------------------------------------------
-*/
-
-.sheet-handle {
-  width: 48px;
-  height: 5px;
-
-  margin: 12px auto;
-
-  border-radius: 999px;
-
-  background: var(--app-border);
 }
 
 /*

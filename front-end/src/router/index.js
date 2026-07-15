@@ -32,21 +32,61 @@ export default defineRouter((/* { store, ssrContext } */) => {
     // quasar.conf.js -> build -> publicPath
     history: createHistory(process.env.VUE_ROUTER_BASE),
   })
-  Router.beforeEach((to, from, next) => {
-    const auth = JSON.parse(
-      localStorage.getItem('auth')
-    )
 
-    console.log('AUTH', auth)
+  Router.beforeEach((to, from, next) => {
+
+    const auth =
+      JSON.parse(
+        localStorage.getItem('auth')
+      )
+
+    /*
+    |--------------------------------------------------------------------------
+    | BELUM LOGIN
+    |--------------------------------------------------------------------------
+    */
 
     if (
       to.meta.requiresAuth &&
       !auth?.token
     ) {
+
       return next('/')
+
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | ADMIN ONLY
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+      to.meta.requiresAdmin &&
+      auth?.type !== 'admin'
+    ) {
+
+      return next('/user')
+
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | USER ONLY
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+      to.meta.requiresUser &&
+      auth?.type !== 'user'
+    ) {
+
+      return next('/dashboard')
+
     }
 
     next()
+
   })
   return Router
 })

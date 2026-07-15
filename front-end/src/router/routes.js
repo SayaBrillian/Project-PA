@@ -35,6 +35,7 @@ const routes = [
     component: () => import('layouts/DashboardLayout.vue'),
     meta: {
       requiresAuth: true,
+      requiresAdmin: true,
     },
     children: [
       {
@@ -76,6 +77,7 @@ const routes = [
     component: () => import('layouts/UserLayout.vue'),
     meta: {
       requiresAuth: true,
+      requiresUser: true,
     },
     children: [
       {

@@ -2,16 +2,22 @@
   <q-dialog v-model="modelValue" backdrop-filter="blur(8px)" transition-show="fade" transition-hide="fade">
     <q-card class="auth-card">
 
-      <!-- Close -->
-      <q-btn flat round dense icon="close" class="close-btn" @click="modelValue = false" />
-
       <!-- ROLE -->
       <template v-if="step === 'role'">
 
         <q-card-section class="auth-header">
 
-          <div class="auth-title">
-            Login as
+          <div class="auth-header-top">
+
+            <!-- Placeholder supaya judul tetap center -->
+            <div class="header-placeholder"></div>
+
+            <div class="auth-title">
+              Login
+            </div>
+
+            <q-btn flat round dense icon="close" class="header-btn" @click="modelValue = false" />
+
           </div>
 
           <div class="auth-subtitle">
@@ -51,19 +57,17 @@
 
         <q-card-section class="auth-header">
 
-          <div class="auth-header-actions">
+          <div class="auth-header-top">
 
-            <q-btn flat round dense icon="arrow_back" class="header-btn" @click="step = 'role'" />
+            <q-btn flat round dense icon="arrow_back" class="header-btn" @click="goBack" />
 
-            <q-space />
+            <div class="auth-title">
+
+              {{ page.title }}
+
+            </div>
 
             <q-btn flat round dense icon="close" class="header-btn" @click="modelValue = false" />
-
-          </div>
-
-          <div class="auth-title">
-
-            {{ page.title }}
 
           </div>
 
@@ -75,11 +79,16 @@
 
         </q-card-section>
 
-        <LoginUserForm v-if="step === 'login-user'" @login-success="handleLoginSuccess" @change-step="step = $event" />
+        <div class="auth-body">
 
-        <RegisterUserForm v-else-if="step === 'register'" @change-step="step = $event" />
+          <LoginUserForm v-if="step === 'login-user'" @login-success="handleLoginSuccess"
+            @change-step="step = $event" />
 
-        <LoginAdminForm v-else-if="step === 'login-admin'" @login-success="handleLoginSuccess" />
+          <RegisterUserForm v-else-if="step === 'register'" @change-step="step = $event" />
+
+          <LoginAdminForm v-else-if="step === 'login-admin'" @login-success="handleLoginSuccess" />
+
+        </div>
 
       </template>
 
@@ -170,15 +179,17 @@ watch(
 
 watch(
 
-  () =>
-    props.modelValue,
+  () => props.modelValue,
 
   value => {
 
     if (value) {
 
-      step.value =
-        props.initialStep
+      step.value = props.initialStep
+
+    } else {
+
+      step.value = 'role'
 
     }
 
@@ -236,18 +247,48 @@ const page =
 
 /*
 |--------------------------------------------------------------------------
+| NAVIGATION
+|--------------------------------------------------------------------------
+*/
+
+function goBack() {
+
+  switch (step.value) {
+
+    case 'register':
+      step.value = 'login-user'
+      break
+
+    case 'login-user':
+      step.value = 'role'
+      break
+
+    case 'login-admin':
+      step.value = 'role'
+      break
+
+    default:
+      step.value = 'role'
+
+  }
+
+}
+
+/*
+|--------------------------------------------------------------------------
 | AUTH
 |--------------------------------------------------------------------------
 */
 
 function handleLoginSuccess() {
 
+  modelValue.value = false
+
+  step.value = 'role'
+
   emit(
     'login-success',
   )
-
-  modelValue.value =
-    false
 
 }
 </script>
@@ -260,10 +301,13 @@ function handleLoginSuccess() {
 */
 
 .auth-card {
-  position: relative;
+  display: flex;
+  flex-direction: column;
 
   width: 100%;
   max-width: 420px;
+
+  max-height: 90vh;
 
   overflow: hidden;
 
@@ -278,44 +322,25 @@ function handleLoginSuccess() {
 
 /*
 |--------------------------------------------------------------------------
-| CLOSE BUTTON
-|--------------------------------------------------------------------------
-*/
-
-.close-btn {
-  position: absolute;
-
-  top: 12px;
-  right: 12px;
-
-  z-index: 10;
-
-  color: var(--app-text-secondary);
-
-  transition:
-    background-color .2s ease,
-    color .2s ease;
-}
-
-.close-btn:hover {
-  background: var(--app-hover);
-
-  color: var(--app-text);
-}
-
-/*
-|--------------------------------------------------------------------------
 | HEADER
 |--------------------------------------------------------------------------
 */
 
 .auth-header {
-  padding: 28px 24px 8px;
+  padding: 24px 24px 12px;
+}
 
-  text-align: center;
+.auth-header-top {
+  display: grid;
+
+  grid-template-columns: 40px 1fr 40px;
+
+  align-items: center;
 }
 
 .auth-title {
+  text-align: center;
+
   font-size: 1.5rem;
   font-weight: 700;
 
@@ -323,12 +348,35 @@ function handleLoginSuccess() {
 }
 
 .auth-subtitle {
-  margin-top: 8px;
+  margin-top: 10px;
+
+  text-align: center;
 
   font-size: .9rem;
+
   line-height: 1.5;
 
   color: var(--app-text-secondary);
+}
+
+.header-btn {
+  color: var(--app-text-secondary);
+
+  transition:
+    color .2s ease,
+    background-color .2s ease;
+}
+
+.header-btn:hover {
+  color: var(--app-primary);
+
+  background: var(--app-hover);
+}
+
+.auth-body {
+  flex: 1;
+
+  overflow-y: auto;
 }
 
 /*
@@ -373,7 +421,9 @@ function handleLoginSuccess() {
 .role-card:hover {
   background: var(--app-hover);
 
-  transform: translateY(-3px);
+  border-color: var(--app-primary);
+
+  transform: translateY(-2px);
 }
 
 .role-card:active {
@@ -383,7 +433,7 @@ function handleLoginSuccess() {
 }
 
 .role-icon {
-  font-size: 56px;
+  font-size: 48px;
 
   color: var(--app-primary);
 }
@@ -408,20 +458,6 @@ function handleLoginSuccess() {
   gap: 16px;
 
   padding: 20px 24px;
-}
-
-/*
-|--------------------------------------------------------------------------
-| ACTIONS
-|--------------------------------------------------------------------------
-*/
-
-.auth-actions {
-  padding: 20px 24px 24px;
-}
-
-.auth-back-btn {
-  margin-top: 8px;
 }
 
 /*

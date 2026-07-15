@@ -1,99 +1,103 @@
 <template>
-    <q-dialog v-model="modelValue" position="bottom" backdrop-filter="blur(8px)" transition-show="slide-up"
-        transition-hide="slide-down">
-        <q-card class="auth-card-mobile">
+  <q-dialog v-model="modelValue" position="bottom" backdrop-filter="blur(8px)" transition-show="slide-up"
+    transition-hide="slide-down">
+    <q-card class="auth-card-mobile">
+      <!-- ROLE -->
+      <template v-if="step === 'role'">
 
-            <!-- Close -->
-            <q-btn flat round dense icon="close" class="close-btn" @click="modelValue = false" />
+        <q-card-section class="auth-header">
 
-            <!-- ROLE -->
-            <template v-if="step === 'role'">
+          <div class="auth-header-top">
 
-                <q-card-section class="auth-header">
+            <div class="header-placeholder"></div>
 
-                    <div class="auth-title">
-                        Login as
-                    </div>
+            <div class="auth-title">
+              Login
+            </div>
 
-                    <div class="auth-subtitle">
-                        Pilih jenis akun yang akan digunakan
-                    </div>
+            <q-btn flat round dense icon="close" class="header-btn" @click="modelValue = false" />
 
-                </q-card-section>
+          </div>
 
-                <q-card-section class="role-grid">
+          <div class="auth-subtitle">
+            Pilih jenis akun yang akan digunakan
+          </div>
 
-                    <div class="role-card" @click="step = 'login-user'">
+        </q-card-section>
+        <q-card-section class="role-grid">
 
-                        <q-icon name="person" size="36px" class="role-icon" />
+          <div class="role-card" @click="step = 'login-user'">
 
-                        <div class="text-subtitle1 text-weight-medium">
-                            User
-                        </div>
+            <q-icon name="person" class="role-icon" />
 
-                    </div>
+            <div class="role-title">
+              User
+            </div>
 
-                    <div class="role-card" @click="step = 'login-admin'">
+          </div>
 
-                        <q-icon name="admin_panel_settings" size="36px" class="role-icon" />
+          <div class="role-card" @click="step = 'login-admin'">
 
-                        <div class="text-subtitle1 text-weight-medium">
-                            Admin
-                        </div>
+            <q-icon name="admin_panel_settings" class="role-icon" />
 
-                    </div>
+            <div class="role-title">
+              Admin
+            </div>
 
-                </q-card-section>
+          </div>
 
-            </template>
+        </q-card-section>
+      </template>
 
-            <!-- FORM -->
-            <template v-else>
+      <!-- FORM -->
+      <template v-else>
 
-                <q-card-section class="auth-header">
+        <q-card-section class="auth-header">
 
-                    <div class="auth-header-actions">
+          <div class="auth-header-top">
 
-                        <q-btn flat round dense icon="arrow_back" class="header-btn" @click="step = 'role'" />
+            <q-btn flat round dense icon="arrow_back" class="header-btn" @click="goBack" />
 
-                        <q-space />
+            <div class="auth-title">
 
-                        <q-btn flat round dense icon="close" class="header-btn" @click="modelValue = false" />
+              {{ page.title }}
 
-                    </div>
+            </div>
 
-                    <div class="auth-title">
+            <q-btn flat round dense icon="close" class="header-btn" @click="modelValue = false" />
 
-                        {{ page.title }}
+          </div>
 
-                    </div>
+          <div class="auth-subtitle">
 
-                    <div class="auth-subtitle">
+            {{ page.subtitle }}
 
-                        {{ page.subtitle }}
+          </div>
 
-                    </div>
+        </q-card-section>
 
-                </q-card-section>
+        <div class="auth-body">
 
-                <LoginUserForm v-if="step === 'login-user'" @login-success="handleLoginSuccess"
-                    @change-step="step = $event" />
+          <LoginUserForm v-if="step === 'login-user'" @login-success="handleLoginSuccess"
+            @change-step="step = $event" />
 
-                <RegisterUserForm v-else-if="step === 'register'" @change-step="step = $event" />
+          <RegisterUserForm v-else-if="step === 'register'" @change-step="step = $event" />
 
-                <LoginAdminForm v-else-if="step === 'login-admin'" @login-success="handleLoginSuccess" />
+          <LoginAdminForm v-else-if="step === 'login-admin'" @login-success="handleLoginSuccess" />
 
-            </template>
+        </div>
 
-        </q-card>
-    </q-dialog>
+      </template>
+
+    </q-card>
+  </q-dialog>
 </template>
 
 <script setup>
 import {
-    computed,
-    ref,
-    watch,
+  computed,
+  ref,
+  watch,
 } from 'vue'
 
 import LoginUserForm from './LoginUserForm.vue'
@@ -101,28 +105,28 @@ import RegisterUserForm from './RegisterUserForm.vue'
 import LoginAdminForm from './LoginAdminForm.vue'
 
 const props =
-    defineProps({
+  defineProps({
 
-        modelValue:
-            Boolean,
+    modelValue:
+      Boolean,
 
-        initialStep: {
+    initialStep: {
 
-            type:
-                String,
+      type:
+        String,
 
-            default:
-                'role',
+      default:
+        'role',
 
-        },
+    },
 
-    })
+  })
 
 const emit =
-    defineEmits([
-        'update:modelValue',
-        'login-success',
-    ])
+  defineEmits([
+    'update:modelValue',
+    'login-success',
+  ])
 
 /*
 |--------------------------------------------------------------------------
@@ -131,19 +135,19 @@ const emit =
 */
 
 const modelValue =
-    computed({
+  computed({
 
-        get:
-            () => props.modelValue,
+    get:
+      () => props.modelValue,
 
-        set:
-            value =>
-                emit(
-                    'update:modelValue',
-                    value,
-                ),
+    set:
+      value =>
+        emit(
+          'update:modelValue',
+          value,
+        ),
 
-    })
+  })
 
 /*
 |--------------------------------------------------------------------------
@@ -152,39 +156,41 @@ const modelValue =
 */
 
 const step =
-    ref(
-        props.initialStep,
-    )
+  ref(
+    props.initialStep,
+  )
 
 watch(
 
-    () =>
-        props.initialStep,
+  () =>
+    props.initialStep,
 
-    value => {
+  value => {
 
-        step.value =
-            value
+    step.value =
+      value
 
-    },
+  },
 
 )
 
 watch(
 
-    () =>
-        props.modelValue,
+  () => props.modelValue,
 
-    value => {
+  value => {
 
-        if (value) {
+    if (value) {
 
-            step.value =
-                props.initialStep
+      step.value = props.initialStep
 
-        }
+    } else {
 
-    },
+      step.value = 'role'
+
+    }
+
+  },
 
 )
 
@@ -196,45 +202,74 @@ watch(
 
 const pages = {
 
-    'login-user': {
+  'login-user': {
 
-        title:
-            'Login User',
+    title:
+      'Login User',
 
-        subtitle:
-            'Masuk menggunakan Email, Username, atau Nomor HP.',
+    subtitle:
+      'Masuk menggunakan Email, Username, atau Nomor HP.',
 
-    },
+  },
 
-    'login-admin': {
+  'login-admin': {
 
-        title:
-            'Login Admin',
+    title:
+      'Login Admin',
 
-        subtitle:
-            'Masuk menggunakan Email atau Username.',
+    subtitle:
+      'Masuk menggunakan Email atau Username.',
 
-    },
+  },
 
-    register: {
+  register: {
 
-        title:
-            'Register',
+    title:
+      'Register',
 
-        subtitle:
-            'Lengkapi data untuk membuat akun baru.',
+    subtitle:
+      'Lengkapi data untuk membuat akun baru.',
 
-    },
+  },
 
 }
 
 const page =
-    computed(
-        () =>
-            pages[
-            step.value
-            ],
-    )
+  computed(
+    () =>
+      pages[
+      step.value
+      ],
+  )
+
+/*
+|--------------------------------------------------------------------------
+| NAVIGATION
+|--------------------------------------------------------------------------
+*/
+
+function goBack() {
+
+  switch (step.value) {
+
+    case 'register':
+      step.value = 'login-user'
+      break
+
+    case 'login-user':
+      step.value = 'role'
+      break
+
+    case 'login-admin':
+      step.value = 'role'
+      break
+
+    default:
+      step.value = 'role'
+
+  }
+
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -244,12 +279,13 @@ const page =
 
 function handleLoginSuccess() {
 
-    emit(
-        'login-success',
-    )
+  modelValue.value = false
 
-    modelValue.value =
-        false
+  step.value = 'role'
+
+  emit(
+    'login-success',
+  )
 
 }
 </script>
@@ -262,8 +298,8 @@ function handleLoginSuccess() {
 */
 
 :deep(.q-dialog__inner--bottom) {
-    padding: 0;
-    align-items: flex-end;
+  padding: 0;
+  align-items: flex-end;
 }
 
 /*
@@ -273,20 +309,19 @@ function handleLoginSuccess() {
 */
 
 .auth-card-mobile {
-    width: 100%;
+  width: 100%;
 
-    max-height: 90vh;
+  max-height: 90vh;
 
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 
-    background: var(--app-surface);
+  overflow: hidden;
 
-    color: var(--app-text);
+  background: var(--app-surface);
+  color: var(--app-text);
 
-    border-radius: 24px 24px 0 0;
-
-    overflow: hidden;
+  border-radius: 24px 24px 0 0;
 }
 
 /*
@@ -296,18 +331,18 @@ function handleLoginSuccess() {
 */
 
 .auth-card-mobile::before {
-    content: '';
+  content: '';
 
-    width: 48px;
-    height: 5px;
+  width: 48px;
+  height: 5px;
 
-    margin: 12px auto 0;
+  margin: 12px auto 0;
 
-    border-radius: 999px;
+  border-radius: 999px;
 
-    background: var(--app-border);
+  background: var(--app-border);
 
-    flex-shrink: 0;
+  flex-shrink: 0;
 }
 
 /*
@@ -317,36 +352,70 @@ function handleLoginSuccess() {
 */
 
 .auth-header {
-    padding: 16px 20px 12px;
+  flex-shrink: 0;
 
-    flex-shrink: 0;
+  padding: 16px 20px 12px;
 }
 
-.auth-header-actions {
-    display: flex;
-    align-items: center;
+.auth-header-top {
+  display: grid;
+
+  grid-template-columns: 40px 1fr 40px;
+
+  align-items: center;
+}
+
+.header-placeholder {
+  width: 40px;
+  height: 40px;
 }
 
 .header-btn {
-    color: var(--app-text-secondary);
+  justify-self: end;
+
+  color: var(--app-text-secondary);
+
+  transition:
+    color .2s ease,
+    background-color .2s ease;
+}
+
+.header-btn:hover {
+  color: var(--app-primary);
+
+  background: var(--app-hover);
 }
 
 .auth-title {
-    margin-top: 8px;
+  text-align: center;
 
-    font-size: 1.4rem;
-    font-weight: 700;
+  font-size: 1.35rem;
+  font-weight: 700;
 
-    color: var(--app-text);
+  color: var(--app-text);
 }
 
 .auth-subtitle {
-    margin-top: 4px;
+  margin-top: 8px;
 
-    font-size: .9rem;
-    line-height: 1.5;
+  text-align: center;
 
-    color: var(--app-text-secondary);
+  font-size: .9rem;
+  line-height: 1.5;
+
+  color: var(--app-text-secondary);
+}
+
+/*
+|--------------------------------------------------------------------------
+| BODY
+|--------------------------------------------------------------------------
+*/
+
+.auth-body {
+  flex: 1;
+
+  overflow-y: auto;
 }
 
 /*
@@ -356,60 +425,67 @@ function handleLoginSuccess() {
 */
 
 .role-grid {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 
-    gap: 14px;
+  gap: 12px;
 
-    padding: 20px;
+  padding: 16px 20px 20px;
 }
 
 .role-card {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 
-    gap: 16px;
+  gap: 14px;
 
-    padding: 18px;
+  padding: 18px;
 
-    border-radius: 16px;
+  cursor: pointer;
 
-    border: 1px solid var(--app-border);
+  background: var(--app-surface-secondary);
 
-    background: var(--app-surface-secondary);
+  border: 1px solid var(--app-border);
+  border-radius: 16px;
 
-    cursor: pointer;
-
-    transition:
-        transform .2s ease,
-        background-color .2s ease,
-        border-color .2s ease;
-}
-
-.role-card:active {
-    transform: scale(.98);
+  transition:
+    transform .2s ease,
+    background-color .2s ease,
+    border-color .2s ease;
 }
 
 .role-card:hover {
-    border-color: var(--app-primary);
+  border-color: var(--app-primary);
+
+  background: var(--app-hover);
+}
+
+.role-card:active {
+  transform: scale(.98);
 }
 
 .role-icon {
-    color: var(--app-primary);
+  flex-shrink: 0;
 
-    flex-shrink: 0;
+  color: var(--app-primary);
+}
+
+.role-title {
+  font-size: 1rem;
+  font-weight: 600;
+
+  color: var(--app-text);
 }
 
 /*
 |--------------------------------------------------------------------------
-| FORM CONTAINER
+| FORM
 |--------------------------------------------------------------------------
 */
 
 :deep(.auth-form) {
-    overflow-y: auto;
-
-    flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 /*
@@ -418,14 +494,14 @@ function handleLoginSuccess() {
 |--------------------------------------------------------------------------
 */
 
-:deep(.auth-form::-webkit-scrollbar) {
-    width: 6px;
+.auth-body-scroll::-webkit-scrollbar {
+  width: 6px;
 }
 
-:deep(.auth-form::-webkit-scrollbar-thumb) {
-    background: var(--app-border);
+.auth-body-scroll::-webkit-scrollbar-thumb {
+  background: var(--app-border);
 
-    border-radius: 999px;
+  border-radius: 999px;
 }
 
 /*
@@ -436,9 +512,9 @@ function handleLoginSuccess() {
 
 @media (max-height: 700px) {
 
-    .auth-card-mobile {
-        max-height: 95vh;
-    }
+  .auth-card-mobile {
+    max-height: 95vh;
+  }
 
 }
 </style>

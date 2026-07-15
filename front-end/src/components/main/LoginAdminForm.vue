@@ -1,122 +1,53 @@
 <template>
-
-  <q-form
-    ref="formRef"
-    class="auth-form"
-    @submit.prevent="loginAdmin"
-  >
-
-    <q-input
-      v-model="credential"
-      outlined
-      clearable
-      autofocus
-      hide-bottom-space
-      lazy-rules
-      maxlength="100"
-      label="Email atau Username"
-      placeholder="Masukkan Email atau Username"
-      autocomplete="username"
-      :rules="credentialRules"
-    >
-
+  <q-form ref="formRef" class="auth-form" @submit.prevent="loginAdmin">
+    <q-input v-model="credential" outlined clearable autofocus hide-bottom-space lazy-rules maxlength="100"
+      label="Email atau Username" placeholder="Masukkan Email atau Username" autocomplete="username"
+      :rules="credentialRules">
       <template #prepend>
         <q-icon name="admin_panel_settings" />
       </template>
-
     </q-input>
-
-    <q-input
-      v-model="password"
-      outlined
-      hide-bottom-space
-      lazy-rules
-      maxlength="32"
-      :type="showPassword ? 'text' : 'password'"
-      label="Password"
-      autocomplete="current-password"
-      :rules="passwordRules"
-    >
-
+    <q-input v-model="password" outlined hide-bottom-space lazy-rules maxlength="32"
+      :type="showPassword ? 'text' : 'password'" label="Password" autocomplete="current-password"
+      :rules="passwordRules">
       <template #prepend>
         <q-icon name="lock" />
       </template>
-
       <template #append>
-
-        <q-icon
-          :name="showPassword ? 'visibility_off' : 'visibility'"
-          class="cursor-pointer"
-          @click="showPassword = !showPassword"
-        />
-
+        <q-icon :name="showPassword ? 'visibility_off' : 'visibility'" class="cursor-pointer"
+          @click="showPassword = !showPassword" />
       </template>
-
     </q-input>
-
-    <q-btn
-      type="submit"
-      unelevated
-      color="primary"
-      label="Login"
-      class="full-width"
-      :loading="loading"
-      :disable="loading"
-    />
-
+    <q-btn type="submit" unelevated color="primary" label="Login" class="full-width" :loading="loading"
+      :disable="loading" />
   </q-form>
-
 </template>
 
 <script setup>
-import {
-  ref,
-} from 'vue'
-
-import {
-  useRouter,
-} from 'vue-router'
-
-import {
-  useQuasar,
-} from 'quasar'
-
+import { ref, } from 'vue'
+import { useRouter, } from 'vue-router'
+import { useQuasar, } from 'quasar'
 import api from 'src/axios'
 
-const router =
-  useRouter()
-
-const $q =
-  useQuasar()
-
-const emit =
-  defineEmits([
-    'login-success',
-  ])
+const router = useRouter()
+const $q = useQuasar()
+const emit = defineEmits(['login-success',])
 
 /*
 |--------------------------------------------------------------------------
 | API
 |--------------------------------------------------------------------------
 */
-
-const LOGIN_URL =
-  '/api/auth/login-admin'
+const LOGIN_URL = '/api/admin/login'
 
 /*
 |--------------------------------------------------------------------------
 | FORM
 |--------------------------------------------------------------------------
 */
-
-const formRef =
-  ref(null)
-
-const credential =
-  ref('')
-
-const password =
-  ref('')
+const formRef = ref(null)
+const credential = ref('')
+const password = ref('')
 
 /*
 |--------------------------------------------------------------------------
@@ -124,8 +55,7 @@ const password =
 |--------------------------------------------------------------------------
 */
 
-const showPassword =
-  ref(false)
+const showPassword = ref(false)
 
 /*
 |--------------------------------------------------------------------------
@@ -133,8 +63,7 @@ const showPassword =
 |--------------------------------------------------------------------------
 */
 
-const loading =
-  ref(false)
+const loading = ref(false)
 
 /*
 |--------------------------------------------------------------------------
@@ -143,19 +72,15 @@ const loading =
 */
 
 const credentialRules = [
-
   value =>
     !!value ||
     'Email atau Username wajib diisi',
-
 ]
 
 const passwordRules = [
-
   value =>
     !!value ||
     'Password wajib diisi',
-
 ]
 
 /*
@@ -165,14 +90,10 @@ const passwordRules = [
 */
 
 function resetForm() {
-
   formRef.value?.resetValidation()
-
   credential.value = ''
   password.value = ''
-
   showPassword.value = false
-
 }
 
 /*
@@ -182,84 +103,53 @@ function resetForm() {
 */
 
 async function loginAdmin() {
-
   const valid =
     await formRef.value.validate()
-
   if (!valid) {
     return
   }
-
   loading.value = true
-
   try {
-
     const response =
       await api.post(
         LOGIN_URL,
         {
-          credential:
-            credential.value.trim(),
-
-          password:
-            password.value,
+          credential: credential.value.trim(),
+          password: password.value,
         },
       )
-
     localStorage.setItem(
       'auth',
       JSON.stringify({
-
         type: 'admin',
-
-        token:
-          response.data.token,
-
-        data:
-          response.data.admin,
-
+        token: response.data.token,
+        data: response.data.admin,
       }),
     )
 
     $q.notify({
-
       type: 'positive',
-
-      message:
-        'Login admin berhasil.',
-
+      message: 'Login admin berhasil.',
     })
-
     resetForm()
-
     emit(
       'login-success',
     )
-
     router.replace(
       '/dashboard',
     )
 
   } catch (error) {
-
     console.error(error)
-
     $q.notify({
-
       type: 'negative',
-
       message:
         error.response?.data?.message ||
         'Login admin gagal.',
-
     })
-
   } finally {
-
     loading.value = false
-
   }
-
 }
 </script>
 
@@ -273,9 +163,7 @@ async function loginAdmin() {
 .auth-form {
   display: flex;
   flex-direction: column;
-
   gap: 18px;
-
   padding: 24px;
 }
 
@@ -314,7 +202,6 @@ async function loginAdmin() {
 
 .cursor-pointer {
   cursor: pointer;
-
   transition:
     color .2s ease;
 }
@@ -335,7 +222,6 @@ async function loginAdmin() {
 
 :deep(.q-btn) {
   border-radius: 14px;
-
   transition:
     transform .2s ease,
     background-color .2s ease;
@@ -353,12 +239,9 @@ async function loginAdmin() {
 
 .auth-footer {
   margin-top: 18px;
-
   text-align: center;
-
   font-size: .85rem;
   line-height: 1.5;
-
   color: var(--app-text-secondary);
 }
 
@@ -369,7 +252,6 @@ async function loginAdmin() {
 */
 
 @media (max-width: 599px) {
-
   .auth-form {
     padding: 20px;
   }
