@@ -19,6 +19,10 @@ import MainNavbar from 'components/main/MainNavbar.vue'
 }
 
 .page-container {
-  background: var(--app-bg);
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding-inline: 24px;
+  box-sizing: border-box;
 }
 </style>

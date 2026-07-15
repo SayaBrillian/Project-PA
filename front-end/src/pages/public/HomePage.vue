@@ -30,12 +30,12 @@
 <script setup>
 import WelcomeSection from 'components/main/home/WelcomeSection.vue'
 import ReasonSection from 'components/main/home/ReasonSection.vue'
-//import CTASection from 'components/main/home/CTASection.vue'
+import CTASection from 'components/main/home/CTASection.vue'
 
-//import TrustStats from 'components/main/home/TrustStats.vue'
-//import PurchaseFlow from 'components/main/home/PurchaseFlow.vue'
-//import TestimonialsSection from 'components/main/home/TestimonialsSection.vue'
-//import FaqSection from 'components/main/home/FaqSection.vue'
+import TrustStats from 'components/main/home/TrustStats.vue'
+import PurchaseFlow from 'components/main/home/PurchaseFlow.vue'
+import TestimonialsSection from 'components/main/home/TestimonialsSection.vue'
+import FaqSection from 'components/main/home/FaqSection.vue'
 
 //import GameSection from 'components/game/GameSection.vue'
 //import ProductSection from 'components/product/ProductSection.vue'
@@ -79,9 +79,7 @@ const popularProducts = [
 .home-page {
   display: flex;
   flex-direction: column;
-
   gap: 10px;
-
   padding: 0 0 64px;
 }
 </style>
