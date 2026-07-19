@@ -4,10 +4,6 @@
     <!-- HEADER -->
     <div class="page-header">
 
-      <span class="section-badge">
-        Semua Produk
-      </span>
-
       <h1>
         Pilih Game Favoritmu
       </h1>
@@ -206,23 +202,6 @@ const filteredGames =
   text-align: center;
 }
 
-.section-badge {
-  display: inline-flex;
-  align-items: center;
-
-  padding: 8px 16px;
-
-  border-radius: 999px;
-
-  background: var(--app-hover);
-
-  border: 1px solid var(--app-border);
-
-  color: var(--app-primary);
-
-  font-size: .8rem;
-  font-weight: 600;
-}
 
 .page-header h1 {
   margin: 16px 0 12px;

@@ -1,225 +1,272 @@
 <template>
+
   <q-page class="check-page">
+
     <div class="check-container">
+
+      <!-- HEADER -->
+
       <div class="page-header">
+
         <h1>
-          Check Transaction
+          Cek Transaksi
         </h1>
+
         <p>
-          Cari riwayat transaksi menggunakan
-          email atau nomor WhatsApp.
+          Cari riwayat transaksi menggunakan email atau nomor WhatsApp.
         </p>
+
       </div>
+
+      <!-- SEARCH -->
+
       <div class="search-bar">
+
         <q-input v-model="keyword" filled sakura class="search-input" label="Email atau WhatsApp"
           placeholder="example@gmail.com" @keyup.enter="searchTransactions" />
-        <q-btn unelevated color="accent" icon="search" label="Check" :loading="loading" @click="searchTransactions" />
+
+        <q-btn unelevated color="accent" icon="search" label="Cari" :loading="loading" @click="searchTransactions" />
+
       </div>
-      <div v-if="transactions.length" class="debug-result">
+
+      <!-- RESULT -->
+
+      <div v-if="transactions.length" class="result-info">
 
         Ditemukan
         {{ transactions.length }}
         transaksi
 
       </div>
+
+      <!-- TABLE -->
+
       <TransactionTable v-if="transactions.length" :transactions="transactions" @details="openDetails" />
+
+      <!-- DETAILS DIALOG -->
+
       <TransactionDetailsDialog v-model="showDetails" :transaction-id="selectedTransactionId" />
+
     </div>
+
   </q-page>
+
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import api from 'src/axios'
 
-import TransactionDetailsDialog from 'src/components/dashboard/transactions/TransactionDetailsDialog.vue'
 import TransactionTable from 'src/components/dashboard/transactions/TransactionTable.vue'
+import TransactionDetailsDialog from 'src/components/dashboard/transactions/TransactionDetailsDialog.vue'
+
+/*
+|--------------------------------------------------------------------------
+| STATE
+|--------------------------------------------------------------------------
+*/
 
 const keyword = ref('')
+
 const loading = ref(false)
+
 const transactions = ref([])
 
-const searchTransactions = async () => {
+const showDetails = ref(false)
+
+const selectedTransactionId = ref(null)
+
+/*
+|--------------------------------------------------------------------------
+| SEARCH
+|--------------------------------------------------------------------------
+*/
+
+async function searchTransactions() {
+
   if (!keyword.value.trim()) {
+
     return
+
   }
+
   try {
+
     loading.value = true
-    const response =
-      await api.get(
-        `/api/transactions/customer/${keyword.value}`
-      )
+
+    const response = await api.get(
+      `/api/transactions/customer/${keyword.value}`,
+    )
+
     transactions.value =
       response.data.transactions
+
     console.log(
       'Transactions:',
-      transactions.value
+      transactions.value,
     )
+
   } catch (error) {
+
     console.error(
       'Search Transaction Error:',
-      error
+      error,
     )
+
     transactions.value = []
+
   } finally {
+
     loading.value = false
+
   }
+
 }
 
-const selectedTransaction =
-  ref(null)
-const selectedTransactionId = ref(null)
-const showDetails =
-  ref(false)
+/*
+|--------------------------------------------------------------------------
+| DETAILS
+|--------------------------------------------------------------------------
+*/
 
-const openDetails =
-  (transaction) => {
+function openDetails(transaction) {
 
-    selectedTransaction.value =
-      transaction
+  selectedTransactionId.value =
+    transaction.id
 
-    showDetails.value =
-      true
+  showDetails.value = true
 
-    selectedTransactionId.value =
-      transaction.id
-
-    showDetails.value = true
-
-  }
+}
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
+/*
+|--------------------------------------------------------------------------
+| PAGE
+|--------------------------------------------------------------------------
+*/
+
 .check-page {
-  padding: 56px 24px;
+  padding: 48px 20px;
 }
 
 .check-container {
-  max-width: 1200px;
+  max-width: 1100px;
 
   margin: 0 auto;
 }
 
 /*
 |--------------------------------------------------------------------------
-| Header
+| HEADER
 |--------------------------------------------------------------------------
 */
 
 .page-header {
+  display: flex;
+  flex-direction: column;
+
+  gap: 12px;
+
+  margin-bottom: 32px;
+
   text-align: center;
 }
 
 .page-header h1 {
   margin: 0;
 
-  font-size: 2.25rem;
-  font-weight: 700;
+  color: var(--app-text);
 
-  color: rgba(255, 255, 255, 0.65);
+  font-size: clamp(2.2rem, 5vw, 3rem);
+  font-weight: 700;
 }
 
 .page-header p {
-  margin-top: 12px;
+  margin: 0;
 
-  color: rgba(255, 255, 255, 0.65);
+  color: var(--app-text-secondary);
 
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 /*
 |--------------------------------------------------------------------------
-| Search
+| SEARCH
 |--------------------------------------------------------------------------
 */
 
 .search-bar {
   display: flex;
-
-  justify-content: center;
-
   align-items: center;
 
   gap: 16px;
 
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 
   padding: 20px;
 
-  background: rgba(255,
-      255,
-      255,
-      .06);
+  background: var(--app-surface);
 
-  backdrop-filter: blur(12px);
-
-  border: 1px solid rgba($sakura,
-      .15);
-
-  border-radius: 10px;
+  border: 1px solid var(--app-border);
+  border-radius: 20px;
 }
 
 .search-input {
   flex: 1;
 }
 
-:deep(.search-input .q-field__control) {
-  background: white !important;
-
-  border-radius: 14px;
-}
-
-:deep(.search-input .q-field__native) {
-  color: $dark;
-}
-
-:deep(.search-input .q-field__label) {
-  color: rgba(0,
-      0,
-      0,
-      .6);
+.search-input :deep(.q-field__control) {
+  border-radius: 16px;
 }
 
 /*
 |--------------------------------------------------------------------------
-| Transaction Table
+| RESULT
 |--------------------------------------------------------------------------
 */
-.debug-result{
-text-align: center;
- color: rgba(255, 255, 255, 0.65);
 
-  line-height: 1.6;
-}
-.transaction-table {
-  margin-top: 24px;
+.result-info {
+  margin-bottom: 24px;
 
-  background: white;
+  text-align: center;
 
-  border-radius: 20px;
-
-  overflow: hidden;
-
-  box-shadow:
-    0 10px 35px rgba(0,
-      0,
-      0,
-      .12);
+  color: var(--app-text-secondary);
 }
 
-:deep(.q-table thead tr) {
-  background: rgba($sakura,
-      .08);
-}
+/*
+|--------------------------------------------------------------------------
+| MOBILE
+|--------------------------------------------------------------------------
+*/
 
-:deep(.q-table th) {
-  font-weight: 700;
+@media (max-width: 768px) {
 
-  color: $dark;
-}
+  .check-page {
+    padding: 32px 16px;
+  }
 
-:deep(.q-table tbody tr:hover) {
-  background: rgba($sakura,
-      .05);
+  .page-header h1 {
+    font-size: 2rem;
+  }
+
+  .page-header p {
+    font-size: .9rem;
+  }
+
+  .search-bar {
+    flex-direction: column;
+
+    align-items: stretch;
+  }
+
+  .search-input {
+    width: 100%;
+  }
+
+  .search-bar :deep(.q-btn) {
+    width: 100%;
+  }
+
 }
 </style>

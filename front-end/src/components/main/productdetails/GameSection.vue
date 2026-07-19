@@ -4,10 +4,6 @@
     <!-- HEADER -->
     <div class="section-header">
 
-      <span class="section-badge">
-        Pilih Game
-      </span>
-
       <h2>
         {{ currentGame?.name || 'Pilih Game Favoritmu' }}
       </h2>
@@ -173,38 +169,18 @@ const selectedGame = computed({
 
 /*
 |--------------------------------------------------------------------------
-| STEP
+| HEADER
 |--------------------------------------------------------------------------
 */
 
-.step-header {
+.section-header {
   display: flex;
   flex-direction: column;
 
   gap: 10px;
 }
 
-.step-badge {
-  display: inline-flex;
-  align-items: center;
-
-  width: fit-content;
-
-  padding: 8px 16px;
-
-  border-radius: 999px;
-
-  background: var(--app-hover);
-
-  border: 1px solid var(--app-border);
-
-  color: var(--app-primary);
-
-  font-size: .8rem;
-  font-weight: 600;
-}
-
-.step-title {
+.section-header h2 {
   margin: 0;
 
   color: var(--app-text);
@@ -213,8 +189,8 @@ const selectedGame = computed({
   font-weight: 700;
 }
 
-.step-subtitle {
-  margin-top: 8px;
+.section-header p {
+  margin: 0;
 
   color: var(--app-text-secondary);
 
@@ -228,6 +204,7 @@ const selectedGame = computed({
 */
 
 .game-select {
+  width: 100%;
   max-width: 420px;
 }
 
@@ -278,6 +255,8 @@ const selectedGame = computed({
 .game-banner {
   overflow: hidden;
 
+  background: var(--app-bg);
+
   border-radius: 20px;
 }
 
@@ -308,6 +287,8 @@ const selectedGame = computed({
 }
 
 .game-title {
+  margin: 0;
+
   color: var(--app-text);
 
   font-size: 2rem;
@@ -353,6 +334,10 @@ const selectedGame = computed({
 
   border: 1px solid var(--app-border);
   border-radius: 16px;
+
+  transition:
+    background-color .2s ease,
+    border-color .2s ease;
 }
 
 .meta-label {
@@ -416,11 +401,11 @@ const selectedGame = computed({
     padding-inline: 16px;
   }
 
-  .step-title {
+  .section-header h2 {
     font-size: 1.6rem;
   }
 
-  .step-subtitle {
+  .section-header p {
     font-size: .9rem;
   }
 

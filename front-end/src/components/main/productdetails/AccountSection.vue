@@ -7,10 +7,6 @@
 
       <div>
 
-        <span class="section-badge">
-          Data Akun
-        </span>
-
         <h2>
           Tambahkan Akun
         </h2>
@@ -209,16 +205,6 @@ const gameServer = computed({
 <style scoped lang="scss">
 /*
 |--------------------------------------------------------------------------
-| SECTION
-|--------------------------------------------------------------------------
-*/
-
-.account-section {
-  margin-top: 56px;
-}
-
-/*
-|--------------------------------------------------------------------------
 | HEADER
 |--------------------------------------------------------------------------
 */
@@ -233,25 +219,15 @@ const gameServer = computed({
   margin-bottom: 28px;
 }
 
-.section-badge {
-  display: inline-flex;
-  align-items: center;
+.section-header>div {
+  display: flex;
+  flex-direction: column;
 
-  padding: 8px 16px;
-
-  border-radius: 999px;
-
-  background: var(--app-hover);
-  border: 1px solid var(--app-border);
-
-  color: var(--app-primary);
-
-  font-size: .8rem;
-  font-weight: 600;
+  gap: 10px;
 }
 
 .section-header h2 {
-  margin: 16px 0 10px;
+  margin: 0;
 
   color: var(--app-text);
 
@@ -269,6 +245,10 @@ const gameServer = computed({
 
 .reset-btn {
   color: var(--app-text-secondary);
+
+  transition:
+    color .2s ease,
+    background-color .2s ease;
 }
 
 .reset-btn:hover {
@@ -441,8 +421,6 @@ const gameServer = computed({
 @media (max-width: 600px) {
 
   .account-section {
-    margin-top: 48px;
-
     padding-inline: 16px;
   }
 

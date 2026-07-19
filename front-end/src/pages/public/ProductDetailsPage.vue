@@ -48,10 +48,7 @@
 
     <CheckoutConfirmationDialog v-model="showConfirmation" :order="confirmationOrder" @confirm="processCheckout" />
 
-    <!-- SNAP -->
-
-    <SnapContainer v-model="showSnap" :snap-token="snapToken" />
-
+    <!-- <SnapContainer v-model="showSnap" :snap-token="snapToken" /> -->
   </q-page>
 
 </template>
@@ -70,7 +67,7 @@ import ContactSection from 'components/main/productdetails/ContactSection.vue'
 import SummarySection from 'components/main/productdetails/SummarySection.vue'
 
 import CheckoutConfirmationDialog from 'components/main/productdetails/CheckoutConfirmationDialog.vue'
-import SnapContainer from 'components/SnapContainer.vue'
+//import SnapContainer from 'components/SnapContainer.vue'
 
 /*
 |--------------------------------------------------------------------------
@@ -88,8 +85,8 @@ const router = useRouter()
 */
 
 const showConfirmation = ref(false)
-const showSnap = ref(false)
-const snapToken = ref('')
+//const showSnap = ref(false)
+//const snapToken = ref('')
 
 /*
 |--------------------------------------------------------------------------
@@ -454,10 +451,15 @@ async function processCheckout() {
     |--------------------------------------------------------------------------
     */
 
-    snapToken.value = paymentResponse.data.token
-
-    showSnap.value = true
-
+    window.snap.pay(
+      paymentResponse.data.token,
+      {
+        onSuccess: paymentSuccess,
+        onPending: paymentPending,
+        onError: paymentError,
+        onClose: paymentClosed,
+      }
+    )
   } catch (error) {
 
     console.error(
@@ -469,6 +471,46 @@ async function processCheckout() {
 
 }
 
+/*
+|--------------------------------------------------------------------------
+| PAYMENT CALLBACK
+|--------------------------------------------------------------------------
+*/
+
+function paymentSuccess(result) {
+
+  console.log(
+    'Payment Success:',
+    result
+  )
+
+}
+
+function paymentPending(result) {
+
+  console.log(
+    'Payment Pending:',
+    result
+  )
+
+}
+
+function paymentError(result) {
+
+  console.log(
+    'Payment Error:',
+    result
+  )
+
+}
+
+function paymentClosed() {
+
+  console.log(
+    'Payment Closed'
+  )
+
+}
 /*
 |--------------------------------------------------------------------------
 | WATCH

@@ -4,10 +4,6 @@
     <!-- HEADER -->
     <section class="page-header">
 
-      <span class="section-badge">
-        Tentang Kami
-      </span>
-
       <h1>
         Kenali Lebih Dekat EI Gaming Store
       </h1>
@@ -83,10 +79,6 @@
     <section class="values-section">
 
       <div class="section-header">
-
-        <span class="section-badge">
-          Nilai Kami
-        </span>
 
         <h2>
           Komitmen Kami
@@ -191,7 +183,7 @@ const values = [
   display: flex;
   flex-direction: column;
 
-  gap: 72px;
+  gap: 24px;
 }
 
 /*
@@ -206,24 +198,6 @@ const values = [
   margin: 0 auto;
 
   text-align: center;
-}
-
-.section-badge {
-  display: inline-flex;
-  align-items: center;
-
-  padding: 8px 16px;
-
-  border-radius: 999px;
-
-  background: var(--app-hover);
-
-  border: 1px solid var(--app-border);
-
-  color: var(--app-primary);
-
-  font-size: .8rem;
-  font-weight: 600;
 }
 
 .page-header h1 {
@@ -539,7 +513,7 @@ const values = [
 @media (max-width: 600px) {
 
   .about-page {
-    gap: 48px;
+    gap: 24px;
 
     padding-inline: 16px;
   }

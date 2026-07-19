@@ -4,10 +4,6 @@
     <!-- HEADER -->
     <section class="page-header">
 
-      <span class="section-badge">
-        Pusat Bantuan
-      </span>
-
       <h1>
         Kami Siap Membantu
       </h1>
@@ -46,10 +42,6 @@
     <section class="faq-section">
 
       <div class="section-header">
-
-        <span class="section-badge">
-          FAQ
-        </span>
 
         <h2>
           Pertanyaan Umum
@@ -194,24 +186,6 @@ const faqs = [
   margin: 0 auto;
 
   text-align: center;
-}
-
-.section-badge {
-  display: inline-flex;
-  align-items: center;
-
-  padding: 8px 16px;
-
-  border-radius: 999px;
-
-  background: var(--app-hover);
-
-  border: 1px solid var(--app-border);
-
-  color: var(--app-primary);
-
-  font-size: .8rem;
-  font-weight: 600;
 }
 
 .page-header h1 {

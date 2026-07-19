@@ -5,10 +5,6 @@
     <!-- HEADER -->
     <div class="section-header">
 
-      <span class="section-badge">
-        Ringkasan
-      </span>
-
       <h2>
         Ringkasan Pesanan
       </h2>
@@ -167,32 +163,20 @@ const emit = defineEmits([
 */
 
 .section-header {
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+
   margin-bottom: 24px;
 }
 
-.section-badge {
-  display: inline-flex;
-  align-items: center;
-
-  padding: 8px 16px;
-
-  border-radius: 999px;
-
-  background: var(--app-hover);
-  border: 1px solid var(--app-border);
-
-  color: var(--app-primary);
-
-  font-size: .8rem;
-  font-weight: 600;
-}
-
 .section-header h2 {
-  margin: 16px 0 10px;
+  margin: 0;
 
   color: var(--app-text);
 
-  font-size: 1.5rem;
+  font-size: clamp(1.8rem, 4vw, 2.3rem);
   font-weight: 700;
 }
 
@@ -202,8 +186,6 @@ const emit = defineEmits([
   color: var(--app-text-secondary);
 
   line-height: 1.7;
-
-  font-size: .95rem;
 }
 
 /*
@@ -301,7 +283,7 @@ const emit = defineEmits([
   }
 
   .section-header h2 {
-    font-size: 1.4rem;
+    font-size: 1.6rem;
   }
 
   .section-header p {

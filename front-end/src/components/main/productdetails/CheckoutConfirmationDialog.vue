@@ -1,21 +1,14 @@
 <template>
 
-  <q-dialog :model-value="modelValue" @update:model-value="
-    emit('update:modelValue', $event)
-    ">
+  <q-dialog :model-value="modelValue" position="bottom" @update:model-value="emit('update:modelValue', $event)">
 
     <q-card class="dialog-card">
 
       <!-- HEADER -->
 
       <div class="dialog-header">
-
+        <div class="dialog-handle"></div>
         <div>
-
-          <span class="section-badge">
-            Konfirmasi
-          </span>
-
           <h2 class="dialog-title">
             Konfirmasi Pesanan
           </h2>
@@ -74,22 +67,6 @@
 
             </div>
 
-            <div class="detail-item">
-
-              <span>Total</span>
-
-              <strong>
-
-                Rp
-                {{
-                  Number(order.totalPrice)
-                    .toLocaleString('id-ID')
-                }}
-
-              </strong>
-
-            </div>
-
           </div>
 
         </section>
@@ -106,10 +83,7 @@
 
           <div class="target-list">
 
-            <div v-for="
-(target, index)
-  in order.targets
-              " :key="index" class="target-card">
+            <div v-for="(target, index) in order.targets" :key="index" class="target-card">
 
               <div class="target-title">
 
@@ -387,21 +361,17 @@ function continuePayment() {
   padding: 24px 28px;
 }
 
-.section-badge {
-  display: inline-flex;
-  align-items: center;
+.dialog-handle {
 
-  padding: 8px 16px;
+  width: 48px;
+  height: 5px;
+
+  margin: 0 auto 20px;
 
   border-radius: 999px;
 
-  background: var(--app-hover);
-  border: 1px solid var(--app-border);
+  background: var(--app-border);
 
-  color: var(--app-primary);
-
-  font-size: .8rem;
-  font-weight: 600;
 }
 
 .dialog-title {
@@ -554,6 +524,14 @@ function continuePayment() {
 
 .payment-total {
   margin-bottom: 20px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+
+  gap: 16px;
+
+  margin-bottom: 20px;
 }
 
 .payment-label {
@@ -614,7 +592,9 @@ function continuePayment() {
     width: 100vw;
     max-width: 100vw;
 
-    height: 90vh;
+    height: 92vh;
+
+    margin: 0;
 
     border-radius: 24px 24px 0 0;
   }
@@ -629,6 +609,7 @@ function continuePayment() {
 
   .dialog-footer {
     padding: 20px;
+    box-shadow: 0 -6px 18px rgba(0, 0, 0, .08);
   }
 
   .dialog-title {

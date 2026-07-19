@@ -4,11 +4,6 @@
 
     <!-- HEADER -->
     <div class="section-header">
-
-      <span class="section-badge">
-        Produk
-      </span>
-
       <h2>
         Pilih Produk
       </h2>
@@ -121,29 +116,23 @@ const selectedProduct = computed({
   margin-top: 56px;
 }
 
+/*
+|--------------------------------------------------------------------------
+| HEADER
+|--------------------------------------------------------------------------
+*/
+
 .section-header {
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+
   margin-bottom: 24px;
 }
 
-.section-badge {
-  display: inline-flex;
-  align-items: center;
-
-  padding: 8px 16px;
-
-  border-radius: 999px;
-
-  background: var(--app-hover);
-  border: 1px solid var(--app-border);
-
-  color: var(--app-primary);
-
-  font-size: .8rem;
-  font-weight: 600;
-}
-
 .section-header h2 {
-  margin: 16px 0 10px;
+  margin: 0;
 
   color: var(--app-text);
 
@@ -275,8 +264,6 @@ const selectedProduct = computed({
 @media (max-width: 600px) {
 
   .product-section {
-    margin-top: 48px;
-
     padding-inline: 16px;
   }
 
