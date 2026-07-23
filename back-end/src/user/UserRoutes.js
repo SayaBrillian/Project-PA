@@ -5,6 +5,9 @@ import { loginUser } from "./LoginUser.js";
 import { checkUser } from "./CheckUser.js";
 import { profileUser } from "./ProfileUser.js";
 
+import { getUsers } from "./GetUsers.js";
+import { updateUser } from "./UpdateUser.js";
+
 import { verifyToken } from "../middleware/Auth.js";
 
 const router = express.Router();
@@ -52,6 +55,22 @@ router.get(
   "/me",
   verifyToken,
   profileUser
+);
+
+/*
+|--------------------------------------------------------------------------
+| USERS
+|--------------------------------------------------------------------------
+*/
+
+router.get(
+  "/",
+  getUsers
+);
+
+router.put(
+  "/:id",
+  updateUser
 );
 
 export default router;

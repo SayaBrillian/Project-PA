@@ -3,6 +3,8 @@
   <q-table flat bordered hide-pagination :rows-per-page-options="[0]" :rows="users" :columns="columns" row-key="id"
     class="user-table">
 
+    <!-- NAME -->
+
     <template #body-cell-name="props">
 
       <q-td :props="props">
@@ -15,6 +17,20 @@
 
     </template>
 
+    <!-- USERNAME -->
+
+    <template #body-cell-username="props">
+
+      <q-td :props="props">
+
+        {{ props.row.username }}
+
+      </q-td>
+
+    </template>
+
+    <!-- EMAIL -->
+
     <template #body-cell-email="props">
 
       <q-td :props="props">
@@ -24,6 +40,20 @@
       </q-td>
 
     </template>
+
+    <!-- PHONE -->
+
+    <template #body-cell-phone="props">
+
+      <q-td :props="props">
+
+        {{ props.row.phone }}
+
+      </q-td>
+
+    </template>
+
+    <!-- REGISTERED -->
 
     <template #body-cell-created_at="props">
 
@@ -38,6 +68,8 @@
       </q-td>
 
     </template>
+
+    <!-- ACTIONS -->
 
     <template #body-cell-actions="props">
 
@@ -54,6 +86,8 @@
       </q-td>
 
     </template>
+
+    <!-- NO DATA -->
 
     <template #no-data>
 
@@ -97,11 +131,26 @@ const columns = [
   },
 
   {
+    name: 'username',
+    label: 'Username',
+    field: 'username',
+    align: 'left',
+    sortable: true,
+  },
+
+  {
     name: 'email',
     label: 'Email',
     field: 'email',
     align: 'left',
     sortable: true,
+  },
+
+  {
+    name: 'phone',
+    label: 'Phone',
+    field: 'phone',
+    align: 'left',
   },
 
   {
@@ -123,36 +172,147 @@ const columns = [
 
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .user-table {
-  background: white;
+  background: var(--app-surface);
 
-  border-radius: 20px;
+  border: 1px solid var(--app-border);
 
-  overflow: hidden;
+  border-radius: 18px;
+
+  overflow: auto;
 }
+
+/*
+|--------------------------------------------------------------------------
+| TABLE
+|--------------------------------------------------------------------------
+*/
+
+:deep(.q-table table) {
+  border-collapse: separate;
+
+  border-spacing: 0;
+}
+
+/*
+|--------------------------------------------------------------------------
+| HEADER
+|--------------------------------------------------------------------------
+*/
+
+:deep(.q-table thead th) {
+  background: var(--app-surface);
+
+  color: var(--app-text);
+
+  font-weight: 700;
+
+  white-space: nowrap;
+
+  border-bottom: 1px solid var(--app-border);
+}
+
+/*
+|--------------------------------------------------------------------------
+| BODY
+|--------------------------------------------------------------------------
+*/
+
+:deep(.q-table td) {
+  color: var(--app-text);
+
+  white-space: nowrap;
+}
+
+:deep(.q-table tbody tr) {
+  transition: background .2s ease;
+}
+
+:deep(.q-table tbody tr:hover) {
+  background: rgba($accent, .05);
+}
+
+/*
+|--------------------------------------------------------------------------
+| STICKY COLUMN
+|--------------------------------------------------------------------------
+*/
+
+:deep(.q-table thead th:first-child),
+:deep(.q-table tbody td:first-child) {
+  position: sticky;
+
+  left: 0;
+
+  z-index: 10;
+
+  background: var(--app-surface);
+}
+
+:deep(.q-table thead th:last-child),
+:deep(.q-table tbody td:last-child) {
+  position: sticky;
+
+  right: 0;
+
+  z-index: 10;
+
+  background: var(--app-surface);
+}
+
+/*
+|--------------------------------------------------------------------------
+| USER
+|--------------------------------------------------------------------------
+*/
+
+.user-name {
+  color: var(--app-text);
+
+  font-weight: 600;
+}
+
+/*
+|--------------------------------------------------------------------------
+| ACTIONS
+|--------------------------------------------------------------------------
+*/
 
 .action-buttons {
   display: flex;
 
   justify-content: center;
 
-  gap: 4px;
+  gap: 6px;
 }
 
-:deep(.q-table thead tr) {
-  background: rgba($sakura,
-      .08);
+.action-buttons :deep(.q-btn) {
+  border-radius: 10px;
+
+  transition: background .2s ease;
 }
 
-:deep(.q-table th) {
-  font-weight: 700;
-
-  color: $dark;
+.action-buttons :deep(.q-btn:hover) {
+  background: rgba($accent, .08);
 }
 
-:deep(.q-table tbody tr:hover) {
-  background: rgba($sakura,
-      .04);
+/*
+|--------------------------------------------------------------------------
+| MOBILE
+|--------------------------------------------------------------------------
+*/
+
+@media (max-width:768px) {
+
+  :deep(.q-table th),
+  :deep(.q-table td) {
+    padding: 10px 12px;
+  }
+
+  .action-buttons {
+    gap: 4px;
+  }
+
 }
 </style>

@@ -2,17 +2,21 @@
 
   <q-page class="products-page">
 
-    <!-- HEADER -->
-
     <div class="page-header">
 
-      <h1>
-        Products
-      </h1>
+      <div class="page-title">
 
-      <p>
-        Kelola seluruh produk game.
-      </p>
+        <h1>
+          Products
+        </h1>
+
+        <p>
+          Kelola seluruh produk game di EI Gaming Store.
+        </p>
+
+      </div>
+
+      <q-btn unelevated rounded color="accent" icon="add" label="Add Product" @click="showCreate = true" />
 
     </div>
 
@@ -24,58 +28,36 @@
         class="game-filter" />
 
       <q-input v-model="search" outlined dense clearable placeholder="Cari produk..." class="search-input">
+
         <template #prepend>
 
           <q-icon name="search" />
 
         </template>
-      </q-input>
 
-      <q-btn unelevated color="accent" icon="add" label="Add Product" @click="
-        showCreate = true
-        " />
+      </q-input>
 
     </div>
 
     <!-- TABLE -->
 
-    <ProductTable :products="filteredProducts
-      " @details="
-        openDetails
-      " @update="
-        openUpdate
-      " @delete="
-        openDelete
-      " />
+    <ProductTable :products="filteredProducts" @details="openDetails" @update="openUpdate" @delete="openDelete" />
 
     <!-- DETAILS -->
 
-    <ProductDetailsDialog v-model="showDetails" :product="selectedProduct
-      " @update="
-        openUpdate
-      " @delete="
-        openDelete
-      " />
+    <ProductDetailsDialog v-model="showDetails" :product="selectedProduct" @update="openUpdate" @delete="openDelete" />
 
     <!-- CREATE -->
 
-    <ProductCreateDialog v-model="showCreate" @created="
-      refreshProducts
-    " />
+    <ProductCreateDialog v-model="showCreate" @created="refreshProducts" />
 
     <!-- UPDATE -->
 
-    <ProductUpdateDialog v-model="showUpdate" :product="selectedProduct
-      " @updated="
-        refreshProducts
-      " />
+    <ProductUpdateDialog v-model="showUpdate" :product="selectedProduct" @updated="refreshProducts" />
 
     <!-- DELETE -->
 
-    <ProductDeleteDialog v-model="showDelete" :product="selectedProduct
-      " @deleted="
-        refreshProducts
-      " />
+    <ProductDeleteDialog v-model="showDelete" :product="selectedProduct" @deleted="refreshProducts" />
 
   </q-page>
 
@@ -320,30 +302,37 @@ onMounted(() => {
 
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .products-page {
-  display: flex;
-  flex-direction: column;
-
-  gap: 24px;
+  padding: 16px;
 }
 
-.page-header h1 {
+.page-header {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 20px;
+
+  margin-bottom: 20px;
+}
+
+.page-title h1 {
   margin: 0;
 
-  color: $dark;
+  color: var(--app-text);
 
-  font-size: 2rem;
+  font-size: 1.9rem;
   font-weight: 700;
 }
 
-.page-header p {
-  margin-top: 8px;
+.page-title p {
+  margin-top: 6px;
 
-  color: rgba(0,
-      0,
-      0,
-      .55);
+  color: var(--app-text-secondary);
+
+  font-size: .95rem;
 }
 
 /*
@@ -358,6 +347,8 @@ onMounted(() => {
   align-items: center;
 
   gap: 16px;
+
+  margin-bottom: 20px;
 }
 
 .game-filter {
@@ -370,12 +361,16 @@ onMounted(() => {
 
 /*
 |--------------------------------------------------------------------------
-| QUASAR OVERRIDE
+| QUASAR
 |--------------------------------------------------------------------------
 */
 
 :deep(.q-field--outlined .q-field__control) {
   border-radius: 14px;
+
+  background: var(--app-surface);
+
+  border-color: var(--app-border);
 }
 
 :deep(.q-btn) {
@@ -388,18 +383,49 @@ onMounted(() => {
 |--------------------------------------------------------------------------
 */
 
-@media (max-width: 768px) {
+@media (min-width:1024px) {
+
+  .products-page {
+    padding: 24px;
+  }
+
+}
+
+@media (max-width:768px) {
+
+  .products-page {
+    padding: 12px;
+  }
+
+  .page-header {
+    flex-direction: column;
+
+    align-items: stretch;
+
+    margin-bottom: 16px;
+  }
+
+  .page-title h1 {
+    font-size: 1.5rem;
+  }
+
+  .page-title p {
+    font-size: .85rem;
+  }
+
+  .page-header .q-btn {
+    width: 100%;
+  }
 
   .toolbar-row {
     flex-direction: column;
 
     align-items: stretch;
+
+    gap: 12px;
   }
 
-  .game-filter {
-    width: 100%;
-  }
-
+  .game-filter,
   .search-input {
     width: 100%;
   }

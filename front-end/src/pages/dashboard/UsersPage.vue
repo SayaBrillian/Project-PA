@@ -6,13 +6,17 @@
 
     <div class="page-header">
 
-      <h1>
-        Users
-      </h1>
+      <div class="page-title">
 
-      <p>
-        Kelola seluruh pengguna.
-      </p>
+        <h1>
+          Users
+        </h1>
+
+        <p>
+          Kelola seluruh pengguna EI Gaming Store.
+        </p>
+
+      </div>
 
     </div>
 
@@ -34,26 +38,15 @@
 
     <!-- TABLE -->
 
-    <UserTable :users="filteredUsers
-      " @details="
-        openDetails
-      " @update="
-        openUpdate
-      " />
+    <UserTable :users="filteredUsers" @details="openDetails" @update="openUpdate" />
 
     <!-- DETAILS -->
 
-    <UserDetailsDialog v-model="showDetails" :user="selectedUser
-      " @update="
-        openUpdate
-      " />
+    <UserDetailsDialog v-model="showDetails" :user="selectedUser" @update="openUpdate" />
 
     <!-- UPDATE -->
 
-    <UserUpdateDialog v-model="showUpdate" :user="selectedUser
-      " @updated="
-        refreshUsers
-      " />
+    <UserUpdateDialog v-model="showUpdate" :user="selectedUser" @updated="refreshUsers" />
 
   </q-page>
 
@@ -100,7 +93,7 @@ const loadUsers =
 
       const response =
         await api.get(
-          '/api/users'
+          '/api/user'
         )
 
       users.value =
@@ -217,31 +210,44 @@ onMounted(() => {
 })
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .users-page {
-  display: flex;
-  flex-direction: column;
-
-  gap: 24px;
+  padding: 16px;
 }
 
-.page-header h1 {
+.page-header {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 20px;
+
+  margin-bottom: 20px;
+}
+
+.page-title h1 {
   margin: 0;
 
-  color: $dark;
+  color: var(--app-text);
 
-  font-size: 2rem;
+  font-size: 1.9rem;
   font-weight: 700;
 }
 
-.page-header p {
-  margin-top: 8px;
+.page-title p {
+  margin-top: 6px;
 
-  color: rgba(0,
-      0,
-      0,
-      .55);
+  color: var(--app-text-secondary);
+
+  font-size: .95rem;
 }
+
+/*
+|--------------------------------------------------------------------------
+| TOOLBAR
+|--------------------------------------------------------------------------
+*/
 
 .toolbar-row {
   display: flex;
@@ -249,26 +255,70 @@ onMounted(() => {
   align-items: center;
 
   gap: 16px;
+
+  margin-bottom: 20px;
 }
 
 .search-input {
   flex: 1;
 }
 
+/*
+|--------------------------------------------------------------------------
+| QUASAR
+|--------------------------------------------------------------------------
+*/
+
 :deep(.q-field--outlined .q-field__control) {
   border-radius: 14px;
+
+  background: var(--app-surface);
+
+  border-color: var(--app-border);
 }
 
 :deep(.q-btn) {
   border-radius: 14px;
 }
 
-@media (max-width: 768px) {
+/*
+|--------------------------------------------------------------------------
+| RESPONSIVE
+|--------------------------------------------------------------------------
+*/
+
+@media (min-width:1024px) {
+
+  .users-page {
+    padding: 24px;
+  }
+
+}
+
+@media (max-width:768px) {
+
+  .users-page {
+    padding: 12px;
+  }
+
+  .page-header {
+    margin-bottom: 16px;
+  }
+
+  .page-title h1 {
+    font-size: 1.5rem;
+  }
+
+  .page-title p {
+    font-size: .85rem;
+  }
 
   .toolbar-row {
     flex-direction: column;
 
     align-items: stretch;
+
+    gap: 12px;
   }
 
   .search-input {

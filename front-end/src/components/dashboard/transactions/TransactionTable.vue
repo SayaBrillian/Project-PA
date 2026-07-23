@@ -3,82 +3,87 @@
   <q-table flat bordered hide-pagination :rows-per-page-options="[0]" :rows="transactions" :columns="columns"
     row-key="id" class="transaction-table">
 
-    <template #body-cell-total_price="props">
+    <!-- INVOICE -->
+
+    <template #body-cell-order_id="props">
 
       <q-td :props="props">
 
-        Rp
-        {{
-          Number(
-            props.row.total_price
-          ).toLocaleString(
-            'id-ID'
-          )
-        }}
+        <span class="invoice">
+          {{ props.row.order_id }}
+        </span>
 
       </q-td>
 
     </template>
+
+    <!-- PRICE -->
+
+    <template #body-cell-total_price="props">
+
+      <q-td :props="props">
+
+        <span class="price">
+          Rp {{ Number(props.row.total_price).toLocaleString('id-ID') }}
+        </span>
+
+      </q-td>
+
+    </template>
+
+    <!-- PAYMENT STATUS -->
 
     <template #body-cell-transaction_status="props">
 
       <q-td :props="props">
 
-        <q-badge :color="getStatusColor(
-          props.row.transaction_status
-        )
-          ">
-          {{
-            props.row.transaction_status
-          }}
+        <q-badge :color="getStatusColor(props.row.transaction_status)">
+          {{ props.row.transaction_status }}
         </q-badge>
 
       </q-td>
 
     </template>
-<template #body-cell-order_status="props">
 
-  <q-td :props="props">
+    <!-- ORDER STATUS -->
 
-    <q-badge
-      :color="getOrderStatusColor(props.row.order_status)"
-    >
-
-      {{ props.row.order_status }}
-
-    </q-badge>
-
-  </q-td>
-
-</template>
-    <template #body-cell-created_at="props">
+    <template #body-cell-order_status="props">
 
       <q-td :props="props">
 
-        {{
-          formatDate(
-            props.row.created_at
-          )
-        }}
+        <q-badge :color="getOrderStatusColor(props.row.order_status)">
+          {{ props.row.order_status }}
+        </q-badge>
 
       </q-td>
 
     </template>
+
+    <!-- CREATED -->
+
+    <template #body-cell-created_at="props">
+
+      <q-td :props="props">
+
+        {{ formatDate(props.row.created_at) }}
+
+      </q-td>
+
+    </template>
+
+    <!-- ACTIONS -->
 
     <template #body-cell-actions="props">
 
       <q-td :props="props">
 
-        <q-btn flat round dense icon="visibility" color="info" @click="
-          emit(
-            'details',
-            props.row
-          )
-          " />
+        <q-btn flat round dense icon="visibility" color="info" @click="emit('details', props.row)" />
 
       </q-td>
 
     </template>
+
+    <!-- NO DATA -->
 
     <template #no-data>
 
@@ -140,17 +145,17 @@ const columns = [
     sortable: true,
   },
   {
-  name: 'transaction_status',
-  label: 'Payment',
-  field: 'transaction_status',
-  align: 'center',
-},
+    name: 'transaction_status',
+    label: 'Payment',
+    field: 'transaction_status',
+    align: 'center',
+  },
   {
-  name: 'order_status',
-  label: 'Order',
-  field: 'order_status',
-  align: 'center',
-},
+    name: 'order_status',
+    label: 'Order',
+    field: 'order_status',
+    align: 'center',
+  },
   {
     name: 'created_at',
     label: 'Created',
@@ -225,28 +230,163 @@ const formatDate =
 
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .transaction-table {
-  background: white;
+  background: var(--app-surface);
 
-  border-radius: 20px;
+  border: 1px solid var(--app-border);
 
-  overflow: hidden;
+  border-radius: 18px;
+
+  overflow: auto;
 }
 
-:deep(.q-table thead tr) {
-  background: rgba($sakura,
-      .08);
+/*
+|--------------------------------------------------------------------------
+| TABLE
+|--------------------------------------------------------------------------
+*/
+
+:deep(.q-table table) {
+  border-collapse: separate;
+
+  border-spacing: 0;
 }
 
-:deep(.q-table th) {
+/*
+|--------------------------------------------------------------------------
+| HEADER
+|--------------------------------------------------------------------------
+*/
+
+:deep(.q-table thead th) {
+  background: var(--app-surface);
+
+  color: var(--app-text);
+
   font-weight: 700;
 
-  color: $dark;
+  white-space: nowrap;
+
+  border-bottom: 1px solid var(--app-border);
+}
+
+/*
+|--------------------------------------------------------------------------
+| BODY
+|--------------------------------------------------------------------------
+*/
+
+:deep(.q-table td) {
+  color: var(--app-text);
+
+  white-space: nowrap;
+}
+
+:deep(.q-table tbody tr) {
+  transition: background .2s ease;
 }
 
 :deep(.q-table tbody tr:hover) {
-  background: rgba($sakura,
-      .04);
+  background: rgba($accent, .05);
+}
+
+/*
+|--------------------------------------------------------------------------
+| STICKY COLUMN
+|--------------------------------------------------------------------------
+*/
+
+:deep(.q-table thead th:first-child),
+:deep(.q-table tbody td:first-child) {
+  position: sticky;
+
+  left: 0;
+
+  z-index: 10;
+
+  background: var(--app-surface);
+}
+
+:deep(.q-table thead th:last-child),
+:deep(.q-table tbody td:last-child) {
+  position: sticky;
+
+  right: 0;
+
+  z-index: 10;
+
+  background: var(--app-surface);
+}
+
+/*
+|--------------------------------------------------------------------------
+| INVOICE
+|--------------------------------------------------------------------------
+*/
+
+.invoice {
+  color: var(--app-text);
+
+  font-weight: 600;
+}
+
+/*
+|--------------------------------------------------------------------------
+| PRICE
+|--------------------------------------------------------------------------
+*/
+
+.price {
+  color: var(--app-text);
+
+  font-weight: 600;
+}
+
+/*
+|--------------------------------------------------------------------------
+| BADGE
+|--------------------------------------------------------------------------
+*/
+
+:deep(.q-badge) {
+  min-width: 76px;
+
+  justify-content: center;
+
+  font-weight: 600;
+
+  text-transform: capitalize;
+}
+
+/*
+|--------------------------------------------------------------------------
+| ACTION
+|--------------------------------------------------------------------------
+*/
+
+:deep(.q-btn) {
+  border-radius: 10px;
+
+  transition: background .2s ease;
+}
+
+:deep(.q-btn:hover) {
+  background: rgba($accent, .08);
+}
+
+/*
+|--------------------------------------------------------------------------
+| MOBILE
+|--------------------------------------------------------------------------
+*/
+
+@media (max-width:768px) {
+
+  :deep(.q-table th),
+  :deep(.q-table td) {
+    padding: 10px 12px;
+  }
+
 }
 </style>

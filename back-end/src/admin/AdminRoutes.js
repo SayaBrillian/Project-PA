@@ -3,6 +3,8 @@ import express from "express";
 import { registerAdmin } from "./RegisterAdmin.js";
 import { loginAdmin } from "./LoginAdmin.js";
 import { profileAdmin } from "./ProfileAdmin.js";
+import { getAdmins } from "./GetAdmins.js";
+import { updateAdmin } from "./UpdateAdmin.js";
 
 import {
 
@@ -63,4 +65,25 @@ router.get(
 
 );
 
+/*
+|--------------------------------------------------------------------------
+| ADMINS
+|--------------------------------------------------------------------------
+*/
+
+router.get(
+  "/",
+  getAdmins
+);
+
+/*
+|--------------------------------------------------------------------------
+| UPDATE ADMIN
+|--------------------------------------------------------------------------
+*/
+
+router.put(
+  "/:id",
+  updateAdmin
+);
 export default router;

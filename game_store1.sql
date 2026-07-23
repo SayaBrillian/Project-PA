@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict dIuFVLTwG2XiyhcXyIaxhbqSBbtIiKLtG4GNQ1FudbYOERfIVv1Iv6HTAfEAe8j
+\restrict h5IHJT1wRgiWWyVrIh0EV6TKKbNxnhNSu5y5XT33eKIL45ivrL1fWEPqGfsFe5Y
 
 -- Dumped from database version 18.4
 -- Dumped by pg_dump version 18.4
@@ -38,7 +38,7 @@ CREATE TABLE public.admins (
     updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     birth_date date NOT NULL,
     phone character varying(20) NOT NULL,
-    CONSTRAINT admins_role_check CHECK (((role)::text = ANY ((ARRAY['super_admin'::character varying, 'admin'::character varying])::text[])))
+    CONSTRAINT admins_role_check CHECK (((role)::text = ANY (ARRAY[('super_admin'::character varying)::text, ('admin'::character varying)::text])))
 );
 
 
@@ -253,8 +253,8 @@ CREATE TABLE public.transactions (
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     order_status character varying(30) DEFAULT 'waiting'::character varying,
-    CONSTRAINT chk_order_status CHECK (((order_status)::text = ANY ((ARRAY['waiting'::character varying, 'processing'::character varying, 'done'::character varying, 'cancelled'::character varying])::text[]))),
-    CONSTRAINT chk_transaction_status CHECK (((transaction_status)::text = ANY ((ARRAY['pending'::character varying, 'settlement'::character varying, 'capture'::character varying, 'deny'::character varying, 'cancel'::character varying, 'expire'::character varying, 'failure'::character varying])::text[])))
+    CONSTRAINT chk_order_status CHECK (((order_status)::text = ANY (ARRAY[('waiting'::character varying)::text, ('processing'::character varying)::text, ('done'::character varying)::text, ('cancelled'::character varying)::text]))),
+    CONSTRAINT chk_transaction_status CHECK (((transaction_status)::text = ANY (ARRAY[('pending'::character varying)::text, ('settlement'::character varying)::text, ('capture'::character varying)::text, ('deny'::character varying)::text, ('cancel'::character varying)::text, ('expire'::character varying)::text, ('failure'::character varying)::text])))
 );
 
 
@@ -378,6 +378,7 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 
 COPY public.admins (id, name, username, email, password, role, created_at, updated_at, birth_date, phone) FROM stdin;
 1	Super Admin	superadmin	superadmin@eigaming.com	$2b$10$MXgPMnUOl.pVqPZWkPfGbeKwTvy5mmtHUqvzV8otlA/A4faSZbX2e	super_admin	2026-07-13 19:54:28.337089	2026-07-13 19:54:28.337089	2000-01-01	081111111111
+2	Admin Biasa	admin1	admin1@eigaming.com	$2b$10$sR5edh18MdKWTSUDRcxM0eOmRfab4IryoVv2/hfQxhh02tdVIfyvO	admin	2026-07-13 22:04:22.945549	2026-07-13 22:04:22.945549	2002-01-01	081111111112
 \.
 
 
@@ -447,6 +448,15 @@ COPY public.products (id, game_id, name, slug, currency_amount, price, display_o
 --
 
 COPY public.transaction_details (id, transaction_id, game_uid, game_server, created_at) FROM stdin;
+1	1	1800080555	Asia	2026-07-14 05:58:42.333037
+2	2	18008055	Asia	2026-07-16 07:49:10.452099
+3	2	862595069	Asia	2026-07-16 07:49:10.468347
+4	3	18008055	Asia	2026-07-16 07:50:43.074392
+5	3	862595069	Asia	2026-07-16 07:50:43.083609
+6	4	18008055	Asia	2026-07-16 07:50:55.759192
+7	4	862595069	Asia	2026-07-16 07:50:55.769825
+8	5	1800080555	Asia	2026-07-19 20:32:14.456204
+9	6	180080555	Asia	2026-07-19 20:44:16.792989
 \.
 
 
@@ -455,6 +465,12 @@ COPY public.transaction_details (id, transaction_id, game_uid, game_server, crea
 --
 
 COPY public.transactions (id, order_id, user_id, product_id, quantity, total_price, customer_email, customer_whatsapp, payment_type, snap_token, transaction_id_midtrans, transaction_status, fraud_status, transaction_time, settlement_time, expiry_time, paid_at, notes, created_at, updated_at, order_status) FROM stdin;
+1	TRX-1783983522092	\N	1	1	16000	brillianbagusajisasongko@gmail.com	085162566346	gopay	391cf5a4-299e-469a-8ebb-20b4b7838470	918175ac-1993-46bd-b3ea-d1e48e6e730d	pending	accept	\N	\N	\N	\N	\N	2026-07-14 05:58:42.30457	2026-07-14 22:17:04.154598	done
+2	TRX-1784162950130	\N	1	2	32000	brillianbagusajisasongko@gmail.com	085162566346	\N	8d665106-8d74-4d62-82d0-b7b8a09d1ccf	\N	pending	\N	\N	\N	\N	\N	\N	2026-07-16 07:49:10.308846	2026-07-16 07:49:10.308846	waiting
+3	TRX-1784163042783	\N	1	2	32000	brillianbagusajisasongko@gmail.com	085162566346	\N	520fdc8e-c6c1-431f-a061-58050d36bc9c	\N	pending	\N	\N	\N	\N	\N	\N	2026-07-16 07:50:43.04886	2026-07-16 07:50:43.04886	waiting
+4	TRX-1784163055343	\N	1	2	32000	brillianbagusajisasongko@gmail.com	085162566346	\N	61e62647-fd6c-43f4-8dda-4646923d1a4b	\N	pending	\N	\N	\N	\N	\N	\N	2026-07-16 07:50:55.712344	2026-07-16 07:50:55.712344	waiting
+5	TRX-1784467934234	\N	3	1	249000	brillianbagusajisasongko@gmail.com	085162566346	gopay	0ba93f6c-83a8-4bec-982e-abeb1d4d45da	f2ee8653-54e6-4413-af4d-68bac752f4c0	settlement	accept	\N	2026-07-19 20:32:25	\N	\N	\N	2026-07-19 20:32:14.377328	2026-07-19 20:33:10.963401	done
+6	TRX-1784468656342	\N	6	1	1599000	brillianbagusajisasongko@gmail.com	085162566346	qris	b72e08c5-2863-4060-a920-bcefb9cd37b1	0b8dd1a8-ddfa-4ccc-8523-53f83d723852	settlement	accept	\N	2026-07-19 20:45:45	\N	\N	\N	2026-07-19 20:44:16.776161	2026-07-19 20:46:32.411548	done
 \.
 
 
@@ -464,6 +480,8 @@ COPY public.transactions (id, order_id, user_id, product_id, quantity, total_pri
 
 COPY public.users (id, name, username, birth_date, email, phone, password, created_at, updated_at) FROM stdin;
 1	Lian	lian	2004-03-25	lian@gmail.com	081234567890	$2b$10$lPY96W3ghCYKAWU7/xqREOoCISSbEOKZv.Aks0HS02vlG/WWzYwvm	2026-07-13 19:46:51.116639	2026-07-13 19:46:51.116639
+2	Jane Doe	janedoe	2004-03-25	janedoe@gmail.com	081111111111	$2b$10$0u0cuUp74oTn/1awVP7Qoe6VDwgdmnIianbXTr0pO7S5i4u7M5072	2026-07-13 21:47:40.488151	2026-07-13 21:47:40.488151
+3	Mika Melatika	mikamelatika	2001-07-18	mikamelatika@test.com	089123456789	$2b$10$BYU6JjlnuGAduQsZ07stTu62aGb4QiuMJyWE2nlqZ896TbOVVkbqC	2026-07-14 06:15:01.066044	2026-07-14 06:15:01.066044
 \.
 
 
@@ -471,7 +489,7 @@ COPY public.users (id, name, username, birth_date, email, phone, password, creat
 -- Name: admins_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.admins_id_seq', 1, true);
+SELECT pg_catalog.setval('public.admins_id_seq', 2, true);
 
 
 --
@@ -499,21 +517,21 @@ SELECT pg_catalog.setval('public.products_id_seq', 18, true);
 -- Name: transaction_details_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.transaction_details_id_seq', 1, false);
+SELECT pg_catalog.setval('public.transaction_details_id_seq', 9, true);
 
 
 --
 -- Name: transactions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.transactions_id_seq', 1, false);
+SELECT pg_catalog.setval('public.transactions_id_seq', 6, true);
 
 
 --
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.users_id_seq', 1, true);
+SELECT pg_catalog.setval('public.users_id_seq', 3, true);
 
 
 --
@@ -688,5 +706,5 @@ ALTER TABLE ONLY public.transactions
 -- PostgreSQL database dump complete
 --
 
-\unrestrict dIuFVLTwG2XiyhcXyIaxhbqSBbtIiKLtG4GNQ1FudbYOERfIVv1Iv6HTAfEAe8j
+\unrestrict h5IHJT1wRgiWWyVrIh0EV6TKKbNxnhNSu5y5XT33eKIL45ivrL1fWEPqGfsFe5Y
 

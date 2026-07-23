@@ -1,15 +1,7 @@
 <template>
 
-  <q-table
-    flat
-    bordered
-    hide-pagination
-    :rows-per-page-options="[0]"
-    :rows="games"
-    :columns="columns"
-    row-key="id"
-    class="game-table"
-  >
+  <q-table flat bordered hide-pagination :rows-per-page-options="[0]" :rows="games" :columns="columns" row-key="id"
+    class="game-table">
 
     <!-- STATUS -->
 
@@ -17,13 +9,10 @@
 
       <q-td :props="props">
 
-        <q-badge
-          :color="
-            props.row.is_active
-              ? 'positive'
-              : 'negative'
-          "
-        >
+        <q-badge :color="props.row.is_active
+          ? 'positive'
+          : 'negative'
+          ">
           {{
             props.row.is_active
               ? 'Active'
@@ -41,13 +30,9 @@
 
       <q-td :props="props">
 
-        <q-chip
-          dense
-          outline
-          color="accent"
-        >
+        <span class="game-key">
           {{ props.row.game_key }}
-        </q-chip>
+        </span>
 
       </q-td>
 
@@ -61,47 +46,26 @@
 
         <div class="action-buttons">
 
-          <q-btn
-            flat
-            round
-            dense
-            icon="visibility"
-            color="info"
-            @click="
-              emit(
-                'details',
-                props.row
-              )
-            "
-          />
+          <q-btn flat round dense icon="visibility" color="info" @click="
+            emit(
+              'details',
+              props.row
+            )
+            " />
 
-          <q-btn
-            flat
-            round
-            dense
-            icon="edit"
-            color="accent"
-            @click="
-              emit(
-                'update',
-                props.row
-              )
-            "
-          />
+          <q-btn flat round dense icon="edit" color="accent" @click="
+            emit(
+              'update',
+              props.row
+            )
+            " />
 
-          <q-btn
-            flat
-            round
-            dense
-            icon="delete"
-            color="negative"
-            @click="
-              emit(
-                'delete',
-                props.row
-              )
-            "
-          />
+          <q-btn flat round dense icon="delete" color="negative" @click="
+            emit(
+              'delete',
+              props.row
+            )
+            " />
 
         </div>
 
@@ -113,14 +77,12 @@
 
     <template #no-data>
 
-      <div
-        class="
+      <div class="
           full-width
           row
           flex-center
           q-pa-lg
-        "
-      >
+        ">
         Tidak ada game ditemukan.
       </div>
 
@@ -182,91 +144,151 @@ const columns = [
 ]
 
 </script>
-    <style lang="scss" scoped>
 
+<style scoped lang="scss">
 .game-table {
-  background: white;
+  background: var(--app-surface);
 
-  border-radius: 20px;
+  border: 1px solid var(--app-border);
 
-  overflow: hidden;
+  border-radius: 18px;
+
+  overflow: auto;
 }
+
+/*
+|--------------------------------------------------------------------------
+| TABLE
+|--------------------------------------------------------------------------
+*/
+
+:deep(.q-table table) {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+/*
+|--------------------------------------------------------------------------
+| HEADER
+|--------------------------------------------------------------------------
+*/
+
+:deep(.q-table thead th) {
+  background: var(--app-surface);
+
+  color: var(--app-text);
+
+  font-weight: 700;
+
+  white-space: nowrap;
+
+  border-bottom: 1px solid var(--app-border);
+}
+
+/*
+|--------------------------------------------------------------------------
+| BODY
+|--------------------------------------------------------------------------
+*/
+
+:deep(.q-table td) {
+  color: var(--app-text);
+
+  white-space: nowrap;
+}
+
+:deep(.q-table tbody tr) {
+  transition: background .2s ease;
+}
+
+:deep(.q-table tbody tr:hover) {
+  background: rgba($accent, .05);
+}
+
+/*
+|--------------------------------------------------------------------------
+| STICKY LEFT
+|--------------------------------------------------------------------------
+*/
+
+:deep(.q-table thead th:first-child),
+:deep(.q-table tbody td:first-child) {
+  position: sticky;
+
+  left: 0;
+
+  z-index: 20;
+
+  background: var(--app-surface);
+}
+
+/*
+|--------------------------------------------------------------------------
+| STICKY RIGHT
+|--------------------------------------------------------------------------
+*/
+
+:deep(.q-table thead th:last-child),
+:deep(.q-table tbody td:last-child) {
+  position: sticky;
+
+  right: 0;
+
+  z-index: 20;
+
+  background: var(--app-surface);
+}
+
+/*
+|--------------------------------------------------------------------------
+| ACTIONS
+|--------------------------------------------------------------------------
+*/
 
 .action-buttons {
   display: flex;
 
   justify-content: center;
 
-  gap: 4px;
+  gap: 6px;
 }
-
-/*
-|--------------------------------------------------------------------------
-| TABLE HEADER
-|--------------------------------------------------------------------------
-*/
-
-:deep(.q-table thead tr) {
-  background: rgba(
-    $sakura,
-    .08
-  );
-}
-
-:deep(.q-table th) {
-  color: $dark;
-
-  font-weight: 700;
-}
-
-/*
-|--------------------------------------------------------------------------
-| TABLE BODY
-|--------------------------------------------------------------------------
-*/
-
-:deep(.q-table tbody tr:hover) {
-  background: rgba(
-    $sakura,
-    .04
-  );
-}
-
-/*
-|--------------------------------------------------------------------------
-| ACTION BUTTONS
-|--------------------------------------------------------------------------
-*/
 
 .action-buttons :deep(.q-btn) {
-  transition:
-    transform .2s ease;
+  border-radius: 10px;
+
+  transition: background .2s ease;
 }
 
 .action-buttons :deep(.q-btn:hover) {
-  transform: scale(1.1);
+  background: rgba($accent, .08);
 }
 
 /*
 |--------------------------------------------------------------------------
-| CHIP
+| GAME KEY
 |--------------------------------------------------------------------------
 */
 
-:deep(.q-chip) {
-  font-weight: 600;
+.game-key {
+  color: var(--app-text-secondary);
+
+  font-size: .9rem;
+
+  font-weight: 500;
 }
 
 /*
 |--------------------------------------------------------------------------
-| BADGE
+| STATUS
 |--------------------------------------------------------------------------
 */
 
 :deep(.q-badge) {
-  min-width: 70px;
+  min-width: 72px;
 
   justify-content: center;
+
+  font-weight: 600;
 }
 
 /*
@@ -275,12 +297,16 @@ const columns = [
 |--------------------------------------------------------------------------
 */
 
-@media (max-width: 768px) {
+@media (max-width:768px) {
+
+  :deep(.q-table th),
+  :deep(.q-table td) {
+    padding: 10px 12px;
+  }
 
   .action-buttons {
-    gap: 2px;
+    gap: 4px;
   }
 
 }
-
 </style>

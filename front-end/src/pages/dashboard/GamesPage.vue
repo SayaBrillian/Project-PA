@@ -2,85 +2,55 @@
 
   <q-page class="games-page">
 
-    <div
-      class="page-content"
-      :class="{
-        blurred:
-          showDetails ||
-          showCreate ||
-          showUpdate ||
-          showDelete
-      }"
-    >
+    <div class="page-content" :class="{
+      blurred:
+        showDetails ||
+        showCreate ||
+        showUpdate ||
+        showDelete
+    }">
 
       <!-- HEADER -->
 
       <div class="page-header">
 
-        <div>
+        <div class="page-title">
 
           <h1>
             Games
           </h1>
 
           <p>
-            Kelola daftar game yang tersedia.
+            Kelola daftar game yang tersedia di EI Gaming Store.
           </p>
 
         </div>
 
-        <q-btn
-          unelevated
-          color="accent"
-          icon="add"
-          label="Add Game"
-          @click="openCreate"
-        />
+        <q-btn unelevated rounded color="accent" icon="add" label="Add Game" @click="openCreate" />
 
       </div>
 
       <!-- TABLE -->
 
-      <GameTable
-        :games="games"
-        @details="openDetails"
-        @update="openUpdate"
-        @delete="openDelete"
-      />
+      <GameTable :games="games" @details="openDetails" @update="openUpdate" @delete="openDelete" />
 
     </div>
 
     <!-- DETAILS -->
 
-    <GameDetailsDialog
-      v-model="showDetails"
-      :game="selectedGame"
-      @update="openUpdate"
-      @delete="openDelete"
-    />
+    <GameDetailsDialog v-model="showDetails" :game="selectedGame" @update="openUpdate" @delete="openDelete" />
 
     <!-- CREATE -->
 
-    <GameCreateDialog
-      v-model="showCreate"
-      @created="loadGames"
-    />
+    <GameCreateDialog v-model="showCreate" @created="loadGames" />
 
     <!-- UPDATE -->
 
-    <GameUpdateDialog
-      v-model="showUpdate"
-      :game="selectedGame"
-      @updated="loadGames"
-    />
+    <GameUpdateDialog v-model="showUpdate" :game="selectedGame" @updated="loadGames" />
 
     <!-- DELETE -->
 
-    <GameDeleteDialog
-      v-model="showDelete"
-      :game="selectedGame"
-      @deleted="loadGames"
-    />
+    <GameDeleteDialog v-model="showDelete" :game="selectedGame" @deleted="loadGames" />
 
   </q-page>
 
@@ -95,22 +65,21 @@ import {
 import api from 'src/axios'
 
 import GameTable from
-'src/components/dashboard/games/GameTable.vue'
+  'src/components/dashboard/games/GameTable.vue'
 
 import GameDetailsDialog from
-'src/components/dashboard/games/GameDetailsDialog.vue'
+  'src/components/dashboard/games/GameDetailsDialog.vue'
 
 import GameCreateDialog from
-'src/components/dashboard/games/GameCreateDialog.vue'
+  'src/components/dashboard/games/GameCreateDialog.vue'
 
 import GameUpdateDialog from
-'src/components/dashboard/games/GameUpdateDialog.vue'
+  'src/components/dashboard/games/GameUpdateDialog.vue'
 
 import GameDeleteDialog from
-'src/components/dashboard/games/GameDeleteDialog.vue'
+  'src/components/dashboard/games/GameDeleteDialog.vue'
 
 const games = ref([])
-
 const selectedGame =
   ref(null)
 
@@ -235,13 +204,9 @@ onMounted(() => {
 
 </script>
 
-<style lang="scss" scoped>
-
+<style scoped lang="scss">
 .games-page {
-  display: flex;
-  flex-direction: column;
-
-  gap: 24px;
+  padding: 16px;
 }
 
 .page-content {
@@ -251,7 +216,9 @@ onMounted(() => {
 }
 
 .page-content.blurred {
-  filter: blur(4px);
+  filter: blur(2px);
+
+  opacity: .7;
 
   pointer-events: none;
 
@@ -270,27 +237,26 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
 
-  margin-bottom: 24px;
+  gap: 20px;
+
+  margin-bottom: 20px;
 }
 
-.page-header h1 {
+.page-title h1 {
   margin: 0;
 
-  color: $dark;
+  color: var(--app-text);
 
-  font-size: 2rem;
+  font-size: 1.9rem;
   font-weight: 700;
 }
 
-.page-header p {
-  margin-top: 8px;
+.page-title p {
+  margin-top: 6px;
 
-  color: rgba(
-    0,
-    0,
-    0,
-    .55
-  );
+  color: var(--app-text-secondary);
+
+  font-size: .95rem;
 }
 
 /*
@@ -299,16 +265,39 @@ onMounted(() => {
 |--------------------------------------------------------------------------
 */
 
-@media (max-width: 768px) {
+@media (min-width: 1024px) {
 
-  .page-header {
-    flex-direction: column;
-
-    align-items: flex-start;
-
-    gap: 16px;
+  .games-page {
+    padding: 24px;
   }
 
 }
 
+@media (max-width: 768px) {
+
+  .games-page {
+    padding: 12px;
+  }
+
+  .page-header {
+    flex-direction: column;
+
+    align-items: stretch;
+
+    margin-bottom: 16px;
+  }
+
+  .page-title h1 {
+    font-size: 1.5rem;
+  }
+
+  .page-title p {
+    font-size: .85rem;
+  }
+
+  .page-header .q-btn {
+    width: 100%;
+  }
+
+}
 </style>
