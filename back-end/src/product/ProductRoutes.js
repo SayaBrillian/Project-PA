@@ -1,101 +1,78 @@
 import express from "express";
 
-import { registerUser } from "./RegisterUser.js";
-import { loginUser } from "./LoginUser.js";
-import { checkUser } from "./CheckUser.js";
-import { profileUser } from "./ProfileUser.js";
-
-import { getUsers } from "./GetUsers.js";
-import { updateUser } from "./UpdateUser.js";
-
-import { verifyToken } from "../middleware/Auth.js";
-import { updateProfileUser } from "./UpdateProfileUser.js";
-import { changePasswordUser } from "./ChangePasswordUser.js";
+import { getProducts } from "./GetProducts.js";
+import { getProductsByGame } from "./GetProductsByGame.js";
+import { getProduct } from "./GetProduct.js";
+import { createProduct } from "./CreateProduct.js";
+import { updateProduct } from "./UpdateProduct.js";
+import { deleteProduct } from "./DeleteProduct.js";
 
 const router = express.Router();
 
 /*
 |--------------------------------------------------------------------------
-| REGISTER
-|--------------------------------------------------------------------------
-*/
-
-router.post(
-  "/register",
-  registerUser
-);
-
-/*
-|--------------------------------------------------------------------------
-| LOGIN
-|--------------------------------------------------------------------------
-*/
-
-router.post(
-  "/login",
-  loginUser
-);
-
-/*
-|--------------------------------------------------------------------------
-| CHECK
-|--------------------------------------------------------------------------
-*/
-
-router.post(
-  "/check",
-  checkUser
-);
-
-/*
-|--------------------------------------------------------------------------
-| PROFILE
+| PRODUCTS
 |--------------------------------------------------------------------------
 */
 
 router.get(
-  "/me",
-  verifyToken,
-  profileUser
+    "/",
+    getProducts
 );
 
 /*
 |--------------------------------------------------------------------------
-| USERS
+| PRODUCTS BY GAME
 |--------------------------------------------------------------------------
 */
 
 router.get(
-  "/",
-  getUsers
-);
-
-router.put(
-  "/:id",
-  updateUser
+    "/game/:gameId",
+    getProductsByGame
 );
 
 /*
 |--------------------------------------------------------------------------
-| UPDATE PROFILE
+| PRODUCT
 |--------------------------------------------------------------------------
 */
 
-router.put(
-  "/me",
-  verifyToken,
-  updateProfileUser
+router.get(
+    "/:id",
+    getProduct
 );
 
 /*
 |--------------------------------------------------------------------------
-| CHANGE PASSWORD
+| CREATE PRODUCT
+|--------------------------------------------------------------------------
+*/
+
+router.post(
+    "/",
+    createProduct
+);
+
+/*
+|--------------------------------------------------------------------------
+| UPDATE PRODUCT
 |--------------------------------------------------------------------------
 */
 
 router.put(
-  "/change-password",
-  verifyToken,
-  changePasswordUser
+    "/:id",
+    updateProduct
 );
+
+/*
+|--------------------------------------------------------------------------
+| DELETE PRODUCT
+|--------------------------------------------------------------------------
+*/
+
+router.delete(
+    "/:id",
+    deleteProduct
+);
+
 export default router;

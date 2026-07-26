@@ -1,61 +1,183 @@
 <template>
-  <q-dialog :model-value="modelValue" @update:model-value="emit('update:modelValue', $event)">
+
+  <q-dialog :model-value="modelValue" :position="$q.screen.lt.md ? 'bottom' : undefined" @update:model-value="
+    emit(
+      'update:modelValue',
+      $event
+    )
+    ">
+
     <q-card class="dialog-card">
-      <q-card-section>
-        <div class="dialog-title">Update Game</div>
-      </q-card-section>
 
-      <q-card-section class="form-section">
-        <q-input v-model="form.name" label="Game Name" outlined />
+      <!-- HEADER -->
 
-        <q-input v-model="form.slug" label="Slug" outlined />
+      <div class="dialog-header">
 
-        <q-input v-model="form.game_key" label="Game Key" outlined />
+        <div v-if="$q.screen.lt.md" class="dialog-handle"></div>
 
-        <q-input v-model="form.publisher" label="Publisher" outlined />
+        <div class="header-content">
 
-        <q-input v-model="form.description" label="Description" outlined type="textarea" />
+          <div>
 
-        <q-input v-model="form.latest_patch" label="Latest Patch" outlined />
+            <h2 class="dialog-title">
+              Update Game
+            </h2>
 
-        <q-input v-model="form.latest_update" label="Latest Update" outlined />
+            <p class="dialog-subtitle">
+              Perbarui informasi game.
+            </p>
 
-        <q-input v-model="form.official_url" label="Official Website" outlined />
+          </div>
 
-        <q-input v-model="form.patchnote_url" label="Patch Notes URL" outlined />
+          <q-btn flat round dense icon="close" v-close-popup />
 
-        <q-toggle v-model="form.is_active" label="Active" color="accent" />
-      </q-card-section>
+        </div>
 
-      <q-card-actions align="right">
-        <q-btn flat label="Cancel" v-close-popup />
+      </div>
 
-        <q-btn
-          unelevated
-          color="accent"
-          label="Save Changes"
-          :loading="loading"
-          @click="updateGame"
-        />
-      </q-card-actions>
+      <q-separator />
+
+      <!-- CONTENT -->
+
+      <div class="dialog-content">
+
+        <!-- BASIC INFORMATION -->
+
+        <div class="dialog-section">
+
+          <h3 class="section-title">
+            Basic Information
+          </h3>
+
+          <div class="form-grid">
+
+            <q-input v-model="form.name" outlined label="Game Name" />
+
+            <q-input v-model="form.slug" outlined label="Slug" />
+
+            <q-input v-model="form.game_key" outlined label="Game Key" />
+
+            <q-input v-model="form.publisher" outlined label="Publisher" />
+
+          </div>
+
+        </div>
+
+        <!-- GAME INFORMATION -->
+
+        <div class="dialog-section">
+
+          <h3 class="section-title">
+            Game Information
+          </h3>
+
+          <div class="form-grid">
+
+            <q-input v-model="form.description" outlined autogrow type="textarea" label="Description"
+              class="col-span-2" />
+
+            <q-input v-model="form.latest_patch" outlined label="Latest Patch" />
+
+            <q-input v-model="form.latest_update" outlined readonly label="Latest Update">
+
+              <template #append>
+
+                <q-icon name="event" class="cursor-pointer">
+
+                  <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+
+                    <q-date v-model="form.latest_update" mask="YYYY-MM-DD" />
+
+                  </q-popup-proxy>
+
+                </q-icon>
+
+              </template>
+
+            </q-input>
+
+          </div>
+
+        </div>
+
+        <!-- LINKS -->
+
+        <div class="dialog-section">
+
+          <h3 class="section-title">
+            Links
+          </h3>
+
+          <div class="form-grid">
+
+            <q-input v-model="form.official_url" outlined type="url" label="Official Website" />
+
+            <q-input v-model="form.patchnote_url" outlined type="url" label="Patch Notes URL" />
+
+          </div>
+
+          <q-toggle v-model="form.is_active" label="Game Active" color="accent" />
+
+        </div>
+
+      </div>
+
+      <q-separator />
+
+      <!-- FOOTER -->
+
+      <div class="dialog-footer">
+
+        <div class="footer-actions">
+
+          <q-btn unelevated color="accent" icon="save" no-caps label="Save Changes" :loading="loading"
+            @click="updateGame" />
+
+        </div>
+
+      </div>
+
     </q-card>
+
   </q-dialog>
+
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+
+import {
+  ref,
+  watch,
+} from 'vue'
+
+import {
+  useQuasar,
+} from 'quasar'
+
 import api from 'src/axios'
 
+const $q = useQuasar()
+
 const props = defineProps({
+
   modelValue: Boolean,
+
   game: Object,
+
 })
 
-const emit = defineEmits(['update:modelValue', 'updated'])
+const emit = defineEmits([
+
+  'update:modelValue',
+
+  'updated',
+
+])
 
 const loading = ref(false)
 
 const form = ref({
+
   name: '',
   slug: '',
   game_key: '',
@@ -65,64 +187,385 @@ const form = ref({
   latest_update: '',
   official_url: '',
   patchnote_url: '',
+  is_active: true,
+
 })
 
-watch(
-  () => props.game,
-  (game) => {
-    if (!game) return
+const fillForm = () => {
 
-    form.value = {
-      name: game.name || '',
-      slug: game.slug || '',
-      game_key: game.game_key || '',
-      publisher: game.publisher || '',
-      description: game.description || '',
-      latest_patch: game.latest_patch || '',
-      latest_update: game.latest_update || '',
-      official_url: game.official_url || '',
-      patchnote_url: game.patchnote_url || '',
+  if (!props.game) return
+
+  form.value = {
+
+    name: props.game.name || '',
+    slug: props.game.slug || '',
+    game_key: props.game.game_key || '',
+    publisher: props.game.publisher || '',
+    description: props.game.description || '',
+    latest_patch: props.game.latest_patch || '',
+    latest_update: props.game.latest_update || '',
+    official_url: props.game.official_url || '',
+    patchnote_url: props.game.patchnote_url || '',
+    is_active: props.game.is_active,
+
+  }
+
+}
+
+watch(
+
+  () => props.modelValue,
+
+  (opened) => {
+
+    if (opened) {
+
+      fillForm()
+
     }
-  },
-  {
-    immediate: true,
-  },
+
+  }
+
 )
 
 const updateGame = async () => {
+
   try {
+
     loading.value = true
 
-    await api.put(`/api/games/${props.game.id}`, form.value)
+    await api.put(
+
+      `/api/games/${props.game.id}`,
+
+      form.value,
+
+    )
 
     emit('updated')
 
     emit('update:modelValue', false)
-  } catch (error) {
-    console.error('Update Game Error:', error)
-  } finally {
-    loading.value = false
+
   }
+
+  catch (error) {
+
+    console.error(
+
+      'Update Game Error:',
+
+      error,
+
+    )
+
+  }
+
+  finally {
+
+    loading.value = false
+
+  }
+
 }
+
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
+/*
+|--------------------------------------------------------------------------
+| DIALOG
+|--------------------------------------------------------------------------
+*/
+
 .dialog-card {
+
   width: 700px;
   max-width: 95vw;
 
-  border-radius: 24px;
-}
+  height: 80vh;
 
-.dialog-title {
-  font-size: 1.3rem;
-  font-weight: 700;
-}
-
-.form-section {
   display: flex;
   flex-direction: column;
 
-  gap: 16px;
+  background: var(--app-bg);
+
+  border: 1px solid var(--app-border);
+  border-radius: 24px;
+
+  overflow: hidden;
+
+}
+
+/*
+|--------------------------------------------------------------------------
+| HEADER
+|--------------------------------------------------------------------------
+*/
+
+.dialog-header {
+
+  padding: 24px 28px;
+
+}
+
+.dialog-handle {
+
+  width: 48px;
+  height: 5px;
+
+  margin: 0 auto 20px;
+
+  border-radius: 999px;
+
+  background: var(--app-border);
+
+}
+
+.header-content {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: flex-start;
+
+  gap: 20px;
+
+}
+
+.dialog-title {
+
+  margin: 0 0 8px;
+
+  color: var(--app-text);
+
+  font-size: 1.7rem;
+  font-weight: 700;
+
+}
+
+.dialog-subtitle {
+
+  margin: 0;
+
+  color: var(--app-text-secondary);
+
+  line-height: 1.7;
+
+}
+
+/*
+|--------------------------------------------------------------------------
+| CONTENT
+|--------------------------------------------------------------------------
+*/
+
+.dialog-content {
+
+  flex: 1;
+
+  overflow-y: auto;
+
+  padding: 28px;
+
+}
+
+.dialog-section {
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 20px;
+
+  margin-bottom: 32px;
+
+}
+
+.dialog-section:last-child {
+
+  margin-bottom: 0;
+
+}
+
+.section-title {
+
+  margin: 0;
+
+  color: var(--app-text);
+
+  font-size: 1.05rem;
+  font-weight: 700;
+
+}
+
+.form-grid {
+
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 18px;
+
+}
+
+.col-span-2 {
+
+  grid-column: span 2;
+
+}
+
+/*
+|--------------------------------------------------------------------------
+| FORM
+|--------------------------------------------------------------------------
+*/
+
+:deep(.q-field__control) {
+
+  border-radius: 14px;
+
+}
+
+:deep(.q-field__native) {
+
+  color: var(--app-text);
+
+}
+
+:deep(.q-field__label) {
+
+  color: var(--app-text-secondary);
+
+}
+
+:deep(.q-toggle) {
+
+  margin-top: 8px;
+
+}
+
+/*
+|--------------------------------------------------------------------------
+| FOOTER
+|--------------------------------------------------------------------------
+*/
+
+.dialog-footer {
+
+  padding: 24px 28px;
+
+  background: var(--app-bg);
+
+  border-top: 1px solid var(--app-border);
+
+}
+
+.footer-actions {
+
+  display: flex;
+
+  justify-content: flex-end;
+
+}
+
+.footer-actions :deep(.q-btn) {
+
+  min-width: 180px;
+
+  border-radius: 14px;
+
+}
+
+/*
+|--------------------------------------------------------------------------
+| SCROLLBAR
+|--------------------------------------------------------------------------
+*/
+
+.dialog-content::-webkit-scrollbar {
+
+  width: 8px;
+
+}
+
+.dialog-content::-webkit-scrollbar-thumb {
+
+  background: var(--app-border);
+
+  border-radius: 999px;
+
+}
+
+/*
+|--------------------------------------------------------------------------
+| MOBILE
+|--------------------------------------------------------------------------
+*/
+
+@media (max-width: 768px) {
+
+  .dialog-card {
+
+    width: 100vw;
+    max-width: 100vw;
+
+    height: 90vh;
+
+    margin: 0;
+
+    border-radius: 24px 24px 0 0;
+
+  }
+
+  .dialog-header {
+
+    padding: 20px;
+
+  }
+
+  .dialog-content {
+
+    padding: 20px;
+
+  }
+
+  .dialog-footer {
+
+    padding: 20px;
+
+    box-shadow: 0 -6px 18px rgba(0, 0, 0, .08);
+
+  }
+
+  .dialog-title {
+
+    font-size: 1.5rem;
+
+  }
+
+  .form-grid {
+
+    grid-template-columns: 1fr;
+
+  }
+
+  .col-span-2 {
+
+    grid-column: span 1;
+
+  }
+
+  .footer-actions {
+
+    display: grid;
+
+  }
+
+  .footer-actions :deep(.q-btn) {
+
+    width: 100%;
+
+  }
+
 }
 </style>

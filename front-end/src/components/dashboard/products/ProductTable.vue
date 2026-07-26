@@ -3,6 +3,8 @@
   <q-table flat bordered hide-pagination :rows-per-page-options="[0]" :rows="products" :columns="columns" row-key="id"
     class="product-table">
 
+    <!-- PRODUCT -->
+
     <template #body-cell-name="props">
 
       <q-td :props="props">
@@ -15,22 +17,37 @@
 
     </template>
 
-    <template #body-cell-price="props">
+    <!-- GAME -->
+
+    <template #body-cell-game_name="props">
 
       <q-td :props="props">
 
-        Rp
-        {{
-          Number(
-            props.row.price
-          ).toLocaleString(
-            'id-ID'
-          )
-        }}
+        <q-badge outline color="accent">
+          {{ props.row.game_name }}
+        </q-badge>
 
       </q-td>
 
     </template>
+
+    <!-- PRICE -->
+
+    <template #body-cell-price="props">
+
+      <q-td :props="props" class="text-right">
+
+        <span class="price">
+
+          Rp {{ Number(props.row.price).toLocaleString("id-ID") }}
+
+        </span>
+
+      </q-td>
+
+    </template>
+
+    <!-- STATUS -->
 
     <template #body-cell-status="props">
 
@@ -40,16 +57,20 @@
           ? 'positive'
           : 'negative'
           ">
+
           {{
             props.row.is_active
               ? 'Active'
               : 'Inactive'
           }}
+
         </q-badge>
 
       </q-td>
 
     </template>
+
+    <!-- ACTIONS -->
 
     <template #body-cell-actions="props">
 
@@ -57,17 +78,37 @@
 
         <div class="action-buttons">
 
-          <q-btn flat round dense icon="visibility" color="info" @click="emit('details', props.row)" />
+          <q-btn flat round dense icon="visibility" color="info" @click="emit('details', props.row)">
 
-          <q-btn flat round dense icon="edit" color="accent" @click="emit('update', props.row)" />
+            <q-tooltip>
+              Details
+            </q-tooltip>
 
-          <q-btn flat round dense icon="delete" color="negative" @click="emit('delete', props.row)" />
+          </q-btn>
+
+          <q-btn flat round dense icon="edit" color="accent" @click="emit('update', props.row)">
+
+            <q-tooltip>
+              Update
+            </q-tooltip>
+
+          </q-btn>
+
+          <q-btn flat round dense icon="delete" color="negative" @click="emit('delete', props.row)">
+
+            <q-tooltip>
+              Delete
+            </q-tooltip>
+
+          </q-btn>
 
         </div>
 
       </q-td>
 
     </template>
+
+    <!-- NO DATA -->
 
     <template #no-data>
 
@@ -77,7 +118,9 @@
           flex-center
           q-pa-lg
         ">
+
         Tidak ada produk ditemukan.
+
       </div>
 
     </template>
@@ -89,65 +132,74 @@
 <script setup>
 
 defineProps({
+
   products: {
+
     type: Array,
+
     default: () => [],
+
   },
+
 })
 
 const emit = defineEmits([
-  'details',
-  'update',
-  'delete',
+
+  "details",
+
+  "update",
+
+  "delete",
+
 ])
 
 const columns = [
+
   {
-    name: 'name',
-    label: 'Product',
-    field: 'name',
-    align: 'left',
+    name: "name",
+    label: "Product",
+    field: "name",
+    align: "left",
     sortable: true,
   },
+
   {
-    name: 'game_name',
-    label: 'Game',
-    field: 'game_name',
-    align: 'left',
+    name: "game_name",
+    label: "Game",
+    field: "game_name",
+    align: "left",
     sortable: true,
   },
+
   {
-    name: 'currency_amount',
-    label: 'Amount',
-    field: 'currency_amount',
-    align: 'center',
+    name: "price",
+    label: "Price",
+    field: "price",
+    align: "right",
     sortable: true,
   },
+
   {
-    name: 'price',
-    label: 'Price',
-    field: 'price',
-    align: 'right',
-    sortable: true,
+    name: "status",
+    label: "Status",
+    field: "is_active",
+    align: "center",
   },
+
   {
-    name: 'status',
-    label: 'Status',
-    field: 'is_active',
-    align: 'center',
+    name: "actions",
+    label: "Actions",
+    field: "actions",
+    align: "center",
   },
-  {
-    name: 'actions',
-    label: 'Actions',
-    field: 'actions',
-    align: 'center',
-  },
+
 ]
 
 </script>
 
 <style scoped lang="scss">
 .product-table {
+
   background: var(--app-surface);
 
   border: 1px solid var(--app-border);
@@ -155,6 +207,7 @@ const columns = [
   border-radius: 18px;
 
   overflow: auto;
+
 }
 
 /*
@@ -164,9 +217,11 @@ const columns = [
 */
 
 :deep(.q-table table) {
+
   border-collapse: separate;
 
   border-spacing: 0;
+
 }
 
 /*
@@ -176,6 +231,7 @@ const columns = [
 */
 
 :deep(.q-table thead th) {
+
   background: var(--app-surface);
 
   color: var(--app-text);
@@ -185,6 +241,7 @@ const columns = [
   white-space: nowrap;
 
   border-bottom: 1px solid var(--app-border);
+
 }
 
 /*
@@ -194,17 +251,23 @@ const columns = [
 */
 
 :deep(.q-table td) {
+
   color: var(--app-text);
 
   white-space: nowrap;
+
 }
 
 :deep(.q-table tbody tr) {
+
   transition: background .2s ease;
+
 }
 
 :deep(.q-table tbody tr:hover) {
+
   background: rgba($accent, .05);
+
 }
 
 /*
@@ -215,24 +278,28 @@ const columns = [
 
 :deep(.q-table thead th:first-child),
 :deep(.q-table tbody td:first-child) {
+
   position: sticky;
 
   left: 0;
 
-  z-index: 10;
+  z-index: 20;
 
   background: var(--app-surface);
+
 }
 
 :deep(.q-table thead th:last-child),
 :deep(.q-table tbody td:last-child) {
+
   position: sticky;
 
   right: 0;
 
-  z-index: 10;
+  z-index: 20;
 
   background: var(--app-surface);
+
 }
 
 /*
@@ -242,9 +309,11 @@ const columns = [
 */
 
 .product-name {
-  color: var(--app-text);
 
   font-weight: 600;
+
+  color: var(--app-text);
+
 }
 
 /*
@@ -254,23 +323,27 @@ const columns = [
 */
 
 .price {
-  font-weight: 600;
+
+  font-weight: 700;
 
   color: var(--app-text);
+
 }
 
 /*
 |--------------------------------------------------------------------------
-| STATUS
+| BADGE
 |--------------------------------------------------------------------------
 */
 
 :deep(.q-badge) {
+
   min-width: 72px;
 
   justify-content: center;
 
   font-weight: 600;
+
 }
 
 /*
@@ -280,21 +353,27 @@ const columns = [
 */
 
 .action-buttons {
+
   display: flex;
 
   justify-content: center;
 
   gap: 6px;
+
 }
 
 .action-buttons :deep(.q-btn) {
+
   border-radius: 10px;
 
   transition: background .2s ease;
+
 }
 
 .action-buttons :deep(.q-btn:hover) {
+
   background: rgba($accent, .08);
+
 }
 
 /*
@@ -307,11 +386,15 @@ const columns = [
 
   :deep(.q-table th),
   :deep(.q-table td) {
+
     padding: 10px 12px;
+
   }
 
   .action-buttons {
+
     gap: 4px;
+
   }
 
 }

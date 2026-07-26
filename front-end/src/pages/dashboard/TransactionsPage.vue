@@ -243,10 +243,16 @@ onMounted(() => {
   gap: 24px;
 }
 
+/*
+|--------------------------------------------------------------------------
+| HEADER
+|--------------------------------------------------------------------------
+*/
+
 .page-header h1 {
   margin: 0;
 
-  color: $dark;
+  color: var(--app-text);
 
   font-size: 2rem;
   font-weight: 700;
@@ -255,18 +261,22 @@ onMounted(() => {
 .page-header p {
   margin-top: 8px;
 
-  color: rgba(0,
-      0,
-      0,
-      .55);
+  color: var(--app-text-secondary);
+
+  font-size: .95rem;
 }
+
+/*
+|--------------------------------------------------------------------------
+| TOOLBAR
+|--------------------------------------------------------------------------
+*/
 
 .toolbar-row {
   display: flex;
+  align-items: center;
 
   gap: 16px;
-
-  align-items: center;
 }
 
 .game-filter {
@@ -281,10 +291,55 @@ onMounted(() => {
   flex: 1;
 }
 
-@media (max-width: 768px) {
+/*
+|--------------------------------------------------------------------------
+| QUASAR INPUT
+|--------------------------------------------------------------------------
+*/
+
+:deep(.q-field) {
+  border-radius: 14px;
+}
+
+:deep(.q-field--outlined .q-field__control) {
+  background: var(--app-surface);
+
+  border-radius: 14px;
+
+  color: var(--app-text);
+}
+
+:deep(.q-field__native),
+:deep(.q-field__input),
+:deep(.q-field__label),
+:deep(.q-field__prepend),
+:deep(.q-field__append) {
+  color: var(--app-text);
+}
+
+:deep(.q-field__marginal) {
+  color: var(--app-text-secondary);
+}
+
+:deep(.q-menu),
+:deep(.q-list) {
+  background: var(--app-surface);
+
+  color: var(--app-text);
+}
+
+/*
+|--------------------------------------------------------------------------
+| MOBILE
+|--------------------------------------------------------------------------
+*/
+
+@media (max-width:768px) {
 
   .toolbar-row {
     flex-direction: column;
+
+    align-items: stretch;
   }
 
   .game-filter,

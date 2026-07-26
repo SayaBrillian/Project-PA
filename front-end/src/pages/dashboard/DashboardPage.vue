@@ -178,7 +178,7 @@ const loadDashboard = async () => {
 
     totalGames.value = gamesResponse.data.games.length
 
-    const productsResponse = await api.get('/api/products')
+    const productsResponse = await api.get('/api/product')
 
     totalProducts.value = productsResponse.data.products.length
 

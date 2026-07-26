@@ -1,152 +1,496 @@
 <template>
-  <q-dialog
-    :model-value="modelValue"
-    @update:model-value="
-      emit(
-        'update:modelValue',
-        $event
-      )
-    "
-  >
 
-    <q-card
-      v-if="game"
-      class="dialog-card"
-    >
+  <q-dialog :model-value="modelValue" :position="$q.screen.lt.md ? 'bottom' : undefined" @update:model-value="
+    emit(
+      'update:modelValue',
+      $event
+    )
+    ">
 
-      <q-card-section>
+    <q-card v-if="game" class="dialog-card">
 
-        <div class="dialog-title">
-          Nonaktifkan Game
+      <!-- HEADER -->
+
+      <div class="dialog-header">
+
+        <div v-if="$q.screen.lt.md" class="dialog-handle"></div>
+
+        <div class="header-content">
+
+          <div>
+
+            <h2 class="dialog-title">
+
+              Delete Game
+
+            </h2>
+
+            <p class="dialog-subtitle">
+
+              Tindakan ini tidak dapat dibatalkan.
+
+            </p>
+
+          </div>
+
+          <q-btn flat round dense icon="close" v-close-popup />
+
         </div>
 
-      </q-card-section>
+      </div>
 
-      <q-card-section>
+      <q-separator />
 
-        <p>
-          Apakah Anda yakin ingin
-          menonaktifkan game:
-        </p>
+      <!-- CONTENT -->
 
-        <div class="game-name">
-          {{ game.name }}
+      <div class="dialog-content">
+
+        <div class="warning-box">
+
+          <q-icon name="warning" color="negative" size="30px" />
+
+          <div>
+
+            <div class="warning-title">
+
+              Anda akan menghapus game berikut
+
+            </div>
+
+            <div class="warning-subtitle">
+
+              Data game akan dihapus dari sistem.
+
+            </div>
+
+          </div>
+
         </div>
 
-        <p class="warning-text">
-          Game tidak akan dihapus,
-          tetapi tidak akan tampil
-          sebagai game aktif.
-        </p>
+        <div class="dialog-section">
 
-      </q-card-section>
+          <h3 class="section-title">
 
-      <q-card-actions align="right">
+            Game Information
 
-        <q-btn
-          flat
-          label="Batal"
-          v-close-popup
-        />
+          </h3>
 
-        <q-btn
-          unelevated
-          color="negative"
-          label="Nonaktifkan"
-          :loading="loading"
-          @click="deleteGame"
-        />
+          <div class="detail-grid">
 
-      </q-card-actions>
+            <div class="detail-item">
+
+              <span>Game Name</span>
+
+              <strong>
+
+                {{ game.name }}
+
+              </strong>
+
+            </div>
+
+            <div class="detail-item">
+
+              <span>Publisher</span>
+
+              <strong>
+
+                {{ game.publisher || '-' }}
+
+              </strong>
+
+            </div>
+
+            <div class="detail-item">
+
+              <span>Game Key</span>
+
+              <strong>
+
+                {{ game.game_key }}
+
+              </strong>
+
+            </div>
+
+            <div class="detail-item">
+
+              <span>Status</span>
+
+              <strong>
+
+                {{
+                  game.is_active
+                    ? 'Active'
+                    : 'Inactive'
+                }}
+
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <q-separator />
+
+      <!-- FOOTER -->
+
+      <div class="dialog-footer">
+
+        <div class="footer-actions">
+
+          <q-btn unelevated color="negative" icon="delete" no-caps label="Delete Game" :loading="loading"
+            @click="deleteGame" />
+
+        </div>
+
+      </div>
 
     </q-card>
 
   </q-dialog>
+
 </template>
 
 <script setup>
-import { ref } from 'vue'
+
+import {
+  ref,
+} from 'vue'
+
+import {
+  useQuasar,
+} from 'quasar'
+
 import api from 'src/axios'
 
+const $q = useQuasar()
+
 const props = defineProps({
+
   modelValue: Boolean,
+
   game: Object,
+
 })
 
 const emit = defineEmits([
+
   'update:modelValue',
+
   'deleted',
+
 ])
 
 const loading = ref(false)
 
 const deleteGame = async () => {
 
+  if (!props.game) return
+
   try {
 
     loading.value = true
 
     await api.delete(
+
       `/api/games/${props.game.id}`
+
     )
 
     emit('deleted')
 
-    emit(
-      'update:modelValue',
-      false
-    )
+    emit('update:modelValue', false)
 
-  } catch (error) {
+  }
+
+  catch (error) {
 
     console.error(
+
       'Delete Game Error:',
-      error
+
+      error,
+
     )
 
-  } finally {
+  }
+
+  finally {
 
     loading.value = false
 
   }
 
 }
+
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
+/*
+|--------------------------------------------------------------------------
+| DIALOG
+|--------------------------------------------------------------------------
+*/
 
 .dialog-card {
-  width: 500px;
+
+  width: 560px;
   max-width: 95vw;
 
+  background: var(--app-bg);
+
+  border: 1px solid var(--app-border);
   border-radius: 24px;
+
+  overflow: hidden;
+
+}
+
+/*
+|--------------------------------------------------------------------------
+| HEADER
+|--------------------------------------------------------------------------
+*/
+
+.dialog-header {
+
+  padding: 24px 28px;
+
+}
+
+.dialog-handle {
+
+  width: 48px;
+  height: 5px;
+
+  margin: 0 auto 20px;
+
+  border-radius: 999px;
+
+  background: var(--app-border);
+
+}
+
+.header-content {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: flex-start;
+
+  gap: 20px;
+
 }
 
 .dialog-title {
-  font-size: 1.25rem;
+
+  margin: 0 0 8px;
+
+  color: var(--app-text);
+
+  font-size: 1.6rem;
   font-weight: 700;
 
-  color: $dark;
 }
 
-.game-name {
-  margin-top: 12px;
+.dialog-subtitle {
 
-  color: $dark;
+  margin: 0;
 
-  font-size: 1.1rem;
+  color: var(--app-text-secondary);
+
+}
+
+/*
+|--------------------------------------------------------------------------
+| CONTENT
+|--------------------------------------------------------------------------
+*/
+
+.dialog-content {
+
+  padding: 28px;
+
+}
+
+.warning-box {
+
+  display: flex;
+
+  gap: 16px;
+
+  padding: 18px;
+
+  margin-bottom: 28px;
+
+  border-radius: 16px;
+
+  background: rgba(244, 67, 54, .08);
+
+}
+
+.warning-title {
+
   font-weight: 700;
+
+  color: var(--app-text);
+
 }
 
-.warning-text {
-  margin-top: 16px;
+.warning-subtitle {
 
-  color: rgba(
-    0,
-    0,
-    0,
-    .6
-  );
+  margin-top: 4px;
+
+  color: var(--app-text-secondary);
+
+  line-height: 1.6;
+
 }
 
+.dialog-section {
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 18px;
+
+}
+
+.section-title {
+
+  margin: 0;
+
+  color: var(--app-text);
+
+  font-size: 1rem;
+  font-weight: 700;
+
+}
+
+.detail-grid {
+
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 18px;
+
+}
+
+.detail-item {
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 6px;
+
+}
+
+.detail-item span {
+
+  color: var(--app-text-secondary);
+
+  font-size: .82rem;
+
+}
+
+.detail-item strong {
+
+  color: var(--app-text);
+
+}
+
+/*
+|--------------------------------------------------------------------------
+| FOOTER
+|--------------------------------------------------------------------------
+*/
+
+.dialog-footer {
+
+  padding: 24px 28px;
+
+  border-top: 1px solid var(--app-border);
+
+}
+
+.footer-actions {
+
+  display: flex;
+
+  justify-content: flex-end;
+
+}
+
+.footer-actions :deep(.q-btn) {
+
+  min-width: 180px;
+
+  border-radius: 14px;
+
+}
+
+/*
+|--------------------------------------------------------------------------
+| MOBILE
+|--------------------------------------------------------------------------
+*/
+
+@media (max-width:768px) {
+
+  .dialog-card {
+
+    width: 100vw;
+
+    max-width: 100vw;
+
+    margin: 0;
+
+    border-radius: 24px 24px 0 0;
+
+  }
+
+  .dialog-header {
+
+    padding: 20px;
+
+  }
+
+  .dialog-content {
+
+    padding: 20px;
+
+  }
+
+  .dialog-footer {
+
+    padding: 20px;
+
+  }
+
+  .detail-grid {
+
+    grid-template-columns: 1fr;
+
+  }
+
+  .footer-actions {
+
+    display: grid;
+
+  }
+
+  .footer-actions :deep(.q-btn) {
+
+    width: 100%;
+
+  }
+
+}
 </style>

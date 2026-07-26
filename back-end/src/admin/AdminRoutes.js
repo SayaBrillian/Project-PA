@@ -5,7 +5,8 @@ import { loginAdmin } from "./LoginAdmin.js";
 import { profileAdmin } from "./ProfileAdmin.js";
 import { getAdmins } from "./GetAdmins.js";
 import { updateAdmin } from "./UpdateAdmin.js";
-
+import { updateProfileAdmin } from "./UpdateProfileAdmin.js";
+import { changePasswordAdmin } from "./ChangePasswordAdmin.js";
 import {
 
   verifyToken,
@@ -85,5 +86,29 @@ router.get(
 router.put(
   "/:id",
   updateAdmin
+);
+
+/*
+|--------------------------------------------------------------------------
+| UPDATE PROFILE
+|--------------------------------------------------------------------------
+*/
+
+router.put(
+  "/me",
+  verifyToken,
+  updateProfileAdmin
+);
+
+/*
+|--------------------------------------------------------------------------
+| CHANGE PASSWORD
+|--------------------------------------------------------------------------
+*/
+
+router.put(
+  "/change-password",
+  verifyToken,
+  changePasswordAdmin
 );
 export default router;

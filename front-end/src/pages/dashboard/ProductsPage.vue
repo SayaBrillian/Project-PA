@@ -155,7 +155,7 @@ const loadProducts =
 
       const response =
         await api.get(
-          '/api/products'
+          '/api/product'
         )
 
       products.value =

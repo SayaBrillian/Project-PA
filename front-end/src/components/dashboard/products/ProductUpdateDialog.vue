@@ -1,102 +1,122 @@
 <template>
 
-  <q-dialog
-    seamless
-    :model-value="modelValue"
-    @update:model-value="
-      emit(
-        'update:modelValue',
-        $event
-      )
-    "
-  >
+  <q-dialog :model-value="modelValue" :position="$q.screen.lt.md ? 'bottom' : undefined" @update:model-value="
+    emit(
+      'update:modelValue',
+      $event
+    )
+    ">
 
     <q-card class="dialog-card">
 
-      <q-card-section>
+      <!-- HEADER -->
 
-        <div class="dialog-title">
-          Update Product
+      <div class="dialog-header">
+
+        <div v-if="$q.screen.lt.md" class="dialog-handle" />
+
+        <div class="header-content">
+
+          <div>
+
+            <h2 class="dialog-title">
+
+              Update Product
+
+            </h2>
+
+            <p class="dialog-subtitle">
+
+              Perbarui informasi produk.
+
+            </p>
+
+          </div>
+
+          <q-btn flat round dense icon="close" v-close-popup />
+
         </div>
 
-        <div class="dialog-subtitle">
-          Update produk baru ke dalam game.
-        </div>
-
-      </q-card-section>
+      </div>
 
       <q-separator />
 
-      <q-card-section>
+      <!-- CONTENT -->
 
-        <div class="form-grid">
+      <div class="dialog-content">
 
-          <q-select
-            v-model="form.game_id"
-            :options="gameOptions"
-            label="Game"
-            outlined
-            emit-value
-            map-options
-          />
+        <!-- PRODUCT INFORMATION -->
 
-          <q-input
-            v-model="form.name"
-            label="Product Name"
-            outlined
-          />
+        <section class="dialog-section">
 
-          <q-input
-            v-model="form.slug"
-            label="Slug"
-            outlined
-          />
+          <h3 class="section-title">
 
-          <q-input
-            v-model="form.currency_amount"
-            label="Currency Amount"
-            outlined
-            type="number"
-          />
+            Product Information
 
-          <q-input
-            v-model="form.price"
-            label="Price"
-            outlined
-            type="number"
-            prefix="Rp"
-          />
+          </h3>
 
-          <q-input
-            v-model="form.display_order"
-            label="Display Order"
-            outlined
-            type="number"
-          />
+          <div class="form-grid">
 
-        </div>
+            <q-select v-model="form.game_id" outlined emit-value map-options :options="gameOptions" label="Game" />
 
-      </q-card-section>
+            <q-input v-model="form.name" outlined label="Product Name" />
+
+            <q-input v-model="form.slug" outlined label="Slug" />
+
+          </div>
+
+        </section>
+
+        <!-- PRICING -->
+
+        <section class="dialog-section">
+
+          <h3 class="section-title">
+
+            Pricing
+
+          </h3>
+
+          <div class="form-grid">
+
+            <q-input v-model.number="form.price" outlined type="number" prefix="Rp" label="Price" />
+
+            <q-input v-model.number="form.display_order" outlined type="number" label="Display Order" />
+
+          </div>
+
+        </section>
+
+        <!-- SETTINGS -->
+
+        <section class="dialog-section">
+
+          <h3 class="section-title">
+
+            Settings
+
+          </h3>
+
+          <q-toggle v-model="form.is_active" color="accent" label="Product Active" />
+
+        </section>
+
+      </div>
 
       <q-separator />
 
-      <q-card-actions align="right">
+      <!-- FOOTER -->
 
-        <q-btn
-          flat
-          label="Cancel"
-          v-close-popup
-        />
+      <div class="dialog-footer">
 
-        <q-btn
-  unelevated
-  color="accent"
-  label="Update Product"
-  :loading="loading"
-  @click="updateProduct"
-/>
+        <div class="footer-actions">
 
-      </q-card-actions>
+          <q-btn unelevated color="accent" icon="save" no-caps label="Update Product" :loading="loading"
+            @click="updateProduct" />
+
+        </div>
+
+      </div>
 
     </q-card>
 
@@ -108,13 +128,14 @@
 import {
   ref,
   watch,
-  onMounted
+  onMounted,
 } from 'vue'
 
 import api from 'src/axios'
 
 const props = defineProps({
   modelValue: Boolean,
+
   product: Object,
 })
 
@@ -129,30 +150,36 @@ const gameOptions = ref([])
 
 const form = ref({
   game_id: null,
+
   name: '',
+
   slug: '',
-  currency_amount: null,
+
   price: null,
+
   display_order: 0,
+
   is_active: true,
 })
+
+/*
+|--------------------------------------------------------------------------
+| LOAD GAMES
+|--------------------------------------------------------------------------
+*/
 
 const loadGames = async () => {
 
   try {
 
     const response =
-      await api.get(
-        '/api/games'
-      )
+      await api.get('/api/games')
 
     gameOptions.value =
-      response.data.games.map(
-        (game) => ({
-          label: game.name,
-          value: game.id,
-        })
-      )
+      response.data.games.map(game => ({
+        label: game.name,
+        value: game.id,
+      }))
 
   } catch (error) {
 
@@ -165,13 +192,22 @@ const loadGames = async () => {
 
 }
 
+/*
+|--------------------------------------------------------------------------
+| WATCH PRODUCT
+|--------------------------------------------------------------------------
+*/
+
 watch(
+
   () => props.product,
+
   (product) => {
 
     if (!product) return
 
     form.value = {
+
       game_id:
         product.game_id,
 
@@ -181,9 +217,6 @@ watch(
       slug:
         product.slug,
 
-      currency_amount:
-        product.currency_amount,
-
       price:
         product.price,
 
@@ -192,13 +225,23 @@ watch(
 
       is_active:
         product.is_active,
+
     }
 
   },
+
   {
     immediate: true,
   }
+
 )
+
+/*
+|--------------------------------------------------------------------------
+| UPDATE PRODUCT
+|--------------------------------------------------------------------------
+*/
+
 const updateProduct = async () => {
 
   try {
@@ -206,8 +249,11 @@ const updateProduct = async () => {
     loading.value = true
 
     await api.put(
+
       `/api/products/${props.product.id}`,
+
       form.value
+
     )
 
     emit('updated')
@@ -231,6 +277,13 @@ const updateProduct = async () => {
   }
 
 }
+
+/*
+|--------------------------------------------------------------------------
+| MOUNTED
+|--------------------------------------------------------------------------
+*/
+
 onMounted(() => {
 
   loadGames()
@@ -239,61 +292,214 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
+/*
+|--------------------------------------------------------------------------
+| DIALOG
+|--------------------------------------------------------------------------
+*/
 
 .dialog-card {
-  width: 800px;
-  max-width: 95vw;
+  width: 900px;
+  max-width: 96vw;
+  height: 85vh;
+  max-height: 85vh;
+
+  display: flex;
+  flex-direction: column;
 
   border-radius: 24px;
 
-  background: white;
+  background: var(--app-surface);
+
+  color: var(--app-text);
+
+  overflow: hidden;
+}
+
+/*
+|--------------------------------------------------------------------------
+| HEADER
+|--------------------------------------------------------------------------
+*/
+
+.dialog-header {
+  flex-shrink: 0;
+}
+
+.dialog-handle {
+  width: 48px;
+  height: 5px;
+
+  margin: 12px auto 0;
+
+  border-radius: 999px;
+
+  background: var(--app-border);
+}
+
+.header-content {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 20px 24px;
 }
 
 .dialog-title {
-  color: $dark;
+  margin: 0;
 
-  font-size: 1.4rem;
+  color: var(--app-text);
+
+  font-size: 1.45rem;
   font-weight: 700;
 }
 
 .dialog-subtitle {
   margin-top: 6px;
 
-  color: rgba(
-    0,
-    0,
-    0,
-    .55
-  );
+  color: var(--app-text-secondary);
 
-  font-size: .9rem;
+  font-size: .92rem;
 }
+
+/*
+|--------------------------------------------------------------------------
+| CONTENT
+|--------------------------------------------------------------------------
+*/
+
+.dialog-content {
+  flex: 1;
+
+  overflow-y: auto;
+
+  padding: 24px;
+}
+
+.dialog-section:not(:last-child) {
+  margin-bottom: 28px;
+}
+
+.section-title {
+  margin: 0 0 18px;
+
+  color: var(--app-text);
+
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+/*
+|--------------------------------------------------------------------------
+| FORM
+|--------------------------------------------------------------------------
+*/
 
 .form-grid {
   display: grid;
 
-  grid-template-columns:
-    repeat(
-      2,
-      1fr
-    );
+  grid-template-columns: repeat(2, 1fr);
 
-  gap: 16px;
+  gap: 18px;
 }
 
 :deep(.q-field) {
-  background: white;
+  border-radius: 14px;
 }
+
+:deep(.q-field__control) {
+  border-radius: 14px;
+}
+
+:deep(.q-field__native),
+:deep(.q-field__input) {
+  color: var(--app-text);
+}
+
+:deep(.q-field__label) {
+  color: var(--app-text-secondary);
+}
+
+/*
+|--------------------------------------------------------------------------
+| FOOTER
+|--------------------------------------------------------------------------
+*/
+
+.dialog-footer {
+  flex-shrink: 0;
+
+  padding: 18px 24px;
+}
+
+.footer-actions {
+  display: flex;
+
+  justify-content: flex-end;
+}
+
+.footer-actions .q-btn {
+  min-width: 180px;
+
+  border-radius: 14px;
+
+  font-weight: 600;
+}
+
+/*
+|--------------------------------------------------------------------------
+| SCROLLBAR
+|--------------------------------------------------------------------------
+*/
+
+.dialog-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dialog-content::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+
+  background: rgba(127, 127, 127, .35);
+}
+
+/*
+|--------------------------------------------------------------------------
+| MOBILE
+|--------------------------------------------------------------------------
+*/
 
 @media (max-width: 768px) {
 
+  .dialog-card {
+    width: 100vw;
+    max-width: 100vw;
+
+    height: 92vh;
+    max-height: 92vh;
+
+    border-radius: 22px 22px 0 0;
+  }
+
+  .header-content {
+    padding: 18px;
+  }
+
+  .dialog-content {
+    padding: 18px;
+  }
+
+  .dialog-footer {
+    padding: 18px;
+  }
+
   .form-grid {
+    grid-template-columns: 1fr;
+  }
 
-    grid-template-columns:
-      1fr;
-
+  .footer-actions .q-btn {
+    width: 100%;
   }
 
 }
-
 </style>

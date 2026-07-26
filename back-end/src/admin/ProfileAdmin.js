@@ -1,29 +1,51 @@
-export async function profileAdmin(req, res) {
+import { db } from "../../db.js";
+
+export const profileAdmin = async (req, res) => {
 
   try {
 
-    return res.json({
+    const adminId = req.user.id;
 
+    const result = await db.query(
+      `
+      SELECT
+        id,
+        name,
+        username,
+        email,
+        role,
+        created_at,
+        updated_at
+      FROM admins
+      WHERE id = $1
+      LIMIT 1
+      `,
+      [adminId]
+    );
+
+    if (result.rows.length === 0) {
+
+      return res.status(404).json({
+        success: false,
+        message: "Admin tidak ditemukan",
+      });
+
+    }
+
+    res.json({
       success: true,
-
-      admin: req.user,
-
+      admin: result.rows[0],
     });
 
-  }
+  } catch (error) {
 
-  catch (error) {
+    console.error("Profile Admin Error:", error);
 
-    console.error(error);
-
-    return res.status(500).json({
-
+    res.status(500).json({
       success: false,
-
       message: error.message,
-
     });
 
   }
 
-}
+};
