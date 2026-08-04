@@ -1,344 +1,317 @@
 <template>
+
   <q-layout view="hHh Lpr lFf" class="dashboard-layout">
 
     <!-- HEADER -->
+
     <q-header class="dashboard-header">
 
       <q-toolbar>
 
-        <q-btn
-          flat
-          round
-          dense
-          icon="menu"
-          class="mobile-menu-btn"
-          @click="leftDrawerOpen = !leftDrawerOpen"
-        />
+        <q-btn flat round dense icon="menu" class="menu-button" @click="toggleDrawer" />
 
         <q-toolbar-title>
-  Dashboard User
-</q-toolbar-title>
 
-        <q-avatar
-          size="40px"
-          color="accent"
-          text-color="white"
-        >
-          U
-        </q-avatar>
+          {{ pageTitle }}
+
+        </q-toolbar-title>
+
+        <q-btn flat round dense :icon="$q.dark.isActive ? 'light_mode' : 'dark_mode'" @click="toggleTheme" />
 
       </q-toolbar>
 
     </q-header>
 
-    <!-- SIDEBAR -->
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      :width="280"
-      class="dashboard-drawer"
-    >
+    <!-- DESKTOP DRAWER -->
 
-      <div class="sidebar-header">
-
-        <div class="sidebar-logo">
-          EI Gaming
-        </div>
-
-        <div class="sidebar-subtitle">
-  User Dashboard
-</div>
-
-      </div>
-
-      <q-list>
-
-        <q-item
-          v-for="item in menuItems"
-          :key="item.label"
-          clickable
-          :to="item.to"
-          exact
-          class="sidebar-item"
-        >
-          <q-item-section avatar>
-            <q-icon :name="item.icon" />
-          </q-item-section>
-
-          <q-item-section>
-            {{ item.label }}
-          </q-item-section>
-        </q-item>
-
-      </q-list>
-
-      <div class="sidebar-divider" />
-
-      <q-list>
-
-        <q-item
-          v-for="item in accountItems"
-          :key="item.label"
-          clickable
-          :to="item.to"
-          class="sidebar-item"
-        >
-          <q-item-section avatar>
-            <q-icon :name="item.icon" />
-          </q-item-section>
-
-          <q-item-section>
-            {{ item.label }}
-          </q-item-section>
-        </q-item>
-<q-item
-  clickable
-  to="/"
-  class="sidebar-item home-item"
->
-
-  <q-item-section avatar>
-
-    <q-icon
-      name="arrow_back"
-    />
-
-  </q-item-section>
-
-  <q-item-section>
-    EI Gaming Store
-  </q-item-section>
-
-</q-item>
-        <q-item
-          clickable
-          class="sidebar-item logout-item"
-        >
-          <q-item-section avatar>
-            <q-icon name="logout" />
-          </q-item-section>
-
-          <q-item-section>
-            Logout
-          </q-item-section>
-        </q-item>
-
-      </q-list>
-
-    </q-drawer>
+    <DashboardDrawer v-if="$q.screen.gt.sm" :mini="drawerMini" :user="user" :role-label="roleLabel"
+      :navigation-items="navigationItems" :profile-route="profileRoute" :store-route="storeRoute" @logout="logout" />
 
     <!-- CONTENT -->
+
     <q-page-container>
 
       <div class="dashboard-content">
+
         <router-view />
+
       </div>
 
     </q-page-container>
 
+    <!-- MOBILE NAVIGATION -->
+
+    <DashboardBottomNavigation @overview="goOverview" @menu="showMenu = true" @profile="showProfile = true" />
+
+    <!-- MOBILE MENU -->
+
+    <DashboardMenuDialog v-model="showMenu" :user="user" :navigation-items="navigationItems" />
+
+    <!-- MOBILE PROFILE -->
+
+    <DashboardProfileDialog v-model="showProfile" :user="user" :role-label="roleLabel" :profile-route="profileRoute"
+      :store-route="storeRoute" @logout="logout" />
+
   </q-layout>
+
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import {
+  computed,
+  ref
+} from 'vue'
 
-const leftDrawerOpen = ref(true)
+import {
+  useQuasar
+} from 'quasar'
 
-const menuItems = [
+import {
+  useRoute,
+  useRouter
+} from 'vue-router'
+
+import DashboardDrawer from 'src/components/dashboard/DashboardDrawer.vue'
+import DashboardBottomNavigation from 'src/components/dashboard/DashboardBottomNavigation.vue'
+import DashboardMenuDialog from 'src/components/dashboard/DashboardMenuDialog.vue'
+import DashboardProfileDialog from 'src/components/dashboard/DashboardProfileDialog.vue'
+
+const $q = useQuasar()
+
+const router = useRouter()
+
+const route = useRoute()
+
+/*
+|--------------------------------------------------------------------------
+| STATE
+|--------------------------------------------------------------------------
+*/
+
+const drawerMini = ref(false)
+
+const showMenu = ref(false)
+
+const showProfile = ref(false)
+
+/*
+|--------------------------------------------------------------------------
+| AUTH
+|--------------------------------------------------------------------------
+*/
+
+const auth = computed(() => {
+
+  return JSON.parse(
+    localStorage.getItem('auth') || '{}'
+  )
+
+})
+
+const user = computed(() => {
+
+  return auth.value.data || {}
+
+})
+
+/*
+|--------------------------------------------------------------------------
+| NAVIGATION
+|--------------------------------------------------------------------------
+*/
+
+const navigationItems = [
   {
-    label: 'Overview',
-    icon: 'dashboard',
-    to: '/user',
-  },
-  {
-    label: 'My Transactions',
+    label: 'Transactions',
     icon: 'receipt_long',
     to: '/user/transactions',
   },
 ]
 
-const accountItems = [
-  {
-    label: 'Profile',
-    icon: 'person',
-    to: '/user/profile',
-  },
-  {
-    label: 'Settings',
-    icon: 'settings',
-    to: '/user/settings',
-  },
-]
+/*
+|--------------------------------------------------------------------------
+| PROFILE
+|--------------------------------------------------------------------------
+*/
+
+const roleLabel = computed(() => 'Member')
+
+const profileRoute =
+  '/user/profile'
+
+const storeRoute =
+  '/'
+
+/*
+|--------------------------------------------------------------------------
+| HEADER
+|--------------------------------------------------------------------------
+*/
+
+const pageTitle = computed(() => {
+
+  switch (route.path) {
+
+    case '/user':
+      return 'Home'
+
+    case '/user/transactions':
+      return 'Transactions'
+
+    case '/user/profile':
+      return 'Profile'
+
+    default:
+      return 'EI Gaming Store'
+
+  }
+
+})
+
+/*
+|--------------------------------------------------------------------------
+| DRAWER
+|--------------------------------------------------------------------------
+*/
+
+function toggleDrawer() {
+
+  drawerMini.value = !drawerMini.value
+
+}
+
+/*
+|--------------------------------------------------------------------------
+| THEME
+|--------------------------------------------------------------------------
+*/
+
+function toggleTheme() {
+
+  $q.dark.toggle()
+
+}
+
+/*
+|--------------------------------------------------------------------------
+| NAVIGATION
+|--------------------------------------------------------------------------
+*/
+
+function goOverview() {
+
+  router.push('/user')
+
+}
+
+/*
+|--------------------------------------------------------------------------
+| LOGOUT
+|--------------------------------------------------------------------------
+*/
+
+function logout() {
+
+  localStorage.removeItem('auth')
+
+  localStorage.removeItem('user')
+
+  router.replace('/')
+
+}
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
+/*
+|--------------------------------------------------------------------------
+| LAYOUT
+|--------------------------------------------------------------------------
+*/
 
 .dashboard-layout {
-  background: $sakura;
+  background: var(--app-bg);
 }
+
+/*
+|--------------------------------------------------------------------------
+| HEADER
+|--------------------------------------------------------------------------
+*/
 
 .dashboard-header {
-  background: $dark;
+  background: var(--app-surface);
 
-  color: white;
+  color: var(--app-text);
 
-  border-bottom:
-    1px solid rgba(
-      $sakura,
-      .15
-    );
+  border-bottom: 1px solid var(--app-border);
 }
 
-.dashboard-drawer {
-  background: $secondary !important;
+:deep(.q-toolbar) {
+  min-height: 64px;
 
-  color: white;
-
-  border-right:
-    1px solid rgba(
-      $sakura,
-      .15
-    );
-}
-:deep(.q-drawer) {
-  background: $secondary !important;
+  padding: 0 20px;
 }
 
-:deep(.q-drawer__content) {
-  background: $secondary !important;
-}
+:deep(.q-toolbar__title) {
+  color: var(--app-text);
 
-.sidebar-header {
-  padding: 28px 24px;
-}
-
-.sidebar-logo {
-  color: $sakura;
-
-  font-size: 1.4rem;
-  font-weight: 700;
-}
-
-.sidebar-subtitle {
-  margin-top: 4px;
-
-  color: rgba(
-  255,
-  255,
-  255,
-  .55
-);
-
-  font-size: .85rem;
-}
-
-.sidebar-divider {
-  margin: 16px 20px;
-
-  border-top: 1px solid rgba(
-    $sakura,
-    .12
-  );
-}
-
-.sidebar-item {
-  margin: 4px 12px;
-
-  border-radius: 12px;
-
-  color: rgba(
-  255,
-  255,
-  255,
-  .85
-);
-
-  transition:
-    background .2s ease,
-    color .2s ease;
-}
-
-.sidebar-item:hover {
-  background: rgba(
-    $sakura,
-    .12
-  );
-
-  color: white;
-}
-
-:deep(.q-router-link--active) {
-  background: rgba(
-    $sakura,
-    .18
-  );
-
-  color: white;
-
+  font-size: 1.15rem;
   font-weight: 600;
 }
-.home-item {
-  color: $accent;
+
+.menu-button {
+  display: none;
+
+  margin-right: 12px;
 }
 
-.home-item:hover {
-  background: rgba(
-    $sakura,
-    .08
-  );
-
-  color: $accent;
-}
-.logout-item {
-  color: #ff6b81;
-}
-
-.logout-item:hover {
-  background: rgba(
-    255,
-    107,
-    129,
-    .08
-  );
-
-  color: #ff6b81;
-}
+/*
+|--------------------------------------------------------------------------
+| CONTENT
+|--------------------------------------------------------------------------
+*/
 
 .dashboard-content {
-  min-height: 100vh;
+  min-height: calc(100vh - 64px);
 
   padding: 24px;
 
-  background:
-    linear-gradient(
-      180deg,
-      rgba($sakura, .06) 0%,
-      #ffffff 100%
-    );
+  background: var(--app-bg);
 }
 
-.mobile-menu-btn {
-  display: none;
-}
+/*
+|--------------------------------------------------------------------------
+| DESKTOP
+|--------------------------------------------------------------------------
+*/
 
-:deep(.q-item__section--avatar) {
-  min-width: 40px;
-}
+@media (min-width: 1024px) {
 
-:deep(.q-icon) {
-  font-size: 1.2rem;
-}
-
-@media (max-width: 1024px) {
-
-  .mobile-menu-btn {
+  .menu-button {
     display: inline-flex;
   }
 
+}
+
+/*
+|--------------------------------------------------------------------------
+| MOBILE
+|--------------------------------------------------------------------------
+*/
+
+@media (max-width: 1023px) {
+
+  :deep(.q-toolbar) {
+    padding: 0 16px;
+  }
+
+  :deep(.q-toolbar__title) {
+    font-size: 1rem;
+  }
+
   .dashboard-content {
-    padding: 16px;
+    padding: 16px 16px 88px;
   }
 
 }
-
 </style>

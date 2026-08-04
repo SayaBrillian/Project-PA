@@ -39,7 +39,7 @@
 
       <q-list class="profile-menu">
 
-        <q-item clickable to="/dashboard/profile" class="profile-item" v-close-popup>
+        <q-item clickable :to="profileRoute" class="profile-item" v-close-popup>
 
           <q-item-section avatar>
 
@@ -55,7 +55,7 @@
 
         </q-item>
 
-        <q-item clickable to="/" class="profile-item" v-close-popup>
+        <q-item clickable :to="storeRoute" class="profile-item" v-close-popup>
 
           <q-item-section avatar>
 
@@ -107,12 +107,33 @@ const props = defineProps({
     required: true,
   },
 
+  roleLabel: {
+    type: String,
+    default: '',
+  },
+
+  profileRoute: {
+    type: String,
+    default: '/profile',
+  },
+
+  storeRoute: {
+    type: String,
+    default: '/',
+  },
+
 })
 
 defineEmits([
   'update:modelValue',
   'logout',
 ])
+
+/*
+|--------------------------------------------------------------------------
+| PROFILE
+|--------------------------------------------------------------------------
+*/
 
 const userInitial = computed(() => {
 
@@ -122,15 +143,9 @@ const userInitial = computed(() => {
 
   }
 
-  return props.user.name.charAt(0).toUpperCase()
-
-})
-
-const roleLabel = computed(() => {
-
-  return props.user.role === 'super_admin'
-    ? 'Super Admin'
-    : 'Admin'
+  return props.user.name
+    .charAt(0)
+    .toUpperCase()
 
 })
 </script>

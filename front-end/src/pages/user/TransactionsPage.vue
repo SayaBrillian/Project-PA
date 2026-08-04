@@ -2,13 +2,17 @@
 
   <q-page class="transactions-page">
 
+    <!-- HEADER -->
+
     <div class="page-header">
 
-      <h1>My Transactions</h1>
+      <h1>
+        My Transactions
+      </h1>
 
-<p>
-Lihat riwayat pembelian dan status pesanan Anda.
-</p>
+      <p>
+        Lihat riwayat pembelian dan status pesanan Anda.
+      </p>
 
     </div>
 
@@ -16,42 +20,17 @@ Lihat riwayat pembelian dan status pesanan Anda.
 
     <div class="toolbar-row">
 
-      <q-select
-        v-model="selectedGame"
-        :options="gameOptions"
-        label="Game"
-        outlined
-        dense
-        emit-value
-        map-options
-        class="game-filter"
-      />
+      <q-select v-model="selectedGame" :options="gameOptions" label="Game" outlined dense emit-value map-options
+        class="game-filter" />
 
-      <q-select
-        v-model="selectedStatus"
-        :options="statusOptions"
-        label="Status"
-        outlined
-        dense
-        emit-value
-        map-options
-        class="status-filter"
-      />
+      <q-select v-model="selectedStatus" :options="statusOptions" label="Status" outlined dense emit-value map-options
+        class="status-filter" />
 
-      <q-input
-        v-model="search"
-        outlined
-        dense
-        clearable
-        placeholder="Cari transaksi..."
-        class="search-input"
-      >
+      <q-input v-model="search" outlined dense clearable placeholder="Cari transaksi..." class="search-input">
 
         <template #prepend>
 
-          <q-icon
-            name="search"
-          />
+          <q-icon name="search" />
 
         </template>
 
@@ -61,23 +40,11 @@ Lihat riwayat pembelian dan status pesanan Anda.
 
     <!-- TABLE -->
 
-    <TransactionTable
-      :transactions="
-        filteredTransactions
-      "
-      @details="
-        openDetails
-      "
-    />
+    <TransactionTable :transactions="filteredTransactions" @details="openDetails" />
 
     <!-- DETAILS -->
 
-    <TransactionDetailsDialog
-      v-model="showDetails"
-      :transaction-id="
-        selectedTransaction?.id
-      "
-    />
+    <TransactionDetailsDialog v-model="showDetails" :transaction-id="selectedTransaction?.id" />
 
   </q-page>
 
@@ -93,10 +60,10 @@ import {
 import api from 'src/axios'
 
 import TransactionTable from
-'src/components/dashboard/transactions/TransactionTable.vue'
+  'src/components/dashboard/transactions/TransactionTable.vue'
 
 import TransactionDetailsDialog from
-'src/components/dashboard/transactions/TransactionDetailsDialog.vue'
+  'src/components/dashboard/transactions/TransactionDetailsDialog.vue'
 
 const transactions = ref([])
 
@@ -146,13 +113,13 @@ const loadTransactions =
     try {
 
       const auth = JSON.parse(
-  localStorage.getItem('auth')
-)
+        localStorage.getItem('auth')
+      )
 
-const response =
-  await api.get(
-    `/api/transactions/customer/${auth.data.email}`
-  )
+      const response =
+        await api.get(
+          `/api/transactions/customer/${auth.data.email}`
+        )
 
       transactions.value =
         response.data.transactions
@@ -218,7 +185,7 @@ const filteredTransactions =
       data = data.filter(
         (transaction) =>
           transaction.order_status ===
-selectedStatus.value
+          selectedStatus.value
       )
 
     }
@@ -241,8 +208,8 @@ selectedStatus.value
             .includes(keyword)
           ||
           transaction.game_name
-      ?.toLowerCase()
-      .includes(keyword)
+            ?.toLowerCase()
+            .includes(keyword)
       )
 
     }
@@ -271,7 +238,6 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-
 .transactions-page {
   display: flex;
   flex-direction: column;
@@ -279,10 +245,16 @@ onMounted(() => {
   gap: 24px;
 }
 
+/*
+|--------------------------------------------------------------------------
+| HEADER
+|--------------------------------------------------------------------------
+*/
+
 .page-header h1 {
   margin: 0;
 
-  color: $dark;
+  color: var(--app-text);
 
   font-size: 2rem;
   font-weight: 700;
@@ -291,20 +263,22 @@ onMounted(() => {
 .page-header p {
   margin-top: 8px;
 
-  color: rgba(
-    0,
-    0,
-    0,
-    .55
-  );
+  color: var(--app-text-secondary);
+
+  font-size: .95rem;
 }
+
+/*
+|--------------------------------------------------------------------------
+| TOOLBAR
+|--------------------------------------------------------------------------
+*/
 
 .toolbar-row {
   display: flex;
+  align-items: center;
 
   gap: 16px;
-
-  align-items: center;
 }
 
 .game-filter {
@@ -319,10 +293,55 @@ onMounted(() => {
   flex: 1;
 }
 
-@media (max-width: 768px) {
+/*
+|--------------------------------------------------------------------------
+| QUASAR INPUT
+|--------------------------------------------------------------------------
+*/
+
+:deep(.q-field) {
+  border-radius: 14px;
+}
+
+:deep(.q-field--outlined .q-field__control) {
+  background: var(--app-surface);
+
+  border-radius: 14px;
+
+  color: var(--app-text);
+}
+
+:deep(.q-field__native),
+:deep(.q-field__input),
+:deep(.q-field__label),
+:deep(.q-field__prepend),
+:deep(.q-field__append) {
+  color: var(--app-text);
+}
+
+:deep(.q-field__marginal) {
+  color: var(--app-text-secondary);
+}
+
+:deep(.q-menu),
+:deep(.q-list) {
+  background: var(--app-surface);
+
+  color: var(--app-text);
+}
+
+/*
+|--------------------------------------------------------------------------
+| MOBILE
+|--------------------------------------------------------------------------
+*/
+
+@media (max-width:768px) {
 
   .toolbar-row {
     flex-direction: column;
+
+    align-items: stretch;
   }
 
   .game-filter,
@@ -332,5 +351,4 @@ onMounted(() => {
   }
 
 }
-
 </style>

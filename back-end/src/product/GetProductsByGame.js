@@ -1,16 +1,20 @@
-import express from "express";
 import { db } from "../../db.js";
 
 /*
 |--------------------------------------------------------------------------
-| GET ALL PRODUCTS
+| GET PRODUCTS BY GAME
 |--------------------------------------------------------------------------
 */
 
 export const getProductsByGame = async (req, res) => {
+
     try {
 
-        const result = await db.query(`
+        const { gameId } = req.params;
+
+        const result = await db.query(
+
+            `
             SELECT
                 p.*,
                 g.name AS game_name,
@@ -18,12 +22,16 @@ export const getProductsByGame = async (req, res) => {
             FROM products p
             JOIN games g
                 ON g.id = p.game_id
-            WHERE p.is_active = true
+            WHERE
+                p.game_id = $1
+                AND p.is_active = true
             ORDER BY
-                g.name ASC,
                 p.display_order ASC,
                 p.id ASC
-        `);
+            `,
+            [gameId]
+
+        );
 
         res.json({
 
@@ -34,6 +42,8 @@ export const getProductsByGame = async (req, res) => {
         });
 
     } catch (error) {
+
+        console.error(error);
 
         res.status(500).json({
 

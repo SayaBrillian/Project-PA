@@ -24,7 +24,9 @@
 
     <!-- DESKTOP DRAWER -->
 
-    <DashboardDrawer v-if="$q.screen.gt.sm" :mini="drawerMini" :user="user" @logout="logout" />
+    <DashboardDrawer v-if="$q.screen.gt.sm" :mini="drawerMini" :user="user" :role-label="roleLabel"
+      :navigation-items="navigationItems" :profile-route="profileRoute" :store-route="storeRoute" @logout="logout" />
+
     <!-- CONTENT -->
 
     <q-page-container>
@@ -41,22 +43,33 @@
 
     <DashboardBottomNavigation @overview="goOverview" @menu="showMenu = true" @profile="showProfile = true" />
 
-    <!-- MENU -->
+    <!-- MOBILE MENU -->
 
-    <DashboardMenuDialog v-model="showMenu" :user="user" />
+    <DashboardMenuDialog v-model="showMenu" :user="user" :navigation-items="navigationItems" />
 
-    <!-- PROFILE -->
+    <!-- MOBILE PROFILE -->
 
-    <DashboardProfileDialog v-model="showProfile" :user="user" @logout="logout" />
+    <DashboardProfileDialog v-model="showProfile" :user="user" :role-label="roleLabel" :profile-route="profileRoute"
+      :store-route="storeRoute" @logout="logout" />
 
   </q-layout>
 
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
-import { useQuasar } from 'quasar'
-import { useRoute, useRouter } from 'vue-router'
+import {
+  computed,
+  ref
+} from 'vue'
+
+import {
+  useQuasar
+} from 'quasar'
+
+import {
+  useRoute,
+  useRouter
+} from 'vue-router'
 
 import DashboardDrawer from 'src/components/dashboard/DashboardDrawer.vue'
 import DashboardBottomNavigation from 'src/components/dashboard/DashboardBottomNavigation.vue'
@@ -83,19 +96,106 @@ const showProfile = ref(false)
 
 /*
 |--------------------------------------------------------------------------
-| USER
+| AUTH
 |--------------------------------------------------------------------------
 */
 
 const auth = computed(() => {
-  return JSON.parse(localStorage.getItem('auth') || '{}')
+
+  return JSON.parse(
+    localStorage.getItem('auth') || '{}'
+  )
+
 })
 
 const user = computed(() => {
+
   return auth.value.data || {}
+
 })
-console.log('AUTH', auth.value)
-console.log('USER', user.value)
+
+/*
+|--------------------------------------------------------------------------
+| NAVIGATION
+|--------------------------------------------------------------------------
+*/
+
+const navigationItems = [
+
+  {
+    label: 'Overview',
+    icon: 'dashboard',
+    to: '/dashboard',
+    roles: ['admin', 'super_admin'],
+  },
+
+  {
+    label: 'Games',
+    icon: 'sports_esports',
+    to: '/dashboard/games',
+    roles: ['admin', 'super_admin'],
+  },
+
+  {
+    label: 'Products',
+    icon: 'inventory_2',
+    to: '/dashboard/products',
+    roles: ['admin', 'super_admin'],
+  },
+
+  {
+    label: 'Transactions',
+    icon: 'receipt_long',
+    to: '/dashboard/transactions',
+    roles: ['admin', 'super_admin'],
+  },
+
+  {
+    label: 'Users',
+    icon: 'group',
+    to: '/dashboard/users',
+    roles: ['admin', 'super_admin'],
+  },
+
+  {
+    label: 'Admins',
+    icon: 'admin_panel_settings',
+    to: '/dashboard/admins',
+    roles: ['super_admin'],
+  },
+
+]
+
+/*
+|--------------------------------------------------------------------------
+| PROFILE
+|--------------------------------------------------------------------------
+*/
+
+const roleLabel = computed(() => {
+
+  if (user.value.role === 'super_admin') {
+
+    return 'Super Admin'
+
+  }
+
+  if (user.value.role === 'admin') {
+
+    return 'Admin'
+
+  }
+
+  return 'Member'
+
+})
+
+const profileRoute =
+  '/dashboard/profile'
+
+const storeRoute =
+  '/'
+
 /*
 |--------------------------------------------------------------------------
 | HEADER
@@ -172,23 +272,19 @@ function goOverview() {
 
 /*
 |--------------------------------------------------------------------------
-| AUTH
+| LOGOUT
 |--------------------------------------------------------------------------
 */
 
 function logout() {
 
-  localStorage.removeItem('user')
-
   localStorage.removeItem('auth')
+
+  localStorage.removeItem('user')
 
   router.replace('/')
 
 }
-
-console.log($q.screen.width)
-console.log($q.screen.gt.md)
-console.log($q.screen.lt.md)
 </script>
 
 <style scoped lang="scss">

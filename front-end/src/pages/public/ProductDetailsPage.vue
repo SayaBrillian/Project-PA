@@ -291,7 +291,7 @@ async function loadProducts(gameId) {
 
     const response =
       await api.get(
-        `/api/products/game/${gameId}`
+        `/api/product/game/${gameId}`
       )
 
     products.value =

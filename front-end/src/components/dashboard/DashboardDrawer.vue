@@ -38,8 +38,7 @@
 
     <q-list class="drawer-menu">
 
-      <q-item v-for="item in visibleNavigationItems" :key="item.label" clickable :to="item.to" exact
-        class="drawer-item">
+      <q-item v-for="item in visibleNavigationItems" :key="item.to" clickable :to="item.to" exact class="drawer-item">
 
         <q-item-section avatar>
 
@@ -69,7 +68,7 @@
 
     <q-list class="drawer-menu">
 
-      <q-item clickable to="/dashboard/profile" class="drawer-item">
+      <q-item clickable :to="profileRoute" class="drawer-item">
 
         <q-item-section avatar>
 
@@ -83,15 +82,9 @@
 
         </q-item-section>
 
-        <q-tooltip v-if="mini" anchor="center right" self="center left">
-
-          Profile
-
-        </q-tooltip>
-
       </q-item>
 
-      <q-item clickable to="/" class="drawer-item">
+      <q-item clickable :to="storeRoute" class="drawer-item">
 
         <q-item-section avatar>
 
@@ -105,15 +98,9 @@
 
         </q-item-section>
 
-        <q-tooltip v-if="mini" anchor="center right" self="center left">
-
-          EI Gaming Store
-
-        </q-tooltip>
-
       </q-item>
 
-      <q-item clickable class="drawer-item logout-item" @click="$emit('logout')">
+      <q-item clickable class="drawer-item logout-item" @click="emit('logout')">
 
         <q-item-section avatar>
 
@@ -127,12 +114,6 @@
 
         </q-item-section>
 
-        <q-tooltip v-if="mini" anchor="center right" self="center left">
-
-          Logout
-
-        </q-tooltip>
-
       </q-item>
 
     </q-list>
@@ -142,21 +123,63 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+
+import {
+
+  computed
+
+} from 'vue'
 
 const props = defineProps({
 
   mini: Boolean,
 
   user: {
+
     type: Object,
-    required: true
-  }
+
+    required: true,
+
+  },
+
+  navigationItems: {
+
+    type: Array,
+
+    default: () => [],
+
+  },
+
+  profileRoute: {
+
+    type: String,
+
+    default: '/profile',
+
+  },
+
+  storeRoute: {
+
+    type: String,
+
+    default: '/',
+
+  },
+
+  roleLabel: {
+
+    type: String,
+
+    default: '',
+
+  },
 
 })
 
-defineEmits([
+const emit = defineEmits([
+
   'logout',
+
 ])
 
 /*
@@ -165,57 +188,23 @@ defineEmits([
 |--------------------------------------------------------------------------
 */
 
-const navigationItems = [
-
-  {
-    label: 'Overview',
-    icon: 'dashboard',
-    to: '/dashboard',
-    roles: ['admin', 'super_admin'],
-  },
-
-  {
-    label: 'Games',
-    icon: 'sports_esports',
-    to: '/dashboard/games',
-    roles: ['admin', 'super_admin'],
-  },
-
-  {
-    label: 'Products',
-    icon: 'inventory_2',
-    to: '/dashboard/products',
-    roles: ['admin', 'super_admin'],
-  },
-
-  {
-    label: 'Transactions',
-    icon: 'receipt_long',
-    to: '/dashboard/transactions',
-    roles: ['admin', 'super_admin'],
-  },
-
-  {
-    label: 'Users',
-    icon: 'group',
-    to: '/dashboard/users',
-    roles: ['admin', 'super_admin'],
-  },
-
-  {
-    label: 'Admins',
-    icon: 'admin_panel_settings',
-    to: '/dashboard/admins',
-    roles: ['super_admin'],
-  },
-
-]
-
 const visibleNavigationItems = computed(() => {
 
-  return navigationItems.filter(item =>
-    item.roles.includes(props.user.role),
-  )
+  return props.navigationItems.filter(item => {
+
+    if (!item.roles) {
+
+      return true
+
+    }
+
+    return item.roles.includes(
+
+      props.user.role
+
+    )
+
+  })
 
 })
 
@@ -233,17 +222,12 @@ const userInitial = computed(() => {
 
   }
 
-  return props.user.name.charAt(0).toUpperCase()
+  return props.user.name
+    .charAt(0)
+    .toUpperCase()
 
 })
 
-const roleLabel = computed(() => {
-
-  return props.user.role === 'super_admin'
-    ? 'Super Admin'
-    : 'Admin'
-
-})
 </script>
 
 <style scoped lang="scss">

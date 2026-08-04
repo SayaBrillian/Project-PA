@@ -25,7 +25,7 @@
 
       <q-list class="menu-list">
 
-        <q-item v-for="item in visibleNavigationItems" :key="item.label" clickable :to="item.to" exact class="menu-item"
+        <q-item v-for="item in visibleNavigationItems" :key="item.to" clickable :to="item.to" exact class="menu-item"
           v-close-popup>
 
           <q-item-section avatar>
@@ -51,7 +51,9 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import {
+  computed
+} from 'vue'
 
 const props = defineProps({
 
@@ -62,66 +64,44 @@ const props = defineProps({
     required: true,
   },
 
+  navigationItems: {
+    type: Array,
+    default: () => [],
+  },
+
 })
 
 defineEmits([
   'update:modelValue',
 ])
 
-const navigationItems = [
-
-  {
-    label: 'Overview',
-    icon: 'dashboard',
-    to: '/dashboard',
-    roles: ['admin', 'super_admin'],
-  },
-
-  {
-    label: 'Games',
-    icon: 'sports_esports',
-    to: '/dashboard/games',
-    roles: ['admin', 'super_admin'],
-  },
-
-  {
-    label: 'Products',
-    icon: 'inventory_2',
-    to: '/dashboard/products',
-    roles: ['admin', 'super_admin'],
-  },
-
-  {
-    label: 'Transactions',
-    icon: 'receipt_long',
-    to: '/dashboard/transactions',
-    roles: ['admin', 'super_admin'],
-  },
-
-  {
-    label: 'Users',
-    icon: 'group',
-    to: '/dashboard/users',
-    roles: ['admin', 'super_admin'],
-  },
-
-  {
-    label: 'Admins',
-    icon: 'admin_panel_settings',
-    to: '/dashboard/admins',
-    roles: ['super_admin'],
-  },
-
-]
+/*
+|--------------------------------------------------------------------------
+| NAVIGATION
+|--------------------------------------------------------------------------
+*/
 
 const visibleNavigationItems = computed(() => {
 
-  return navigationItems.filter(item =>
-    item.roles.includes(props.user.role),
-  )
+  return props.navigationItems.filter(item => {
+
+    if (!item.roles) {
+
+      return true
+
+    }
+
+    return item.roles.includes(
+      props.user.role
+    )
+
+  })
 
 })
+
 </script>
+
+
 
 <style scoped lang="scss">
 /*
