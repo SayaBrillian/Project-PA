@@ -336,18 +336,19 @@ const updateAdmin = async () => {
 .dialog-section {
 
   display: flex;
-
   flex-direction: column;
 
   gap: 20px;
 
+  margin-bottom: 32px;
+
 }
 
-/*
-|--------------------------------------------------------------------------
-| SECTION
-|--------------------------------------------------------------------------
-*/
+.dialog-section:last-child {
+
+  margin-bottom: 0;
+
+}
 
 .section-title {
 
@@ -355,16 +356,10 @@ const updateAdmin = async () => {
 
   color: var(--app-text);
 
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 700;
 
 }
-
-/*
-|--------------------------------------------------------------------------
-| FORM
-|--------------------------------------------------------------------------
-*/
 
 .form-grid {
 
@@ -376,17 +371,39 @@ const updateAdmin = async () => {
 
 }
 
-:deep(.q-field) {
+.col-span-2 {
 
-  background: white;
+  grid-column: span 2;
+
+}
+
+/*
+|--------------------------------------------------------------------------
+| FORM
+|--------------------------------------------------------------------------
+*/
+
+:deep(.q-field__control) {
 
   border-radius: 14px;
 
 }
 
-:deep(.q-field__control) {
+:deep(.q-field__native) {
 
-  border-radius: 14px;
+  color: var(--app-text);
+
+}
+
+:deep(.q-field__label) {
+
+  color: var(--app-text-secondary);
+
+}
+
+:deep(.q-toggle) {
+
+  margin-top: 8px;
 
 }
 
@@ -416,7 +433,7 @@ const updateAdmin = async () => {
 
 .footer-actions :deep(.q-btn) {
 
-  min-width: 170px;
+  min-width: 180px;
 
   border-radius: 14px;
 
@@ -448,7 +465,7 @@ const updateAdmin = async () => {
 |--------------------------------------------------------------------------
 */
 
-@media (max-width:768px) {
+@media (max-width: 768px) {
 
   .dialog-card {
 
@@ -492,6 +509,12 @@ const updateAdmin = async () => {
   .form-grid {
 
     grid-template-columns: 1fr;
+
+  }
+
+  .col-span-2 {
+
+    grid-column: span 1;
 
   }
 

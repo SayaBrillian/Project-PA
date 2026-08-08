@@ -400,6 +400,14 @@ const createGame = async () => {
 
   gap: 20px;
 
+  margin-bottom: 32px;
+
+}
+
+.dialog-section:last-child {
+
+  margin-bottom: 0;
+
 }
 
 .section-title {
@@ -423,23 +431,33 @@ const createGame = async () => {
 
 }
 
+.col-span-2 {
+
+  grid-column: span 2;
+
+}
+
 /*
 |--------------------------------------------------------------------------
-| INPUT
+| FORM
 |--------------------------------------------------------------------------
 */
 
-:deep(.q-field) {
-
-  background: white;
+:deep(.q-field__control) {
 
   border-radius: 14px;
 
 }
 
-:deep(.q-field__control) {
+:deep(.q-field__native) {
 
-  border-radius: 14px;
+  color: var(--app-text);
+
+}
+
+:deep(.q-field__label) {
+
+  color: var(--app-text-secondary);
 
 }
 
@@ -507,7 +525,7 @@ const createGame = async () => {
 |--------------------------------------------------------------------------
 */
 
-@media (max-width:768px) {
+@media (max-width: 768px) {
 
   .dialog-card {
 
@@ -551,6 +569,12 @@ const createGame = async () => {
   .form-grid {
 
     grid-template-columns: 1fr;
+
+  }
+
+  .col-span-2 {
+
+    grid-column: span 1;
 
   }
 

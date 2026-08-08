@@ -237,32 +237,40 @@ const createAdmin = async () => {
 </script>
 
 <style scoped lang="scss">
+/*
+|--------------------------------------------------------------------------
+| DIALOG
+|--------------------------------------------------------------------------
+*/
+
 .dialog-card {
 
   width: 700px;
   max-width: 95vw;
-  max-height: 85vh;
+
+  height: 80vh;
 
   display: flex;
   flex-direction: column;
 
-  border-radius: 24px;
+  background: var(--app-bg);
 
-  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: 24px;
 
   overflow: hidden;
 
 }
 
-/* -------------------------------------------------------------------------- */
-/* HEADER */
-/* -------------------------------------------------------------------------- */
+/*
+|--------------------------------------------------------------------------
+| HEADER
+|--------------------------------------------------------------------------
+*/
 
 .dialog-header {
 
-  padding: 24px 28px 20px;
-
-  background: var(--app-surface);
+  padding: 24px 28px;
 
 }
 
@@ -271,7 +279,7 @@ const createAdmin = async () => {
   width: 48px;
   height: 5px;
 
-  margin: 0 auto 18px;
+  margin: 0 auto 20px;
 
   border-radius: 999px;
 
@@ -297,7 +305,7 @@ const createAdmin = async () => {
 
   color: var(--app-text);
 
-  font-size: 1.45rem;
+  font-size: 1.7rem;
   font-weight: 700;
 
 }
@@ -306,17 +314,17 @@ const createAdmin = async () => {
 
   margin: 0;
 
-  color: var(--app-text-light);
+  color: var(--app-text-secondary);
 
-  font-size: .95rem;
-
-  line-height: 1.5;
+  line-height: 1.7;
 
 }
 
-/* -------------------------------------------------------------------------- */
-/* CONTENT */
-/* -------------------------------------------------------------------------- */
+/*
+|--------------------------------------------------------------------------
+| CONTENT
+|--------------------------------------------------------------------------
+*/
 
 .dialog-content {
 
@@ -331,10 +339,17 @@ const createAdmin = async () => {
 .dialog-section {
 
   display: flex;
-
   flex-direction: column;
 
   gap: 20px;
+
+  margin-bottom: 32px;
+
+}
+
+.dialog-section:last-child {
+
+  margin-bottom: 0;
 
 }
 
@@ -344,15 +359,10 @@ const createAdmin = async () => {
 
   color: var(--app-text);
 
-  font-size: 1rem;
-
-  font-weight: 600;
+  font-size: 1.05rem;
+  font-weight: 700;
 
 }
-
-/* -------------------------------------------------------------------------- */
-/* FORM */
-/* -------------------------------------------------------------------------- */
 
 .form-grid {
 
@@ -364,13 +374,17 @@ const createAdmin = async () => {
 
 }
 
-:deep(.q-field) {
+.col-span-2 {
 
-  background: white;
-
-  border-radius: 14px;
+  grid-column: span 2;
 
 }
+
+/*
+|--------------------------------------------------------------------------
+| FORM
+|--------------------------------------------------------------------------
+*/
 
 :deep(.q-field__control) {
 
@@ -378,23 +392,37 @@ const createAdmin = async () => {
 
 }
 
-/* Password full width */
+:deep(.q-field__native) {
 
-.form-grid .q-field:last-child {
-
-  grid-column: 1 / -1;
+  color: var(--app-text);
 
 }
 
-/* -------------------------------------------------------------------------- */
-/* FOOTER */
-/* -------------------------------------------------------------------------- */
+:deep(.q-field__label) {
+
+  color: var(--app-text-secondary);
+
+}
+
+:deep(.q-toggle) {
+
+  margin-top: 8px;
+
+}
+
+/*
+|--------------------------------------------------------------------------
+| FOOTER
+|--------------------------------------------------------------------------
+*/
 
 .dialog-footer {
 
-  padding: 20px 28px;
+  padding: 24px 28px;
 
-  background: var(--app-surface);
+  background: var(--app-bg);
+
+  border-top: 1px solid var(--app-border);
 
 }
 
@@ -406,17 +434,19 @@ const createAdmin = async () => {
 
 }
 
-.footer-actions .q-btn {
+.footer-actions :deep(.q-btn) {
 
-  min-width: 170px;
+  min-width: 180px;
 
-  border-radius: 12px;
+  border-radius: 14px;
 
 }
 
-/* -------------------------------------------------------------------------- */
-/* SCROLLBAR */
-/* -------------------------------------------------------------------------- */
+/*
+|--------------------------------------------------------------------------
+| SCROLLBAR
+|--------------------------------------------------------------------------
+*/
 
 .dialog-content::-webkit-scrollbar {
 
@@ -432,21 +462,22 @@ const createAdmin = async () => {
 
 }
 
-/* -------------------------------------------------------------------------- */
-/* MOBILE */
-/* -------------------------------------------------------------------------- */
+/*
+|--------------------------------------------------------------------------
+| MOBILE
+|--------------------------------------------------------------------------
+*/
 
 @media (max-width: 768px) {
 
   .dialog-card {
 
-    width: 100%;
+    width: 100vw;
+    max-width: 100vw;
 
-    max-width: 100%;
+    height: 90vh;
 
-    height: 92vh;
-
-    max-height: 92vh;
+    margin: 0;
 
     border-radius: 24px 24px 0 0;
 
@@ -454,7 +485,7 @@ const createAdmin = async () => {
 
   .dialog-header {
 
-    padding: 18px 20px 16px;
+    padding: 20px;
 
   }
 
@@ -466,29 +497,15 @@ const createAdmin = async () => {
 
   .dialog-footer {
 
-    position: sticky;
+    padding: 20px;
 
-    bottom: 0;
-
-    padding: 16px 20px;
-
-    border-top: 1px solid var(--app-border);
-
-    background: var(--app-surface);
-
-    z-index: 5;
+    box-shadow: 0 -6px 18px rgba(0, 0, 0, .08);
 
   }
 
-  .footer-actions {
+  .dialog-title {
 
-    width: 100%;
-
-  }
-
-  .footer-actions .q-btn {
-
-    width: 100%;
+    font-size: 1.5rem;
 
   }
 
@@ -498,9 +515,21 @@ const createAdmin = async () => {
 
   }
 
-  .form-grid .q-field:last-child {
+  .col-span-2 {
 
-    grid-column: auto;
+    grid-column: span 1;
+
+  }
+
+  .footer-actions {
+
+    display: grid;
+
+  }
+
+  .footer-actions :deep(.q-btn) {
+
+    width: 100%;
 
   }
 
